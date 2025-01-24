@@ -1,0 +1,9 @@
+{
+  "name": "yugioh-fb-api",
+  "version": "0.0.1",
+  "description": "API to Retrive data from Yugioh Forbidden Memories (PS1 Games)",
+  "main": "index.js",
+  "repository": "git@github.com:mhsalves/yugioh-fb-api.git",
+  "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
+  "license": "MIT"
+}
