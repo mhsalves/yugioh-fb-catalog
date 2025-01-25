@@ -1,4 +1,4 @@
-import type { IRitualCard } from "../cards";
+import type { IRitualCard } from "./types";
 
 export default {
     id: 674,

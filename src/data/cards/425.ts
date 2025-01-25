@@ -1,4 +1,4 @@
-import type { IMonsterCard } from "../cards";
+import type { IMonsterCard } from "./types";
 
 export default {
     id: 425,

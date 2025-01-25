@@ -1,4 +1,4 @@
-import type { ISupportCard } from "../cards";
+import type { ISupportCard } from "./types";
 
 export default {
     id: 690,
