@@ -1,3 +1,4 @@
+# Rules from: /Users/matheusalves/Documents/Projects/yugioh-fb-catalog/.gitignore
 # Logs
 logs
 *.log
@@ -129,5 +130,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Only build to NPM
-lib
+
+# npmignore - content above this line is automatically generated and modifications may be omitted
+# see npmjs.com/npmignore for more details.
+src/
+tsconfig.json
