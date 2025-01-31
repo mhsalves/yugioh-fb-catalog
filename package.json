@@ -2,7 +2,7 @@
   "name": "@mhsalves/yugioh-fb-api",
   "version": "0.0.1-alpha4",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-api.git"
@@ -11,7 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/index.js",
+    "start": "node lib/index.js",
     "dev": "nodemon src/server/index.ts",
     "npm:publish": "yarn build && npm publish"
   },
