@@ -1,9 +1,12 @@
 {
-  "name": "yugioh-fb-api",
-  "version": "0.0.1",
-  "description": "API to Retrive data from Yugioh Forbidden Memories (PS1 Games)",
+  "name": "@mhsalves/yugioh-fb-api",
+  "version": "0.0.1-alpha1",
+  "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "index.js",
-  "repository": "git@github.com:mhsalves/yugioh-fb-api.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-api.git"
+  },
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
@@ -21,5 +24,15 @@
   "dependencies": {
     "express": "^4.21.2",
     "nodemon": "^3.1.9"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/mhsalves/yugioh-fb-api/issues"
+  },
+  "homepage": "https://github.com/mhsalves/yugioh-fb-api#readme",
+  "keywords": [
+    "yugioh",
+    "forbidden",
+    "memories",
+    "catalog"
+  ]
 }
