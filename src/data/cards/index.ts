@@ -1,4 +1,4 @@
-import { ICard } from './types';
+import { ICard } from '../card-types';
 import c315 from './315';
 import c425 from './425';
 import c674 from './674';

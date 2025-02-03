@@ -1,5 +1,5 @@
 import cards from '../data/cards';
-import type { TCardType, TMonsterType } from '../data/cards/types';
+import type { TCardType, TMonsterType } from '../data/card-types';
 
 export const getCardList = () => cards;
 

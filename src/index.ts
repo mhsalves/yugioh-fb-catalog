@@ -1,3 +1,3 @@
-export * from './data/cards/types';
+export type * from './data/card-types';
 
 export * from './tools/cards'

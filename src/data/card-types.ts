@@ -39,16 +39,16 @@ interface ICardBase {
     description: string;
 }
 
-interface ISupportCard extends ICardBase {
+export interface ISupportCard extends ICardBase {
     cardType: TSupportCardType;
 };
 
-interface IRitualCard extends ICardBase {
+export interface IRitualCard extends ICardBase {
     cardType: "Ritual";
     summon: IRitualSummon;
 };
 
-interface IMonsterCard extends ICardBase {
+export interface IMonsterCard extends ICardBase {
     cardType: "Monster";
     level: number; /** Range betweeen 1-12 */
     monsterType: TMonsterType;
