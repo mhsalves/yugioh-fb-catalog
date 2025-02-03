@@ -1,6 +1,6 @@
 import { ICard } from '../card-types';
 import c425 from './425';
-import c674 from './674';
+import rituals from './rituals';
 import support from './support';
 
 const group0_50: ICard[] = [];
@@ -16,7 +16,7 @@ const group451_500: ICard[] = [];
 const group501_550: ICard[] = [];
 const group551_600: ICard[] = [];
 const group601_650: ICard[] = [];
-const group651_700: ICard[] = [c674];
+const group651_700: ICard[] = [];
 const group701_750: ICard[] = [];
 
 const base: ICard[] = [];
@@ -29,5 +29,6 @@ export default base.concat(
     group451_500, group501_550,
     group551_600, group601_650,
     group651_700, group701_750,
+    rituals,
     support,
 ).sort((cardA, cardB) => cardA.id > cardB.id ? 1 : -1);
