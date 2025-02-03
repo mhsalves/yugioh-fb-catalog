@@ -2,8 +2,7 @@
   "name": "@mhsalves/yugioh-fb-catalog",
   "version": "0.0.1-alpha6",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
-  "main": "./lib/index.ts",
-  "types": "./lib/index.ts",
+  "main": "./lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
