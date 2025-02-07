@@ -3,6 +3,7 @@
   "version": "0.0.1-alpha6",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
@@ -14,6 +15,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "gh:predeploy": "next build",
+    "gh:theme": "touch ./out/.nojekyll",
+    "gh:prepare": "gh-pages -d out",
+    "gh:deploy": "yarn gh:predeploy && yarn gh:theme && yarn gh:prepare",
     "npm:build": "rm -rf ./lib && npx tsc",
     "npm:publish": "yarn npm:build && npm publish"
   },
@@ -27,6 +32,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.10",
     "@types/react": "^19.0.8",
+    "gh-pages": "^6.3.0",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
