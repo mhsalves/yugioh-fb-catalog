@@ -1,6 +1,5 @@
+import { getCard } from "@mhsalves/yugioh-fb-catalog";
 import { Card, DialogContent, DialogTitle, Divider, Grid2, Stack, Typography } from "@mui/material";
-
-import { getCard } from "../tools/cards";
 
 interface CardItemViewProps {
     id: number;
