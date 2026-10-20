@@ -30,16 +30,16 @@ flowchart LR
             entry["index.ts<br/>(public API)"]
             types --> data --> tools --> entry
         end
-        subgraph site["mkt_site/ (Next.js static site)"]
-            page["pages/index.tsx"]
-            item["components/CardItemView.tsx"]
-            page --> item
+        subgraph site["mkt_site/ (Vite + React SPA)"]
+            app["App.tsx + routes.ts"]
+            header["components/Header.tsx"]
+            app --> header
         end
         catalog -- "workspace link (lib/)" --> site
     end
 
     catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fb-catalog")]
-    site -- "next build (output: export) → out/ → gh-pages" --> pages[("GitHub Pages")]
+    site -- "vite build → dist/ → gh-pages" --> pages[("GitHub Pages")]
     npm --> consumers["Third-party apps"]
 ```
 
@@ -84,11 +84,13 @@ The important detail: **the website imports the library from the repository**, t
 ├── .github/
 │   ├── dependabot.yml       # Weekly grouped dependency updates (root workspace + Actions)
 │   └── workflows/ci.yml     # CI on every PR and push to main
-├── mkt_site/                # Next.js 15 + MUI static site (was server/)
-│   ├── next.config.js       # output: 'export', basePath for GH Pages
+├── mkt_site/                # Vite + React SPA, plain CSS (was server/, then Next.js + MUI)
+│   ├── vite.config.ts       # base path for GH Pages, 404.html fallback, catalog version
+│   ├── index.html
 │   └── src/
-│       ├── pages/index.tsx
-│       └── components/{Header,CardItemView}.tsx
+│       ├── App.tsx, routes.ts, router.tsx, styles.css
+│       ├── pages/{HomePage,NotFoundPage}.tsx
+│       └── components/{Header,CatalogVersion,icons}.tsx
 └── README.md                # Project overview (Portuguese)
 ```
 
@@ -220,35 +222,42 @@ data/rituals.json  equips.json  fields.json  fusions/<result-type>.json  rules.j
 
 ## 5. The website (`mkt_site/`)
 
-This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). It is a Next.js app built with `output: 'export'` into static HTML/JS in `out/`, then pushed to the `gh-pages` branch.
+This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). It is a Vite + React single-page app built into static files in `dist/`, then pushed to the `gh-pages` branch. It replaced a Next.js 15 + MUI 6 static export (spec 06 U-4).
 
 ### 5.1 Behaviour
 
-`pages/index.tsx` renders `TOTAL_CARDS` slots, imported from the library (722: `CardItemView` for IDs 1..722). Each slot calls `getCard(id)`:
-- the card exists → show name, description, type, password and cost
-- the card is missing → show "Not available yet", or hide it when the **Only Available** switch is on (the default)
+The site is being rebuilt page by page (spec 06 U-2). Today it has:
+- a **header** on every page: logo (home link), the page menu built from `routes.ts` (a toggle on phones), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fb-catalog@<version>`) and a link to that version on npm;
+- a placeholder **Home** page at `/`;
+- a **404** page for unknown paths.
 
-In practice, the site is a **coverage report** for the dataset: it shows how much of the game has been entered.
+The old "Cards registered" coverage grid was removed; it comes back as `/progress` (spec 06 U-6).
 
 ### 5.2 Stack and reasons
 
 | Choice | Reason |
 |---|---|
-| Next.js with static export | The data is static and bundled, so no server is needed. Static export works on free GitHub Pages hosting. Commit `2e50981` removed an earlier Express/nodemon server for this reason. |
-| `basePath`/`assetPrefix` `/yugioh-fb-catalog` in production | GitHub Pages serves project sites under `/<repo>/`. |
-| `images.unoptimized` | Next's image optimiser needs a running server, which static export does not have. |
-| `touch out/.nojekyll` | Stops GitHub Pages' Jekyll from ignoring the `_next/` folder (Jekyll skips paths that start with an underscore). |
-| MUI + Toolpad `PageContainer` | Ready-made, decent-looking components without writing CSS. |
-| Depends on the **workspace** catalog (`"*"`, linked by Yarn) | Data changes appear on the site without publishing. Earlier the site depended on the published npm package, so it doubled as a real consumer *(inferred)*. That check now runs in CI as a packed-tarball smoke test. |
+| Vite + React, no framework | The data is static and bundled, so no server or SSR is needed. Vite builds in under a second and outputs plain HTML/JS/CSS for GitHub Pages. |
+| Plain CSS with tokens in `src/styles.css` | No UI or CSS-in-JS library to update. Colors and fonts live in `:root` variables, ready for the style guide (spec 06 U-1). |
+| Own router (`src/router.tsx`, ~50 lines) | History API + `useSyncExternalStore`; avoids a router dependency for a handful of routes. |
+| Inline SVG icons (`components/icons.tsx`) | No icon library. |
+| `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview | GitHub Pages serves project sites under `/<repo>/` (spec 07 P-3). |
+| `dist/404.html` = copy of `index.html` | Pages serves `404.html` for unknown paths, so deep links boot the SPA and its router shows the page or the 404 view. |
+| Catalog version injected at build (`define` in `vite.config.ts`) | Shows exactly which catalog the site was built against without shipping `package.json`. |
+| Depends on the **workspace** catalog (`"*"`, linked by Yarn) | Data changes appear on the site without publishing. The packed-tarball smoke test in CI checks the npm consumer path. |
 | TypeScript `strict: true` | Same as the catalog (spec 01 R-5). |
 
 ### 5.3 Deploy
 
+`.github/workflows/pages.yml` deploys after every merge to `main` that changes the site, the catalog data or code, or the dependencies (spec 07 P-1): validate → test → `yarn build` (base path from `actions/configure-pages`) → upload `mkt_site/dist` → `actions/deploy-pages`. It can also be started by hand (`workflow_dispatch`). It needs the repository's Pages source set to **GitHub Actions**.
+
+The manual fallback, until the first Actions deploy succeeds:
+
 ```
-yarn gh:deploy  =  next build  →  touch out/.nojekyll  →  gh-pages -d out
+yarn gh:deploy  =  vite build  →  gh-pages -d dist
 ```
 
-This runs manually from a developer machine, inside `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists).
+It runs from `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists). No `.nojekyll` is needed: Vite's output has no `_`-prefixed folders.
 
 ---
 
@@ -268,11 +277,10 @@ sequenceDiagram
     CI->>CI: type-check, lint, format, test, build, pack smoke test
     Dev->>Cat: after merge: bump version, yarn npm:publish
     Cat->>NPM: lib/ (JS + .d.ts)
-    Dev->>Site: yarn gh:deploy
-    Site->>GH: static out/
+    CI->>GH: after merge: pages.yml builds and deploys dist/
 ```
 
-Publishing and deploying are still manual. They are automated in specs [05](./specs/05-catalog-npm-distribution.md) N-2 and [07](./specs/07-site-github-pages-delivery.md) P-1.
+The site deploy is automated ([07](./specs/07-site-github-pages-delivery.md) P-1). Publishing to npm is still manual; it is automated in spec [05](./specs/05-catalog-npm-distribution.md) N-2.
 
 ---
 
@@ -296,7 +304,7 @@ Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (67
 | # | Issue |
 |---|---|
 | Q1 | ~~No tests.~~ **Mostly resolved** by spec 01 R-2: Vitest covers the query API and data integrity (unique and sorted IDs, ranges, password format, ritual references in range). Still missing: ritual references pointing to *existing* monsters, page ranges matching the header comments. |
-| Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm and deploying to Pages are still manual. |
+| Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm is still manual; `pages.yml` deploys the site on merge (spec 07 P-1). |
 | Q3 | ~~No linter or formatter.~~ **Resolved** by spec 01 R-3: ESLint (flat config) and Prettier at the root. |
 | Q4 | `getCard` is a linear scan, called 722 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
 | Q5 | ~~The site has `strict: false`.~~ **Resolved** by spec 01 R-5. |

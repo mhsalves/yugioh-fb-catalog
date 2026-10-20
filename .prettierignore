@@ -2,9 +2,7 @@
 catalog/lib
 catalog/src/data/catalog.generated.ts
 catalog/schema/*.schema.json
-mkt_site/.next
-mkt_site/out
-mkt_site/next-env.d.ts
+mkt_site/dist
 
 # Generated
 yarn.lock

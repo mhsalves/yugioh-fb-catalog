@@ -11,14 +11,14 @@
 
 Build status as of 2026-10-20, `main` @ `9a353ee` (P-2 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
 
-**1 built · 2 partial · 3 not built**
+**3 built · 1 partial · 2 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| P-1 | Deploy with GitHub Actions after site changes | Agreed | ❌ Not built | Manual `yarn gh:deploy` pushes the `gh-pages` branch |
+| P-1 | Deploy with GitHub Actions after site changes | Agreed | 🟡 Partial | `.github/workflows/pages.yml` built; runs once the Pages source is switched to GitHub Actions (TBD-P1). `yarn gh:deploy` stays as a fallback until then |
 | P-2 | Site builds from the workspace catalog | Proposed | ✅ Built | Built by [01](./01-repository-and-workspaces.md) R-1: `mkt_site/` links the workspace `catalog/` (TBD-P2 still open) |
-| P-3 | Configurable base path | Proposed | 🟡 Partial | Base path works but is hard-coded in `next.config.js` |
-| P-4 | Static hosting constraints | Proposed | 🟡 Partial | Static export, unoptimized images, `.nojekyll` in place; no custom 404 |
+| P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fb-catalog/` (`pages.yml` sets it from `actions/configure-pages`) |
+| P-4 | Static hosting constraints | Proposed | ✅ Built | Static Vite SPA, links through the router's base-path helper, `dist/404.html` fallback with the site's own 404 view |
 | P-5 | PR previews | TBD | ❌ Not built | None (TBD-P4) |
 | P-6 | Publish API docs with the site | Proposed | ❌ Not built | No API docs generated |
 
@@ -30,11 +30,11 @@ Goal **G2**: the site must **keep being served from GitHub Pages**. Pages is fre
 
 | Item | Current state | Reference |
 |---|---|---|
-| Rendering | Next.js `output: 'export'` → static `out/` | `mkt_site/next.config.js` |
-| Base path | `basePath` and `assetPrefix` = `/yugioh-fb-catalog` in production | `mkt_site/next.config.js` |
-| Images | `images.unoptimized: true` (no image server on Pages) | `mkt_site/next.config.js` |
-| Jekyll | `touch out/.nojekyll` so `_next/` is served | `mkt_site/package.json` `gh:theme` |
-| Deploy | Manual: `yarn gh:deploy` = `next build` → `.nojekyll` → `gh-pages -d out` (pushes to the `gh-pages` branch) from a dev machine | `mkt_site/package.json` |
+| Rendering | Vite + React SPA: `vite build` → static `dist/` (replaced the Next.js `output: 'export'` → `out/` on 2026-10-20, [06](./06-site-ux-forbidden-memories.md) U-4) | `mkt_site/vite.config.ts` |
+| Base path | `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview, `/` in dev | `mkt_site/vite.config.ts` |
+| Unknown paths | The build copies `index.html` to `404.html`; Pages serves it and the router renders the page or the 404 view | `mkt_site/vite.config.ts` |
+| Jekyll | No `.nojekyll` needed: the output has no `_`-prefixed folders | — |
+| Deploy | Manual: `yarn gh:deploy` = `vite build` → `gh-pages -d dist` (pushes to the `gh-pages` branch) from a dev machine | `mkt_site/package.json` |
 | Data source | The **workspace** catalog (`catalog/`, linked by Yarn; see [01](./01-repository-and-workspaces.md) R-1) | `mkt_site/package.json` |
 | URL | `https://mhsalves.github.io/yugioh-fb-catalog` | `README.md` |
 
@@ -55,7 +55,7 @@ The table describes **today's** Next.js setup. The future stack is open ([06](./
 
 ## 4. Proposed improvements
 
-### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · ❌ Not built
+### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · 🟡 Partial
 **Rule (Agreed, 2026-10-20):** after a merge to `main`, if the merge **updates the site**, the GitHub Pages deploy runs automatically. Merges that do not affect what the site shows deploy nothing. The npm release has its own rule ([05](./05-catalog-npm-distribution.md) N-2), and the [index](./README.md#automation-rules) summarizes both.
 
 **What counts as "a site update"** (path filter):
@@ -90,9 +90,8 @@ jobs:
       - checkout, setup-node (cache), install
       - test + validate data          # same as CI (01 R-4)
       - build catalog (workspace)     # 01 R-1
-      - build site  → <site>/<output dir>     # e.g. mkt_site/out with today's Next.js export
-      - touch <output dir>/.nojekyll          # needed when the output has _-prefixed folders (e.g. Next.js _next/)
-      - actions/upload-pages-artifact (path: <output dir>)
+      - build site  → mkt_site/dist           # SITE_BASE_PATH from actions/configure-pages (P-3)
+      - actions/upload-pages-artifact (path: mkt_site/dist)
   deploy:
     needs: build
     uses: actions/deploy-pages
@@ -103,15 +102,17 @@ jobs:
 - Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**).
 - Remove `gh-pages` from devDependencies and the `gh:*` scripts once this works. Keep the old branch until the first successful Actions deploy, then delete it.
 
+**As built** (`.github/workflows/pages.yml`): the path filter above, plus `package.json` and `yarn.lock` (dependency changes alter the build). The build job runs `yarn validate`, `yarn test` and `yarn build` with `SITE_BASE_PATH` from `actions/configure-pages`, then uploads `mkt_site/dist`. Type-check, lint and format already ran on the PR (`ci.yml`), so they are not repeated. Only the `deploy` job gets `pages: write` and `id-token: write`; the workflow default is `contents: read`. Actions are pinned by SHA (01 R-4).
+
 ### P-2 Site builds from the **workspace** catalog · ✅ Built
 With workspaces ([01](./01-repository-and-workspaces.md) R-1), the site is built from the catalog source on `main`. Merged data goes live on the next deploy, with no npm publish needed (fixes P-gap-3). npm publishing ([05](./05-catalog-npm-distribution.md)) stays independent: the site may be ahead of the latest npm release. **TBD-P2:** is that acceptable, or should the site show only released data?
 
-### P-3 Configurable base path · 🟡 Partial
+### P-3 Configurable base path · ✅ Built
 The base path is read from one environment variable (for example `SITE_BASE_PATH`), defaulting to `/yugioh-fb-catalog` in production and `''` in development. The workflow sets it from `actions/configure-pages` (`steps.pages.outputs.base_path`). Forks and a future custom domain then work without code edits (TBD-P3).
 
-How it is wired depends on the stack ([06](./06-site-ux-forbidden-memories.md) U-4). With today's Next.js it means `basePath`/`assetPrefix` in `next.config.js`; Astro uses `base`, Vite uses `base`, and SvelteKit uses `paths.base`.
+How it is wired depends on the stack ([06](./06-site-ux-forbidden-memories.md) U-4). With today's Vite site it is `base` in `vite.config.ts` (built).
 
-### P-4 Static hosting constraints (guardrails for 06, any stack) · 🟡 Partial
+### P-4 Static hosting constraints (guardrails for 06, any stack) · ✅ Built
 Whatever stack is chosen (TBD-U1), every page in [06](./06-site-ux-forbidden-memories.md) must respect:
 - **no server at runtime**: no API routes, middleware, server-side rendering per request, or incremental regeneration (in Next.js terms: no `getServerSideProps`, ISR or route handlers);
 - dynamic routes (`/cards/[id]`) list all their paths at build time;
@@ -124,7 +125,7 @@ Whatever stack is chosen (TBD-U1), every page in [06](./06-site-ux-forbidden-mem
 Build the site on every PR (already in CI, 01 R-4) and upload the output folder as a workflow artifact. A hosted per-PR preview (for example, Netlify or Cloudflare Pages) would be an extra service outside GitHub Pages. **TBD-P4**
 
 ### P-6 Publish API docs with the site · ❌ Not built
-Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `<output dir>/docs/api/` during the Pages build, so docs and site deploy together.
+Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `mkt_site/dist/docs/api/` during the Pages build, so docs and site deploy together.
 
 ## 5. Acceptance criteria
 

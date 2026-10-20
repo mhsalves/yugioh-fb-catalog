@@ -11,7 +11,7 @@ The project keeps **one repository with two deliverables**:
 | # | Goal | Build status today | Spec |
 |---|---|---|---|
 | G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: a basic MUI coverage grid exists; no FM look, search or detail pages | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
-| G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (deploy is manual) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
+| G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (`pages.yml` deploys on merge once the Pages source is switched, TBD-P1) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
 | G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | ✅ Built: JSON files in `catalog/data/` with schemas, `yarn validate` in CI, contributor guide | [03 – Data authoring](./03-catalog-data-authoring.md) |
 | G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
 | G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: 4 read/filter functions; no search | [04 – Query API](./04-catalog-query-api.md) |
@@ -70,10 +70,10 @@ Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which
 | [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 5 | 0 | 1 | 0 |
 | [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 4 | 4 | 0 |
 | [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 4 | 4 | 0 |
-| [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 3 | 1 |
-| [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 1 | 2 | 3 | 0 |
+| [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 3 | 3 | 0 |
+| [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 3 | 1 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
-| **Total** | **15** | **14** | **22** | **1** |
+| **Total** | **17** | **14** | **21** | **0** |
 
 ## Automation rules
 
@@ -118,7 +118,8 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 | 2026-10-20 | **Spec 01 built** with these defaults for its open questions: **Yarn 1** workspaces (TBD-R2), **Node 22** for development and CI (TBD-R3, the consumer minimum stays open), site package **`yugioh-fb-catalog-mkt-site`** (TBD-R5), **plain grep** for the SHA-pin check (TBD-R6) | Built (defaults; open to change) | [01](./01-repository-and-workspaces.md) §6 |
 | 2026-10-20 | **Card images are linked from the Yu-Gi-Oh! Fandom wiki** (interim). The wiki URL is stored as copied, including `?cb=`, in `data/images.json`, filled by hand per card or by an import script. No images in the repo or npm package | **Agreed** (interim) | [08](./08-card-images.md) I-1, I-2 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
-| 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
+| 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | Superseded (next row) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
+| 2026-10-20 | **Site stack: Vite + React + plain CSS** (drops Next.js, MUI, Emotion, Toolpad, MUI icons). Pages are rebuilt from a hello-world Home and a shared header; per-card pre-rendering (S-2) is added when card pages land | **Agreed** | [06](./06-site-ux-forbidden-memories.md) U-4 |
 
 ## Suggested delivery order
 

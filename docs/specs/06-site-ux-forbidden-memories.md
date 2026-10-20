@@ -11,16 +11,16 @@
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 3 not built** · 1 n/a
+**0 built · 3 partial · 3 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| U-1 | Visual language inspired by FM | Proposed | ❌ Not built | Default MUI light theme |
-| U-2 | Information architecture (pages) | Proposed | 🟡 Partial | One page: a coverage grid (becomes `/progress`) |
-| U-3 | Interaction details | Proposed | ❌ Not built | Only an "Only Available" switch; no search, keyboard or virtualization |
-| U-4 | Site technology stack | TBD | ➖ N/A | Today: Next.js 15 + MUI 6 (decision deferred, TBD-U1) |
-| U-5 | Static generation and SEO | Proposed | 🟡 Partial | Static export works; no per-card pages, meta tags or sitemap |
-| U-6 | Migration of the current page | Proposed | ❌ Not built | Page still at `/` |
+| U-1 | Visual language inspired by FM | Proposed | ❌ Not built | Placeholder dark-blue/gold tokens in `src/styles.css`; style guide pending |
+| U-2 | Information architecture (pages) | Proposed | 🟡 Partial | Shared header (logo, page menu, copyable catalog version, npm link), a placeholder Home and a 404 page |
+| U-3 | Interaction details | Proposed | ❌ Not built | No search, keyboard or virtualization yet |
+| U-4 | Site technology stack | Agreed | 🟡 Partial | Vite + React + plain CSS (2026-10-20); per-card pre-rendering (S-2) not built yet |
+| U-5 | Static generation and SEO | Proposed | 🟡 Partial | Static SPA build with a meta description; no per-card pages, per-page meta or sitemap |
+| U-6 | Migration of the current page | Proposed | ❌ Not built | The coverage grid was removed in the stack change; `/progress` not built yet |
 
 ## 1. Why this spec exists
 
@@ -33,7 +33,9 @@ A generic Material UI grid (what exists today) serves neither well. A themed, se
 
 ## 2. What exists today
 
-`mkt_site/` (Next.js 15, static export, MUI 6 + Toolpad; see `ARCHITECTURE.md` §5):
+> The rest of this section describes the site **before** the U-4 stack change (2026-10-20). See `ARCHITECTURE.md` §5 for today's site.
+
+`mkt_site/` (Next.js 15, static export, MUI 6 + Toolpad):
 
 - One page, `pages/index.tsx`, titled "Cards registered".
 - It renders `TOTAL_CARDS = 721` slots and calls `getCard(id)` for each one.
@@ -109,9 +111,22 @@ Pages whose data does not exist yet (fusions, duelists) are hidden from navigati
 - **Empty and loading states** in the FM style ("No cards match.").
 - **Optional sound effects** (menu blip), **off by default**, using original sounds only (**TBD-U6**).
 
-### U-4 Site technology stack (**TBD-U1: to be decided later**) · ➖ N/A
+### U-4 Site technology stack · 🟡 Partial
 
-The stack (framework, UI/component library, styling) is **not decided yet**. Today's site uses **Next.js + MUI** (§2), and that is one candidate among others. This spec fixes only the **requirements** any stack must meet, so the choice can be made later without changing the UX defined in U-1 to U-3.
+**Decision (Agreed, 2026-10-20): Vite + React + plain CSS**, replacing Next.js 15 + MUI 6 + Emotion + Toolpad. Goals: faster builds and pages, an SPA that works on GitHub Pages, and fewer libraries to maintain (runtime dependencies went from 10 to 3: `react`, `react-dom`, the catalog). Routing is a small in-repo router, icons are inline SVG, and styling is CSS variables in one file until the style guide arrives (U-1).
+
+| # | Check | Status |
+|---|---|---|
+| S-1 | Fully static build | ✅ `vite build` → `dist/` |
+| S-2 | One pre-rendered page per card | ❌ Not built: needs a pre-render step (for example, a build script that renders each route to HTML) when `/cards/[id]` lands. Until then, deep links work through the `404.html` SPA fallback |
+| S-3 | Configurable base path | ✅ `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` |
+| S-4 | Public catalog API only | ✅ |
+| S-5 | Full custom theming | ✅ No UI library to fight; tokens in `src/styles.css` |
+| S-6 | Accessible interactive components | 🟡 Built by hand as needed (native elements first). Add a headless library (for example, Radix) only if a component gets complex |
+| S-7 | TypeScript strict | ✅ |
+| S-8 | Lighthouse targets | Not measured yet |
+
+The requirements below stay as the checklist for future changes.
 
 **Requirements for the stack:**
 
@@ -126,7 +141,7 @@ The stack (framework, UI/component library, styling) is **not decided yet**. Tod
 | S-7 | TypeScript, strict mode | Same quality bar as the catalog |
 | S-8 | Can meet the Lighthouse targets in §5 | Performance on mobile |
 
-**Candidates** (examples, not a decision):
+**Candidates** that were considered before the U-4 decision:
 
 | Layer | Candidates | Notes |
 |---|---|---|
@@ -158,7 +173,7 @@ The current "Cards registered" page becomes **/progress** (U-2), so the coverage
 
 ## 6. TBD / open questions
 
-- **TBD-U1:** Site technology stack: framework, UI library and styling (U-4). **To be decided later.** Next.js + MUI is the current stack and one candidate; the choice must meet S-1 to S-8.
+- ~~**TBD-U1:** Site technology stack.~~ **Resolved 2026-10-20:** Vite + React + plain CSS (U-4).
 - **TBD-U2:** Who produces the mock-ups, and in what tool? Could start as a static HTML prototype.
 - **TBD-U3:** Exact palette and fonts (pixel font licence must allow web use: OFL fonts are fine).
 - **TBD-U4:** Frame color for Equip cards (and whether FM visually separates Equip from Magic).
