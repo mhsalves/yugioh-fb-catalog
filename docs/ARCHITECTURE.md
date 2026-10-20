@@ -21,7 +21,7 @@ There is no backend, database or API. All of the data is TypeScript source code.
 
 ```mermaid
 flowchart LR
-    subgraph repo["Git repository (one repo, no workspaces)"]
+    subgraph repo["Git repository (Yarn workspaces: catalog, mkt_site)"]
         direction TB
         subgraph catalog["catalog/ (library package)"]
             types["data/card-types.ts<br/>(domain types)"]
@@ -30,20 +30,20 @@ flowchart LR
             entry["index.ts<br/>(public API)"]
             types --> data --> tools --> entry
         end
-        subgraph server["server/ (Next.js static site)"]
+        subgraph site["mkt_site/ (Next.js static site)"]
             page["pages/index.tsx"]
             item["components/CardItemView.tsx"]
             page --> item
         end
+        catalog -- "workspace link (lib/)" --> site
     end
 
     catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fb-catalog")]
-    npm -- "yarn install (^0.1.1)" --> server
-    server -- "next build (output: export) → out/ → gh-pages" --> pages[("GitHub Pages")]
+    site -- "next build (output: export) → out/ → gh-pages" --> pages[("GitHub Pages")]
     npm --> consumers["Third-party apps"]
 ```
 
-The important detail: **the website does not import the library from the repository.** It installs the *published* version from npm. Changes to the data appear on the site only after you publish a new library version and update the server's dependency.
+The important detail: **the website imports the library from the repository**, through a Yarn workspace link to `catalog/` (built to `catalog/lib/`). A data change shows up on the site without publishing to npm. Before spec 01 the site installed the *published* npm version instead. That check of the shipped package now runs in CI as a packed-tarball smoke test.
 
 ---
 
@@ -51,9 +51,17 @@ The important detail: **the website does not import the library from the reposit
 
 ```
 .
+├── package.json             # Private root: Yarn 1 workspaces, scripts, resolutions
+├── yarn.lock                # The only lockfile
+├── .nvmrc                   # Node 22 for development and CI
+├── eslint.config.mjs        # ESLint flat config (typescript-eslint, react-hooks)
+├── .prettierrc.json         # Prettier (4 spaces, 120 columns; 2 for JSON/YAML)
+├── scripts/check-action-pins.sh  # CI check: every action pinned by commit SHA
 ├── catalog/                 # The library (current source of truth)
 │   ├── package.json         # @mhsalves/yugioh-fb-catalog@0.1.1
-│   ├── tsconfig.json        # CommonJS, ES2016, emits lib/ + .d.ts
+│   ├── tsconfig.json        # strict; type-checks src/ + test/
+│   ├── tsconfig.build.json  # CommonJS, ES2016, emits lib/ + .d.ts from src/
+│   ├── test/                # Vitest: query API + data integrity
 │   └── src/
 │       ├── index.ts         # Public API: re-exports types + tools
 │       ├── data/
@@ -66,8 +74,10 @@ The important detail: **the website does not import the library from the reposit
 │       │       ├── rituals/page0..3.ts
 │       │       └── support/{equip,magic,trap}.ts
 │       └── tools/cards.ts           # Query functions
-├── .github/dependabot.yml   # Weekly grouped dependency updates
-├── server/                  # Next.js 15 + MUI static site
+├── .github/
+│   ├── dependabot.yml       # Weekly grouped dependency updates (root workspace + Actions)
+│   └── workflows/ci.yml     # CI on every PR and push to main
+├── mkt_site/                # Next.js 15 + MUI static site (was server/)
 │   ├── next.config.js       # output: 'export', basePath for GH Pages
 │   └── src/
 │       ├── pages/index.tsx
@@ -173,17 +183,17 @@ Each `pageN.ts` file holds **one contiguous ID range**, recorded in its header c
 
 ### 4.5 Build and publish
 
-- `tsc` with `module: commonjs`, `target: es2016`, `declaration: true`, output in `lib/`.
-- `.npmignore` removes `src/` and `tsconfig.json`, so the package contains only `lib/` (JS + `.d.ts`).
-- `yarn npm:publish` builds and publishes. This is a manual step with no CI.
+- `yarn build` runs `tsc -p tsconfig.build.json` with `module: commonjs`, `target: es2016`, `declaration: true`, output in `lib/`.
+- `"files": ["lib"]` in `catalog/package.json` allowlists the build output, so the package contains only `lib/` (JS + `.d.ts`) plus `README.md` and `package.json`. The allowlist is required inside the workspace: npm also applies the root `.gitignore`, which ignores `lib`, so without it the tarball would be empty. `.npmignore` is kept as a second guard.
+- `yarn npm:publish` builds and publishes. This is still a manual step. CI (`ci.yml`) checks every PR, including a smoke test that installs the packed tarball, but it does not publish.
 
 **Why CommonJS/ES2016** *(inferred)*: it is the format with the widest compatibility. It loads in old and new Node versions and in bundlers such as Next.js/webpack with no extra setup.
 
 ---
 
-## 5. The website (`server/`)
+## 5. The website (`mkt_site/`)
 
-Despite the folder name, this is **not a server**. It is a Next.js app built with `output: 'export'` into static HTML/JS in `out/`, then pushed to the `gh-pages` branch.
+This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). It is a Next.js app built with `output: 'export'` into static HTML/JS in `out/`, then pushed to the `gh-pages` branch.
 
 ### 5.1 Behaviour
 
@@ -202,7 +212,8 @@ In practice, the site is a **coverage report** for the dataset: it shows how muc
 | `images.unoptimized` | Next's image optimiser needs a running server, which static export does not have. |
 | `touch out/.nojekyll` | Stops GitHub Pages' Jekyll from ignoring the `_next/` folder (Jekyll skips paths that start with an underscore). |
 | MUI + Toolpad `PageContainer` | Ready-made, decent-looking components without writing CSS. |
-| Depends on the **npm** package, not the local folder | The site doubles as a real consumer of the published package, so it confirms that what ships to npm works *(inferred)*. The cost is a publish-then-bump step before any data change appears on the site. |
+| Depends on the **workspace** catalog (`"*"`, linked by Yarn) | Data changes appear on the site without publishing. Earlier the site depended on the published npm package, so it doubled as a real consumer *(inferred)*. That check now runs in CI as a packed-tarball smoke test. |
+| TypeScript `strict: true` | Same as the catalog (spec 01 R-5). |
 
 ### 5.3 Deploy
 
@@ -210,7 +221,7 @@ In practice, the site is a **coverage report** for the dataset: it shows how muc
 yarn gh:deploy  =  next build  →  touch out/.nojekyll  →  gh-pages -d out
 ```
 
-This runs manually from a developer machine.
+This runs manually from a developer machine, inside `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists).
 
 ---
 
@@ -220,23 +231,27 @@ This runs manually from a developer machine.
 sequenceDiagram
     actor Dev
     participant Cat as catalog/
+    participant Site as mkt_site/
+    participant CI as GitHub Actions (ci.yml)
     participant NPM as npm registry
-    participant Srv as server/
     participant GH as GitHub Pages
     Dev->>Cat: add card object to the right pageN.ts
-    Dev->>Cat: tsc (type-checks the record)
-    Dev->>Cat: bump version, yarn npm:publish
+    Cat-->>Site: yarn dev: tsc --watch, site shows it live
+    Dev->>CI: open PR
+    CI->>CI: type-check, lint, format, test, build, pack smoke test
+    Dev->>Cat: after merge: bump version, yarn npm:publish
     Cat->>NPM: lib/ (JS + .d.ts)
-    Dev->>Srv: bump @mhsalves/yugioh-fb-catalog, yarn install
-    Dev->>Srv: yarn gh:deploy
-    Srv->>GH: static out/
+    Dev->>Site: yarn gh:deploy
+    Site->>GH: static out/
 ```
+
+Publishing and deploying are still manual. They are automated in specs [05](./specs/05-catalog-npm-distribution.md) N-2 and [07](./specs/07-site-github-pages-delivery.md) P-1.
 
 ---
 
 ## 7. Current state and known issues
 
-Checked on 2026-10-20 against `main` @ `4d80225`. `catalog/` type-checks cleanly with `tsc --noEmit`.
+Checked on 2026-10-20 against `main` @ `4d80225`; tooling items (S3, Q1–Q3, Q5) rechecked after the spec 01 build. Both packages type-check cleanly in strict mode (`yarn typecheck`).
 
 ### 7.1 Data coverage
 Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674), and 1 each of equip (315), magic (332) and trap (690). Most `pageN.ts` files are empty arrays with a range comment. `TMonsterType` has only `"Thunder" | "Dragon"`, and `data/duelists/` is an empty placeholder (probably intended for duelist drop and deck tables).
@@ -246,18 +261,18 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 |---|---|---|---|
 | S1 | ~~**Duplicated library.**~~ **Resolved.** Commit `7f15bd0` "Move all catalog files to a folder" *copied* `src/` into `catalog/src/` instead of moving it. The stale root `src/`, `package.json` (v0.1.0), `tsconfig.json`, `yarn.lock` and `.npmignore` have since been deleted. | — | — |
 | S2 | ~~**Dependency drift between the copies.**~~ **Resolved** together with S1. | — | — |
-| S3 | **No workspace linking.** The server consumes the published npm version. | `server/package.json` | Every data change needs publish + bump + deploy. Unpublished changes cannot be previewed locally. |
-| S4 | **Hard-coded card count** `TOTAL_CARDS = 721` in the UI. FM has 722 cards (verify). | `server/src/pages/index.tsx` | Duplicates knowledge that belongs in the library, and may be off by one. |
-| S5 | **README docs do not match the code.** `src/README.md` and `catalog/README.md` describe `getCards`, `getCardById(id: string)`, string IDs, lowercase types and an `attribute` field, none of which exist. `server/README.md` lists search, theming, stats, `styles/`, `utils/` and `NEXT_PUBLIC_API_URL`, also not present. Reference links are `(URL)` placeholders. | READMEs vs `card-types.ts` / `tools/cards.ts` | Misleads contributors and package users. |
+| S3 | ~~**No workspace linking.**~~ **Resolved** by spec 01 R-1: a Yarn workspace links `mkt_site/` to `catalog/`. | — | — |
+| S4 | **Hard-coded card count** `TOTAL_CARDS = 721` in the UI. FM has 722 cards (verify). | `mkt_site/src/pages/index.tsx` | Duplicates knowledge that belongs in the library, and may be off by one. |
+| S5 | **README docs do not match the code.** `src/README.md` and `catalog/README.md` describe `getCards`, `getCardById(id: string)`, string IDs, lowercase types and an `attribute` field, none of which exist. `mkt_site/README.md` lists search, theming, stats, `styles/`, `utils/` and `NEXT_PUBLIC_API_URL`, also not present. Reference links are `(URL)` placeholders. | READMEs vs `card-types.ts` / `tools/cards.ts` | Misleads contributors and package users. |
 
 ### 7.3 Quality and tooling gaps
 | # | Issue |
 |---|---|
-| Q1 | No tests and no data integrity checks (unique IDs, value ranges, ritual references pointing to real monsters, page range matching the header comment). |
-| Q2 | No CI. Publishing to npm and deploying to Pages are manual, and nothing type-checks PRs (Dependabot PRs are merged unverified). |
-| Q3 | There is no linter or formatter. The unused, deprecated `tslint` was removed; ESLint and Prettier are the usual replacements. |
+| Q1 | ~~No tests.~~ **Mostly resolved** by spec 01 R-2: Vitest covers the query API and data integrity (unique and sorted IDs, ranges, password format, ritual references in range). Still missing: ritual references pointing to *existing* monsters, page ranges matching the header comments. |
+| Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm and deploying to Pages are still manual. |
+| Q3 | ~~No linter or formatter.~~ **Resolved** by spec 01 R-3: ESLint (flat config) and Prettier at the root. |
 | Q4 | `getCard` is a linear scan, called 721 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
-| Q5 | The server has `strict: false`. |
+| Q5 | ~~The site has `strict: false`.~~ **Resolved** by spec 01 R-5. |
 | Q6 | The library emits only CommonJS/ES2016, with no `exports` map or ESM build. |
 | Q7 | The site shows only base fields. Monster stats, guardian stars and ritual recipes are in the data but not rendered. There is no search or filtering beyond the availability toggle. |
 
@@ -270,9 +285,9 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 Ordered so that each step makes the next one safer.
 
 1. ~~**Single source of truth (S1, S2).**~~ Done: the root copy was deleted and `catalog/` is the only library.
-2. **Monorepo workspaces (S3).** Add a root `package.json` with `"workspaces": ["catalog", "server"]` (Yarn, npm or pnpm). The server then imports the local library during development, and data changes appear immediately.
-3. **Tests and integrity checks (Q1).** Add Vitest or Jest tests that assert unique IDs, value ranges, valid ritual references, IDs inside each page's declared range, and that `getCardList()` is sorted. These matter most once many people contribute data.
-4. **CI (Q2).** Add a GitHub Actions workflow that type-checks, tests and builds both packages on every PR. Then automate the Pages deploy on push to `main` (`actions/deploy-pages`), and npm publishing on tags or with Changesets.
+2. ~~**Monorepo workspaces (S3).**~~ Done (spec 01 R-1): root `package.json` with `"workspaces": ["catalog", "mkt_site"]` (Yarn 1). The site imports the local library, and data changes appear immediately.
+3. ~~**Tests and integrity checks (Q1).**~~ Done for the current data (spec 01 R-2): Vitest asserts unique and sorted IDs, value ranges and ritual references in range. Reference and page-range checks grow with the data ([03](./specs/03-catalog-data-authoring.md) A-2).
+4. **CI (Q2).** Partly done (spec 01 R-4): `ci.yml` type-checks, lints, tests and builds both packages on every PR. Still to do: automate the Pages deploy on push to `main` ([07](./specs/07-site-github-pages-delivery.md) P-1) and npm publishing ([05](./specs/05-catalog-npm-distribution.md) N-2).
 5. **Fix the docs (S5).** Rewrite the READMEs from the real API, or generate API docs with TypeDoc, and link to this file.
 6. **Library API polish (S4, Q4, Q6).** Export `TOTAL_CARDS` and a progress helper, index cards in a `Map` for `getCard`, and consider a dual ESM/CJS build with an `exports` map.
 7. **Fill in the data (§7.1).** Extend `TMonsterType` to every FM type, add the matching `monsters/<type>/` folders, and decide on the shape of `duelists/` (drop tables, decks). Consider a scraper or importer script in `tools/` that generates the page files from a trusted source.

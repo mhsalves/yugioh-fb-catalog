@@ -33,7 +33,7 @@ A generic Material UI grid (what exists today) serves neither well. A themed, se
 
 ## 2. What exists today
 
-`server/` (Next.js 15, static export, MUI 6 + Toolpad; see `ARCHITECTURE.md` §5):
+`mkt_site/` (Next.js 15, static export, MUI 6 + Toolpad; see `ARCHITECTURE.md` §5):
 
 - One page, `pages/index.tsx`, titled "Cards registered".
 - It renders `TOTAL_CARDS = 721` slots and calls `getCard(id)` for each one.

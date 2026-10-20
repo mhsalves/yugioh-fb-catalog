@@ -11,10 +11,10 @@ O projeto está dividido em dois componentes principais, cada um com seu própri
    - Base de dados estruturada das cartas e acesso programático a ela
    - [Documentação do Catálogo](./catalog/README.md)
 
-2. **[Servidor Web](./server/README.md)** (`server/`)
-   - Interface visual do catálogo
+2. **[Site](./mkt_site/README.md)** (`mkt_site/`)
+   - Interface visual do catálogo, publicada no GitHub Pages
    - Desenvolvido com Next.js e Material-UI
-   - [Documentação do Servidor](./server/README.md)
+   - [Documentação do Site](./mkt_site/README.md)
 
 Para a arquitetura, as decisões de design e o roadmap de melhorias, veja [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
@@ -29,6 +29,22 @@ yarn add @mhsalves/yugioh-fb-catalog
 ```
 
 Para acessar a interface web, visite: [Yu-Gi-Oh! FB Catalog](https://mhsalves.github.io/yugioh-fb-catalog)
+
+## Desenvolvimento
+
+O repositório é um workspace Yarn 1 (`catalog/` e `mkt_site/`) com um único `yarn.lock` na raiz. Use Node 22 (veja `.nvmrc`).
+
+```bash
+yarn install          # instala tudo na raiz
+yarn dev              # site em http://localhost:3000 usando o catálogo local (atualiza ao editar catalog/src)
+yarn typecheck        # TypeScript (strict) nos dois pacotes
+yarn lint             # ESLint
+yarn format:check     # Prettier (yarn format para corrigir)
+yarn test             # Vitest: API de consulta + integridade dos dados
+yarn build            # build do catálogo e do site
+```
+
+Cada PR passa pelo CI (`.github/workflows/ci.yml`). As especificações ficam em [docs/specs](./docs/specs/README.md).
 
 ## Licença
 

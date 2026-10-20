@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardContent, Card, Grid2, Stack, Switch, Typography } from "@mui/material";
+import { CardContent, Grid2, Stack, Switch, Typography } from "@mui/material";
 import { PageContainer } from "@toolpad/core";
 
 import Header from "../components/Header";
@@ -9,7 +9,7 @@ const TOTAL_CARDS = 721;
 
 export default function CardPage() {
     const [onlyAvailable, setOnlyAvailable] = useState(true);
-    const handleChangeAvailable = (_: any, checked: boolean) => {
+    const handleChangeAvailable = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setOnlyAvailable(checked);
     };
 
@@ -23,9 +23,11 @@ export default function CardPage() {
                     <Switch defaultChecked={onlyAvailable} onChange={handleChangeAvailable} />
                 </Stack>
                 <Grid2 container spacing={2}>
-                    {Array(TOTAL_CARDS).fill(0).map((_, index) => (
-                        <CardItemView id={index + 1} onlyAvailable={onlyAvailable} key={`card-${index + 1}`} />
-                    ))}
+                    {Array(TOTAL_CARDS)
+                        .fill(0)
+                        .map((_, index) => (
+                            <CardItemView id={index + 1} onlyAvailable={onlyAvailable} key={`card-${index + 1}`} />
+                        ))}
                 </Grid2>
             </CardContent>
         </PageContainer>

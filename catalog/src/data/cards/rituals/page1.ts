@@ -6,8 +6,8 @@ import type { IRitualCard } from "../../card-types";
 const rituals: IRitualCard[] = [
     {
         id: 674,
-        name: 'Beastry Mirror Ritual',
-        description: 'Ceremony conducted to summon Fiend\'s Mirror. Sacrifice required.',
+        name: "Beastry Mirror Ritual",
+        description: "Ceremony conducted to summon Fiend's Mirror. Sacrifice required.",
         cardType: "Ritual",
         password: {
             code: "81933259",
@@ -16,7 +16,7 @@ const rituals: IRitualCard[] = [
         summon: {
             monsterResultId: 365,
             monsterMaterialIds: [186, 261, 595],
-        }
+        },
     },
 ];
 

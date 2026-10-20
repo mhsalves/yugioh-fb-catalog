@@ -1,0 +1,11 @@
+# Build output
+catalog/lib
+mkt_site/.next
+mkt_site/out
+mkt_site/next-env.d.ts
+
+# Generated
+yarn.lock
+
+# Docs are hand-formatted (aligned tables, mermaid)
+*.md

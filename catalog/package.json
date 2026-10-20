@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
@@ -10,12 +13,18 @@
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "npm:build": "rm -rf ./lib && npx tsc",
-    "npm:publish": "yarn npm:build && npm publish"
+    "build": "rm -rf ./lib && tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "npm:build": "yarn build",
+    "npm:publish": "yarn build && npm publish"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^8",
+    "vitest": "^5.0.5"
   },
   "bugs": {
     "url": "https://github.com/mhsalves/yugioh-fb-catalog/issues"

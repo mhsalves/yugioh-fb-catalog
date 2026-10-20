@@ -21,24 +21,29 @@ Interface web do catálogo Yu-Gi-Oh! Forbidden Memories, desenvolvida com Next.j
 
 ### Pré-requisitos
 
-- Node.js (versão recomendada: 16+)
-- Yarn ou npm
+- Node.js 22 (veja `.nvmrc` na raiz)
+- Yarn 1
 
 ### Configuração
 
+O site é um workspace Yarn e usa o catálogo local (`../catalog`), não a versão publicada no npm. Rode os comandos **na raiz do repositório**:
+
 ```bash
-# Instalar dependências
+# Instalar dependências (um único yarn.lock na raiz)
 yarn install
 
-# Iniciar servidor de desenvolvimento
+# Compilar o catálogo e iniciar o site; mudanças em catalog/src aparecem na hora
 yarn dev
 ```
 
-O servidor estará disponível em `http://localhost:3000`
+O site estará disponível em `http://localhost:3000`
 
-### Scripts Disponíveis
+### Scripts Disponíveis (dentro de `mkt_site/`)
 
-- `yarn dev`: Inicia o servidor em modo desenvolvimento
+O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/lib/`).
+
+- `yarn dev`: Inicia o site em modo desenvolvimento (sem observar o catálogo)
+- `yarn typecheck`: Verifica os tipos (TypeScript strict)
 - `yarn build`: Constrói o projeto para produção
 - `yarn start`: Inicia o servidor em modo produção
 - `yarn gh:deploy`: Faz deploy para GitHub Pages
@@ -66,7 +71,7 @@ yarn build
 ## Estrutura do Projeto
 
 ```
-server/
+mkt_site/
 ├── src/
 │   ├── components/    # Componentes React reutilizáveis
 │   ├── pages/        # Páginas Next.js

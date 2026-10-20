@@ -9,9 +9,9 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, `main` @ `9a353ee` (N-5 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 6 not built**
+**0 built · 3 partial · 5 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -21,7 +21,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./READM
 | N-2a | Release order with the site | Proposed | ❌ Not built | Releases and deploys are both manual and unrelated |
 | N-3 | Versioning policy | Proposed | ❌ Not built | No written policy or changelog |
 | N-4 | Package README | Proposed | 🟡 Partial | `catalog/README.md` exists but documents the wrong API |
-| N-5 | Pack check in CI | Proposed | ❌ Not built | No CI |
+| N-5 | Pack check in CI | Proposed | 🟡 Partial | `ci.yml` installs the packed tarball and checks `require` and `import` with `getCard(425)`; no type check, `publint` or attw yet |
 | N-6 | Size budget | Proposed | ❌ Not built | Not tracked |
 
 ## 1. Why this spec exists
@@ -183,7 +183,7 @@ Release `1.0.0` when the model in 02 is agreed and the card list is complete (**
 ### N-4 Package README · 🟡 Partial
 `catalog/README.md` becomes the npm landing page: install, five-line usage, a link to the TypeDoc API ([04](./04-catalog-query-api.md) Q-8), a coverage badge, and a link to the site.
 
-### N-5 Pack check in CI · ❌ Not built
+### N-5 Pack check in CI · 🟡 Partial
 Covered by [01](./01-repository-and-workspaces.md) R-4 step 5: `npm pack`, install the tarball into a scratch project, then `require` **and** `import` it and call `getCard(425)`. Optionally add `publint` and `@arethetypeswrong/cli` to lint the package shape.
 
 ### N-6 Size budget · ❌ Not built

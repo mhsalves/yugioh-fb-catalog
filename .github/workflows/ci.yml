@@ -1,0 +1,69 @@
+# Checks every PR and every push to main (spec 01, R-4).
+# Every action is pinned by full commit SHA; Dependabot bumps the SHA and the version comment.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Check action pins
+        run: yarn check:action-pins
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Type-check
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format
+        run: yarn format:check
+
+      - name: Test (query API + data integrity)
+        run: yarn test
+
+      - name: Build catalog and site
+        run: yarn build
+
+      - name: Smoke-test the packed catalog
+        run: |
+          cd catalog
+          npm pack --pack-destination "$RUNNER_TEMP"
+          mkdir "$RUNNER_TEMP/smoke" && cd "$RUNNER_TEMP/smoke"
+          npm init -y > /dev/null
+          npm install "$RUNNER_TEMP"/mhsalves-yugioh-fb-catalog-*.tgz
+          node -e '
+            const catalog = require("@mhsalves/yugioh-fb-catalog");
+            if (!catalog.getCardList().length) throw new Error("require: packed catalog has no cards");
+            if (catalog.getCard(425)?.id !== 425) throw new Error("require: getCard(425) failed");
+            console.log(`require OK: ${catalog.getCardList().length} cards`);
+          '
+          node --input-type=module -e '
+            import { getCard, getCardList } from "@mhsalves/yugioh-fb-catalog";
+            if (!getCardList().length) throw new Error("import: packed catalog has no cards");
+            if (getCard(425)?.id !== 425) throw new Error("import: getCard(425) failed");
+            console.log(`import OK: ${getCardList().length} cards`);
+          '

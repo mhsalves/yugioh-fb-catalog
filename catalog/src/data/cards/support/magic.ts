@@ -9,7 +9,7 @@ const magics: ISupportCard[] = [
         password: {
             code: "50913601",
             cost: 55,
-        }
+        },
     },
 ];
 
