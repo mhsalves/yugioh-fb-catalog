@@ -129,7 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Only build to NPM
-lib
+# Only build to NPM (the catalog build output; source folders named lib, like catalog/scripts/lib, stay tracked)
+/catalog/lib/
+
 # Generated from catalog/data by `yarn data:build`
 catalog/src/data/catalog.generated.ts
