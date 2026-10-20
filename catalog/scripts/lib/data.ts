@@ -132,7 +132,8 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         }
         const result = FILE_SCHEMAS[kind.schema].safeParse(json);
         if (!result.success) {
-            for (const issue of result.error.issues) error(file, `${formatPath(issue.path) || "(file)"}: ${issue.message}`);
+            for (const issue of result.error.issues)
+                error(file, `${formatPath(issue.path) || "(file)"}: ${issue.message}`);
             continue;
         }
         const data = result.data as Record<string, unknown> & { $schema: string };
@@ -199,7 +200,8 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         if (!inRange(file, label, id)) return;
         const card = byId.get(id);
         if (!card) warning(file, `${label} ${id} not found (card not entered yet)`);
-        else if (card.cardType !== cardType) error(file, `${label} ${id} is a ${card.cardType} card, expected ${cardType}`);
+        else if (card.cardType !== cardType)
+            error(file, `${label} ${id} is a ${card.cardType} card, expected ${cardType}`);
     };
 
     for (const card of catalog.cards) inRange(cardFile.get(card.id)!, "id", card.id);
@@ -208,7 +210,8 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
     for (const card of catalog.cards) {
         const key = card.name.toLowerCase();
         const other = names.get(key);
-        if (other !== undefined) warning(cardFile.get(card.id)!, `name "${card.name}" is used by cards ${other} and ${card.id}`);
+        if (other !== undefined)
+            warning(cardFile.get(card.id)!, `name "${card.name}" is used by cards ${other} and ${card.id}`);
         else names.set(key, card.id);
     }
 
@@ -241,7 +244,10 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         reference(file, `${label} → result`, fusion.result, "Monster");
         const result = byId.get(fusion.result);
         if (result?.cardType === "Monster" && result.monsterType !== monsterType) {
-            error(file, `${label} → result ${fusion.result} is a ${result.monsterType} monster, expected ${monsterType} in this file`);
+            error(
+                file,
+                `${label} → result ${fusion.result} is a ${result.monsterType} monster, expected ${monsterType} in this file`,
+            );
         }
     }
 
