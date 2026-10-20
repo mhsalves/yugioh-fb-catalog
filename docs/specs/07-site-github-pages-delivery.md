@@ -5,6 +5,7 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -60,7 +61,7 @@ The table describes **today's** Next.js setup. The future stack is open ([06](./
 
 | Triggers a deploy | Why |
 |---|---|
-| `server/**` (or the future site folder, TBD-R1), except `*.md` | The site itself changed |
+| `mkt_site/**` (the site folder after the [01](./01-repository-and-workspaces.md) R-6 rename), except `*.md` | The site itself changed |
 | `catalog/data/**`, `catalog/src/**`, `catalog/schema/**` | The site is built from the workspace catalog (P-2), so new data must appear on the site too. Removed if TBD-P2 picks "released data only" (see below) |
 | `.github/workflows/pages.yml` | The deploy process changed |
 
@@ -73,8 +74,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "server/**"
-      - "!server/**/*.md"
+      - "mkt_site/**"
+      - "!mkt_site/**/*.md"
       - "catalog/data/**"
       - "catalog/src/**"
       - "catalog/schema/**"
@@ -88,7 +89,7 @@ jobs:
       - checkout, setup-node (cache), install
       - test + validate data          # same as CI (01 R-4)
       - build catalog (workspace)     # 01 R-1
-      - build site  → <site>/<output dir>     # e.g. server/out for today's Next.js export
+      - build site  → <site>/<output dir>     # e.g. mkt_site/out with today's Next.js export
       - touch <output dir>/.nojekyll          # needed when the output has _-prefixed folders (e.g. Next.js _next/)
       - actions/upload-pages-artifact (path: <output dir>)
   deploy:

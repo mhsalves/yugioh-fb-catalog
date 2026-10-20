@@ -5,16 +5,18 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 5 not built**
+**0 built · 2 partial · 6 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | N-1 | Dual ESM + CJS build with `exports` map | Proposed | 🟡 Partial | CJS + `.d.ts` only; no ESM, `exports` or `files` allowlist |
 | N-2 | Automated release after `main` merge | Agreed | ❌ Not built | Manual `yarn npm:publish` works (v0.1.1 on npm); no release workflow |
+| N-2b | npm authentication: trusted publishing | Agreed | ❌ Not built | Publishing uses a local npm login; no trusted publisher configured |
 | N-2a | Release order with the site | Proposed | ❌ Not built | Releases and deploys are both manual and unrelated |
 | N-3 | Versioning policy | Proposed | ❌ Not built | No written policy or changelog |
 | N-4 | Package README | Proposed | 🟡 Partial | `catalog/README.md` exists but documents the wrong API |
@@ -86,7 +88,7 @@ Build with `tsup` (or two `tsc` configs):
 |---|---|
 | `catalog/data/**` (cards, relations, rules) | `catalog/**/*.md` (README, contributing guide; see TBD-N7) |
 | `catalog/src/**` (query API, loader) | `catalog/**/*.test.ts`, test fixtures |
-| `catalog/schema/**` | `docs/**`, `server/**` (or the future site folder), `.github/**` |
+| `catalog/schema/**` | `docs/**`, `mkt_site/**` (the site, [01](./01-repository-and-workspaces.md) R-6), `.github/**` |
 | `catalog/package.json` (version, dependencies, exports) | Lockfile-only changes (dev-dependency bumps from Dependabot) |
 
 **Mechanism: version in the PR, publish on merge** *(recommended)*. Two workflows:
@@ -95,7 +97,7 @@ Build with `tsup` (or two `tsc` configs):
    - `catalog/package.json` `version` must be **higher than the latest version on npm**, following the N-3 policy (data → patch, feature → minor);
    - `catalog/CHANGELOG.md` must have an entry for that version.
 
-   The check fails with a clear message ("catalog data changed: bump the version, e.g. 0.1.1 → 0.1.2"). It is a **required status check** on `main` (branch protection, TBD-N6).
+   The check fails with a clear message ("catalog data changed: bump the version, e.g. 0.1.1 → 0.1.2"). It is a **required status check** on `main` (branch protection, see N-2b setup).
 
 2. **Release** (`.github/workflows/release.yml`):
 
@@ -109,7 +111,7 @@ on:
       - "catalog/schema/**"
       - "catalog/package.json"
   workflow_dispatch:            # manual re-run if a publish failed
-permissions: { contents: write, id-token: write }   # tag + release, npm provenance
+permissions: { contents: write, id-token: write }   # tag + release; OIDC token for trusted publishing (N-2b)
 concurrency: { group: npm-release, cancel-in-progress: false }   # never cancel a publish halfway
 jobs:
   release:
@@ -118,7 +120,7 @@ jobs:
       - validate data + test + build catalog          # same gates as CI
       - read version from catalog/package.json
       - if that version already exists on npm → stop (no-op, job succeeds)
-      - npm publish --provenance --access public       # from catalog/
+      - npm publish --access public                    # from catalog/, authenticated by trusted publishing (N-2b), no token
       - git tag catalog-v<version> && push tag
       - create GitHub Release from the CHANGELOG entry
 ```
@@ -136,6 +138,32 @@ Alternatives considered:
 | **Changesets** | Merging a PR opens a second "Version Packages" PR, and **publishing happens only when that second PR is merged**. That is not "after the main merge" |
 | **semantic-release** (version from commit messages) | Fully automatic, but needs strict commit-message discipline, and the release bot pushes a version commit to `main` |
 | Publish on a `v*` tag push | Needs a manual tag after each merge |
+
+### N-2b npm authentication: trusted publishing · ❌ Not built
+**Agreed (2026-10-20):** `release.yml` publishes to npm with **npm trusted publishing (OIDC)**. No npm token is stored anywhere.
+
+How it works: when the workflow runs, GitHub Actions issues a short-lived OIDC identity token (that is why the job has `id-token: write`). npm checks that the token comes from **this repository and this workflow file**, and only then accepts the publish. npm also attaches **provenance** automatically, so every version on npmjs.com links back to the exact commit and workflow run that built it.
+
+Why trusted publishing rather than an `NPM_TOKEN` secret:
+- **Nothing to leak or rotate.** There is no long-lived token in the repository secrets.
+- **Only the reviewed workflow can publish.** A token can be used from anywhere; trusted publishing is bound to `mhsalves/yugioh-fb-catalog` + `release.yml`. Combined with SHA-pinned actions ([01](./01-repository-and-workspaces.md) R-4), this makes the publish path tamper-resistant.
+- **Provenance for free.** No `--provenance` flag is needed.
+
+Requirements for the workflow:
+- Runs on a **GitHub-hosted runner** (trusted publishing does not support self-hosted runners).
+- Uses an **npm CLI version that supports trusted publishing** (11.5.1 or later), so the job installs or pins a recent npm (TBD-N8).
+- `permissions: { id-token: write, contents: write }` on the release job only.
+- No `NODE_AUTH_TOKEN` / `NPM_TOKEN` environment variable.
+
+One-time setup (needs npm package owner + repository admin):
+
+| # | Where | Step |
+|---|---|---|
+| 1 | npmjs.com → `@mhsalves/yugioh-fb-catalog` → Settings → **Trusted publishing** | Add a GitHub Actions publisher: owner `mhsalves`, repository `yugioh-fb-catalog`, workflow `release.yml`, environment `npm` (optional, TBD-N9) |
+| 2 | npmjs.com → package Settings → Publishing access | After the first successful trusted publish, set **"Require two-factor authentication and disallow tokens"**, so the package can only be published through the trusted workflow |
+| 3 | npmjs.com → account → Access tokens | Revoke any existing automation/publish tokens used for manual publishing |
+| 4 | GitHub → Settings → Branches | Protect `main`: require PRs and require the `ci.yml` check (including the version-bump check) to pass |
+| 5 | GitHub → Settings → Environments (if TBD-N9 = yes) | Create environment `npm`, limited to the `main` branch |
 
 ### N-2a Release order with the site · ❌ Not built
 The site is built from the workspace catalog ([07](./07-site-github-pages-delivery.md) P-2). The two workflows therefore do not depend on each other: a merge that changes catalog data starts **both** the npm release and the Pages deploy, in parallel. If TBD-P2 decides the site must show only released data, the Pages workflow instead starts with `workflow_run` **after** `release.yml` succeeds (see 07 P-1).
@@ -171,11 +199,14 @@ Track the packed size in CI. At about 722 cards plus relations, a few hundred KB
 - [ ] `npm pack --dry-run` lists only `dist/`, `data/`, `schema/`, `README.md`, `LICENSE`, `package.json`.
 - [ ] Every published version has a `CHANGELOG.md` entry.
 - [ ] Each published version shows npm provenance.
+- [ ] Publishing uses trusted publishing: the repository has no `NPM_TOKEN` secret, and the package is set to disallow token publishing.
 
 ## 6. TBD / open questions
 
 - ~~**TBD-N1:** Release trigger and mechanism.~~ **Resolved (2026-10-20):** an automatic release after a `main` merge that changes the catalog (rule agreed). The mechanism proposed is "version in PR, publish on merge" (N-2).
-- **TBD-N6:** npm auth and repository settings. Options: **trusted publishing (OIDC)**, which needs no stored secret and is recommended, or an `NPM_TOKEN` automation secret. Both need branch protection on `main` that requires the CI check. Needs repository and npm admin.
+- ~~**TBD-N6:** npm auth.~~ **Resolved (2026-10-20): npm trusted publishing (OIDC)**, with no `NPM_TOKEN` (N-2b). The one-time setup steps are listed in N-2b.
+- **TBD-N8:** How the release job gets a trusted-publishing-capable npm: use a Node version that bundles npm ≥ 11.5.1, or run `npm install -g npm@<pinned version>` in the job?
+- **TBD-N9:** Use a GitHub **environment** (`npm`) for the release job? It adds a deployment record and can require a manual approval before publishing. Proposal: yes, without required approval.
 - **TBD-N7:** Should README-only changes to `catalog/` trigger a release, so the npm page updates? Proposal: no. They ship with the next release.
 - **TBD-N2:** Minimum Node version and JS target (ties to TBD-R3).
 - **TBD-N3:** Criteria for `1.0.0`.
