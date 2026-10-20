@@ -12,7 +12,7 @@ The project keeps **one repository with two deliverables**:
 |---|---|---|---|
 | G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: a basic MUI coverage grid exists; no FM look, search or detail pages | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
 | G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (deploy is manual) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
-| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | 🟡 Partial: data is saved and type-checked, but as TS literals, not JSON | [03 – Data authoring](./03-catalog-data-authoring.md) |
+| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | ✅ Built: JSON files in `catalog/data/` with schemas, `yarn validate` in CI, contributor guide | [03 – Data authoring](./03-catalog-data-authoring.md) |
 | G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
 | G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: 4 read/filter functions; no search | [04 – Query API](./04-catalog-query-api.md) |
 | G6 | The catalog **organizes the data correctly** by card type and other game concepts | 🟡 Partial: all 5 card types and 20 monster types modeled, fusion/ritual/equip/field relations typed; duelists wait for TBD-D9 | [02 – Data model](./02-catalog-data-model.md) |
@@ -61,19 +61,19 @@ Every improvement item has **two independent statuses**, shown in each spec's **
 
 ## Status board
 
-Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which it also moved) rechecked after the spec 01 build PR (based on `main` @ `750004a`); spec 02 (and 04 Q-5/Q-6, 05 N-3) rechecked after the spec 02 build PR (based on `main` @ `d06bf94`).
+Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which it also moved) rechecked after the spec 01 build PR (based on `main` @ `750004a`); spec 02 (and 04 Q-5/Q-6, 05 N-3) rechecked after the spec 02 build PR (based on `main` @ `d06bf94`); spec 03 (and 02 D-4/D-5) rechecked after the spec 03 build PR (based on `main` @ `ce9dfcf`).
 
 | Spec | ✅ Built | 🟡 Partial | ❌ Not built | ➖ N/A |
 |---|---|---|---|---|
 | [01 – Repository, workspaces, tests and CI](./01-repository-and-workspaces.md) | 5 | 1 | 0 | 0 |
-| [02 – Catalog data model and organization](./02-catalog-data-model.md) | 3 | 2 | 0 | 0 |
-| [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 0 | 2 | 4 | 0 |
+| [02 – Catalog data model and organization](./02-catalog-data-model.md) | 4 | 1 | 0 | 0 |
+| [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 5 | 0 | 1 | 0 |
 | [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 4 | 4 | 0 |
 | [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 4 | 4 | 0 |
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 3 | 1 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 1 | 2 | 3 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
-| **Total** | **9** | **17** | **25** | **1** |
+| **Total** | **15** | **14** | **22** | **1** |
 
 ## Automation rules
 
@@ -113,6 +113,7 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 | 2026-10-20 | **npm trusted publishing (OIDC)** for releases. No `NPM_TOKEN`; provenance on every version | **Agreed** | [05](./05-catalog-npm-distribution.md) N-2b |
 | 2026-10-20 | **All GitHub Actions pinned by full commit SHA** (version in a comment, updated by Dependabot, enforced in CI) | **Agreed** | [01](./01-repository-and-workspaces.md) R-4 |
 | 2026-10-20 | **Rename the site folder `server/` → `mkt_site/`**. Target-state specs use `mkt_site/` | **Agreed** | [01](./01-repository-and-workspaces.md) R-6 |
+| 2026-10-20 | **Spec 03 built**: data in `catalog/data/**/*.json`, **Zod 4** (dev-only) as the schema tool, exporting draft-07 JSON Schemas (TBD-A6), with the public types kept hand-written and asserted equal to the schemas. Missing relation IDs are **warnings** while data is incomplete (TBD-A3). Import tooling (A-5) deferred: TBD-X1, TBD-A4 | Built (defaults; open to change) | [03](./03-catalog-data-authoring.md) §6 |
 | 2026-10-20 | **Spec 02 built** (catalog `0.2.0`, breaking, migration note in `catalog/CHANGELOG.md`). Game facts resolved from game-data sources: 20 monster types (TBD-D1), fusions are specific card pairs, order-insensitive (TBD-D2), 722 cards (TBD-D10), guardian-star cycles with ±500 (TBD-D11). Data stays in `.ts` at the target paths until spec 03 converts it to JSON | Built; D3/D5/D6/D8/D9 deferred | [02](./02-catalog-data-model.md) §6 |
 | 2026-10-20 | **Spec 01 built** with these defaults for its open questions: **Yarn 1** workspaces (TBD-R2), **Node 22** for development and CI (TBD-R3, the consumer minimum stays open), site package **`yugioh-fb-catalog-mkt-site`** (TBD-R5), **plain grep** for the SHA-pin check (TBD-R6) | Built (defaults; open to change) | [01](./01-repository-and-workspaces.md) §6 |
 | 2026-10-20 | **Card images are linked from the Yu-Gi-Oh! Fandom wiki** (interim). The wiki URL is stored as copied, including `?cb=`, in `data/images.json`, filled by hand per card or by an import script. No images in the repo or npm package | **Agreed** (interim) | [08](./08-card-images.md) I-1, I-2 |

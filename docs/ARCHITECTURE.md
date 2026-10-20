@@ -13,7 +13,7 @@ A typed, offline dataset of the cards in *Yu-Gi-Oh! Forbidden Memories* (PS1, 19
 1. **An npm library**, `@mhsalves/yugioh-fb-catalog`. It ships the card data plus a few lookup functions.
 2. **A static website** on GitHub Pages (`https://mhsalves.github.io/yugioh-fb-catalog`). It uses the library to show which card IDs are in the catalog and which are still missing.
 
-There is no backend, database or API. All of the data is TypeScript source code.
+There is no backend, database or API. All of the data is JSON files in the repository (`catalog/data/`), validated and compiled into the library at build time.
 
 ---
 
@@ -25,7 +25,7 @@ flowchart LR
         direction TB
         subgraph catalog["catalog/ (library package)"]
             types["data/card-types.ts<br/>(domain types)"]
-            data["data/cards/**<br/>(card records as TS literals)"]
+            data["data/**/*.json → validate → catalog.generated.ts<br/>(card and relation records)"]
             tools["tools/cards.ts<br/>(query functions)"]
             entry["index.ts<br/>(public API)"]
             types --> data --> tools --> entry
@@ -60,22 +60,26 @@ The important detail: **the website imports the library from the repository**, t
 ├── catalog/                 # The library (current source of truth)
 │   ├── package.json         # @mhsalves/yugioh-fb-catalog@0.2.0
 │   ├── CHANGELOG.md         # Release notes, with migration notes for breaking changes
-│   ├── tsconfig.json        # strict; type-checks src/ + test/
+│   ├── CONTRIBUTING-DATA.md # How to add data (PT-BR), with templates
+│   ├── tsconfig.json        # strict; type-checks src/, test/, schema/, scripts/
 │   ├── tsconfig.build.json  # CommonJS, ES2016, emits lib/ + .d.ts from src/
-│   ├── test/                # Vitest: query API + data integrity
+│   ├── data/                # All data, as JSON (spec 03)
+│   │   ├── cards/monsters/<type>.json   # one file per monster type (thunder.json today)
+│   │   ├── cards/{magic,trap,equip,ritual}.json
+│   │   ├── rituals.json  equips.json  fields.json  fusions/<type>.json   # relations
+│   │   ├── rules.json               # totalCards, guardian-star advantage and bonus
+│   │   └── duelists/                # Empty placeholder (.gitkeep), waits for TBD-D9
+│   ├── schema/              # schemas.ts (Zod, dev-only) + generated <name>.schema.json
+│   ├── scripts/             # validate, data:build (+ --watch), schema:build, coverage:data
+│   ├── test/                # Vitest: query API, data integrity, validator fixtures
 │   └── src/
 │       ├── index.ts         # Public API: re-exports types, enums, rules + tools
 │       ├── data/
 │       │   ├── enums.ts             # MONSTER_TYPES, CARD_TYPES, GUARDIAN_STARS (runtime lists)
-│       │   ├── rules.ts             # TOTAL_CARDS, guardian-star advantage and bonus
+│       │   ├── rules.ts             # TOTAL_CARDS, … read from rules.json
 │       │   ├── card-types.ts        # Card entities (types derived from enums.ts)
 │       │   ├── relation-types.ts    # IFusion, IRitual, IEquipCompat, IFieldEffect
-│       │   ├── cards/
-│       │   │   ├── index.ts         # Merges every file, sorts by id
-│       │   │   ├── monsters/<type>.ts   # one file per monster type (thunder.ts today)
-│       │   │   └── {magic,trap,equip,ritual}.ts
-│       │   ├── rituals.ts  equips.ts  fields.ts  fusions/   # relation collections
-│       │   └── duelists/            # Empty placeholder (.gitkeep), waits for TBD-D9
+│       │   └── catalog.generated.ts # Written by `yarn data:build` (git-ignored)
 │       └── tools/{cards,relations}.ts   # Query functions
 ├── .github/
 │   ├── dependabot.yml       # Weekly grouped dependency updates (root workspace + Actions)
@@ -148,32 +152,41 @@ classDiagram
 - **Cards are entities; game mechanics are relations** (spec 02 D-1). Ritual recipes, fusions, equip compatibility and field effects are separate collections keyed by card ID, so a fusion between two cards is not duplicated in both, and relation data can grow without reshaping cards. Fusions are stored as the game stores them: specific card pairs, sorted, one entry per pair.
 - **`id` is the in-game card number** (1–`TOTAL_CARDS`, 722). It is a natural key and needs no extra mapping table.
 - References use plain IDs, not nested objects. The data then stays flat and serialisable, and you can declare cards in any order.
-- **Enumerations are runtime lists** (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` in `enums.ts`), and the TS types derive from them. The site's filters and the types cannot drift apart. **Rule values** (`TOTAL_CARDS`, `GUARDIAN_STAR_ADVANTAGE`, `GUARDIAN_STAR_BONUS`) are data in `rules.ts`. Every game fact is sourced in spec 02 §6.
+- **Enumerations are runtime lists** (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` in `enums.ts`), and the TS types derive from them. The site's filters and the types cannot drift apart. **Rule values** (`TOTAL_CARDS`, `GUARDIAN_STAR_ADVANTAGE`, `GUARDIAN_STAR_BONUS`) are data in `catalog/data/rules.json`. Every game fact is sourced in spec 02 §6.
 
-### 4.2 Data storage: cards as TypeScript literals
+### 4.2 Data storage: JSON validated by schemas, compiled into the library
 
-Every card is an object literal in a `.ts` file, typed against its interface (`MonsterCardsOf<"Thunder">`, `IMagicCard[]`, …). Spec 03 A-1 (agreed) moves this data to JSON plus a schema, at the same paths.
+[Spec 03](./specs/03-catalog-data-authoring.md) A-1. Every record lives in a JSON file under `catalog/data/`. Each file is `{ "$schema": "<relative path to its JSON Schema>", "<list>": [ … ] }` (`rules.json` holds the rule values instead of a list).
 
-**Why** *(inferred)*:
-- **Free validation.** `tsc` checks each record when it compiles. A missing field, a wrong `cardType` or a misspelled guardian star breaks the build. No JSON schema or runtime validator is needed.
-- **No I/O.** The data is bundled into the compiled JS, so consumers (Node, browsers, the static site) can `import` it synchronously with no fetch or file read.
-- **Easy contributions.** Adding a card means pasting an object into a file that already shows the format.
+```mermaid
+flowchart LR
+    json["catalog/data/**/*.json"] --> val["scripts/lib/data.ts<br/>Zod schemas + integrity rules"]
+    zod["schema/schemas.ts (Zod)"] --> val
+    zod -- "yarn schema:build" --> js["schema/*.schema.json<br/>($schema for editors)"]
+    val -- "yarn data:build<br/>(before build, dev, typecheck, test)" --> gen["src/data/catalog.generated.ts"]
+    gen --> tools["src/tools/*.ts"] --> lib["lib/ (tsc)"]
+```
+
+- **Validation before every build.** `scripts/lib/data.ts` checks each file against its Zod schema (shape, ranges, 8-digit passwords, enums, unknown fields) and then the cross-file rules: unique IDs, IDs within `totalCards`, monster type matching its file, relation references, fusion pairs. Errors fail `yarn validate`, the build and CI. A relation pointing at a card not entered yet is only a warning (TBD-A3). Every rule has a failing-fixture test.
+- **Editors validate as you type.** Zod exports draft-07 JSON Schemas into `catalog/schema/`, and each data file points at its schema with `$schema`. Tests fail if the committed schemas are stale.
+- **One source for types.** The public interfaces in `card-types.ts` and `relation-types.ts` stay hand-written for readable `.d.ts` files, and `schemas.ts` asserts at compile time that each one equals what its schema accepts. Zod is a dev dependency only; consumers do not install it.
+- **No I/O at runtime.** `yarn data:build` writes the validated data into `src/data/catalog.generated.ts` (git-ignored), which `tsc` compiles into `lib/`. Consumers (Node, browsers, the static site) still `import` the data synchronously, with no fetch, file read or runtime validation. `yarn dev` watches `catalog/data/`, so a saved JSON edit appears on the running site.
+
+**Why JSON** (agreed in spec 03): it can be edited in the GitHub web UI with no tooling, it suits bulk entry (thousands of fusions), it is readable by non-JS tools and importers, and adding a data file needs no `index.ts` or code change.
 
 **Trade-offs:**
-- The compiler cannot check value ranges (8-digit password, level 1–12, cost 0–999999), unique IDs, or whether referenced IDs exist. The Vitest integrity tests (`catalog/test/data-integrity.test.ts`) check these.
 - The full dataset ends up in every consumer's bundle. At about 722 small records this is acceptable.
-- Non-JS consumers (Python scripts, other tools) cannot read the data directly.
+- The JSON files are not shipped in the npm package yet (spec 05 TBD-N5).
 
 ### 4.3 Data organization: one file per card type (and monster type)
 
 ```
-cards/index.ts              concat(monsters, magic, trap, equip, ritual).sort(by id)
-├── monsters/index.ts       concat(thunder, …)   // one <monster-type>.ts per type
-│   └── thunder.ts
-└── magic.ts  trap.ts  equip.ts  ritual.ts
+data/cards/monsters/<monster-type>.json   // thunder.json today; winged-beast.json, sea-serpent.json, …
+data/cards/magic.json  trap.json  equip.json  ritual.json
+data/rituals.json  equips.json  fields.json  fusions/<result-type>.json  rules.json
 ```
 
-**One rule** (spec 02 D-5): a card goes in the file for its `cardType`, and a monster goes in `monsters/<monster-type>.ts`. `MonsterCardsOf<"Thunder">` makes a monster of another type in `thunder.ts` a compile error. Relations live beside the cards: `rituals.ts`, `fusions/`, `equips.ts`, `fields.ts`.
+**One rule** (spec 02 D-5): a card goes in the file for its `cardType`, and a monster goes in `cards/monsters/<monster-type>.json`. The validator rejects a monster in another type's file and file names that are not a monster type. `data:build` merges every file and sorts the cards by ID.
 
 **Why:**
 - **One rule to learn.** The earlier layout had three: monsters by type and then by unverified ID-range "pages", rituals by page only, and support cards by type only.
@@ -249,7 +262,7 @@ sequenceDiagram
     participant CI as GitHub Actions (ci.yml)
     participant NPM as npm registry
     participant GH as GitHub Pages
-    Dev->>Cat: add card object to its card-type file (cards/monsters/<type>.ts, cards/magic.ts, …)
+    Dev->>Cat: add the card to its JSON file (data/cards/monsters/<type>.json, data/cards/magic.json, …)
     Cat-->>Site: yarn dev: tsc --watch, site shows it live
     Dev->>CI: open PR
     CI->>CI: type-check, lint, format, test, build, pack smoke test
@@ -268,7 +281,7 @@ Publishing and deploying are still manual. They are automated in specs [05](./sp
 Checked on 2026-10-20 against `main` @ `4d80225`; tooling items (S3, Q1–Q3, Q5) rechecked after the spec 01 build. Both packages type-check cleanly in strict mode (`yarn typecheck`).
 
 ### 7.1 Data coverage
-Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674, with its recipe in `rituals.ts`), and 1 each of equip (315), magic (332) and trap (690). (This section said 6 before; the count was wrong.) The model now covers all 20 monster types (spec 02), but only `monsters/thunder.ts` has data. The fusion, equip and field collections are typed and empty, and `data/duelists/` waits for TBD-D9.
+Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674, with its recipe in `data/rituals.json`), and 1 each of equip (315), magic (332) and trap (690). (This section said 6 before; the count was wrong.) The model now covers all 20 monster types (spec 02), but only `data/cards/monsters/thunder.json` has data. `yarn coverage:data` prints these counts. The fusion, equip and field collections are typed and empty, and `data/duelists/` waits for TBD-D9.
 
 ### 7.2 Structural problems
 | # | Issue | Evidence | Impact |
@@ -304,5 +317,5 @@ Ordered so that each step makes the next one safer.
 4. **CI (Q2).** Partly done (spec 01 R-4): `ci.yml` type-checks, lints, tests and builds both packages on every PR. Still to do: automate the Pages deploy on push to `main` ([07](./specs/07-site-github-pages-delivery.md) P-1) and npm publishing ([05](./specs/05-catalog-npm-distribution.md) N-2).
 5. **Fix the docs (S5).** Rewrite the READMEs from the real API, or generate API docs with TypeDoc, and link to this file.
 6. **Library API polish (Q4, Q6).** (`TOTAL_CARDS` is exported since spec 02.) Add a progress helper, index cards in a `Map` for `getCard`, and consider a dual ESM/CJS build with an `exports` map.
-7. **Fill in the data (§7.1).** `TMonsterType` already covers every FM type (spec 02); add each `monsters/<type>.ts` file with its first card, fill the relation collections, and decide on the shape of `duelists/` (TBD-D9). Consider an importer script that generates the data files from a trusted source (spec 03 A-5).
+7. **Fill in the data (§7.1).** `TMonsterType` already covers every FM type (spec 02); add each `data/cards/monsters/<type>.json` file with its first card (see `catalog/CONTRIBUTING-DATA.md`), fill the relation collections, and decide on the shape of `duelists/` (TBD-D9). Consider an importer script that generates the data files from a trusted source (spec 03 A-5).
 8. **Website features (Q7).** Add a card detail view, search, filters by type, monster type and stars, a progress bar, and, once the data exists, fusion or ritual lookups.
