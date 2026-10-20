@@ -3,23 +3,10 @@
 # in Settings → Code security → Dependabot security updates.
 version: 2
 updates:
-  # npm library
+  # Yarn workspace: one root lockfile covers the root tooling, catalog/ (npm library)
+  # and mkt_site/ (static website, Next.js).
   - package-ecosystem: "npm"
-    directory: "/catalog"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "build(deps)"
-    groups:
-      # One PR per week for every non-major bump.
-      catalog-minor-and-patch:
-        update-types: ["minor", "patch"]
-
-  # Static website (Next.js)
-  - package-ecosystem: "npm"
-    directory: "/server"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -31,14 +18,19 @@ updates:
       framework:
         patterns: ["next", "react", "react-dom", "@types/react", "@mui/*", "@emotion/*", "@toolpad/*"]
         update-types: ["minor", "patch"]
-      server-minor-and-patch:
+      # Lint, format and test tooling.
+      tooling:
+        patterns: ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier", "vitest", "vite"]
+        update-types: ["minor", "patch"]
+      # One PR per week for every other non-major bump.
+      minor-and-patch:
         update-types: ["minor", "patch"]
     ignore:
       # @types/node tracks the Node runtime major; bump it on purpose.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
 
-  # Keeps any future GitHub Actions workflows up to date.
+  # Keeps the GitHub Actions workflows up to date (bumps the pinned SHA and the version comment).
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

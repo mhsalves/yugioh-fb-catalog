@@ -1,0 +1,38 @@
+{
+  "name": "yugioh-fb-catalog-root",
+  "private": true,
+  "workspaces": [
+    "catalog",
+    "mkt_site"
+  ],
+  "scripts": {
+    "build": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site build",
+    "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site dev",
+    "typecheck": "yarn workspaces run typecheck",
+    "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:action-pins": "sh scripts/check-action-pins.sh"
+  },
+  "resolutions": {
+    "postcss": "^8.5.23",
+    "nanoid": "^3.3.18",
+    "source-map-js": "^1.2.2",
+    "browserslist": "^4.28.7",
+    "@babel/core": "^7.29.6",
+    "**/cosmiconfig/yaml": "^1.10.3",
+    "**/@toolpad/utils/yaml": "^2.8.3",
+    "**/yaml-diff-patch/yaml": "^2.8.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.72.0"
+  }
+}

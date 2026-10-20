@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardContent, Card, Grid2, Stack, Switch, Typography } from "@mui/material";
+import { CardContent, Grid2, Stack, Switch, Typography } from "@mui/material";
 import { PageContainer } from "@toolpad/core";
 
 import Header from "../components/Header";
@@ -9,7 +9,7 @@ const TOTAL_CARDS = 721;
 
 export default function CardPage() {
     const [onlyAvailable, setOnlyAvailable] = useState(true);
-    const handleChangeAvailable = (_: any, checked: boolean) => {
+    const handleChangeAvailable = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setOnlyAvailable(checked);
     };
 
