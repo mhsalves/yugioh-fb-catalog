@@ -1,6 +1,10 @@
 # Dependabot version updates.
 # Security updates for vulnerable dependencies are separate and are turned on
 # in Settings → Code security → Dependabot security updates.
+#
+# Every update lands in a group so Dependabot opens a handful of PRs per run
+# instead of one per package. Groups that don't apply to security updates
+# leave those to the `security` group.
 version: 2
 updates:
   # Yarn workspace: one root lockfile covers the root tooling, catalog/ (npm library)
@@ -8,23 +12,56 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     commit-message:
       prefix: "build(deps)"
     groups:
+      # Security fixes: one PR per area. The workspace shares one root lockfile,
+      # so areas are told apart by package name, and a package goes to the first
+      # group it matches. Transitive packages can't be traced to a workspace, so
+      # they fall through to `security-other`.
+      security-mkt-site:
+        applies-to: security-updates
+        patterns:
+          [
+            "next",
+            "react",
+            "react-dom",
+            "@types/react",
+            "@types/react-dom",
+            "@mui/*",
+            "@emotion/*",
+            "@toolpad/*",
+            "gh-pages",
+          ]
+      security-catalog:
+        applies-to: security-updates
+        patterns: ["vite", "vitest", "@vitest/*", "@types/node", "typescript"]
+      security-tooling:
+        applies-to: security-updates
+        patterns: ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier"]
+      security-other:
+        applies-to: security-updates
+        patterns: ["*"]
       # React, Next and MUI move together; keep their bumps in one PR.
       framework:
-        patterns: ["next", "react", "react-dom", "@types/react", "@mui/*", "@emotion/*", "@toolpad/*"]
+        patterns:
+          ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*"]
         update-types: ["minor", "patch"]
       # Lint, format and test tooling.
       tooling:
         patterns: ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier", "vitest", "vite"]
         update-types: ["minor", "patch"]
-      # One PR per week for every other non-major bump.
+      # One PR for every other non-major bump.
       minor-and-patch:
+        patterns: ["*"]
         update-types: ["minor", "patch"]
+      # Breaking upgrades (next, typescript, ...) in one PR to review on purpose,
+      # instead of one PR per package.
+      major:
+        patterns: ["*"]
+        update-types: ["major"]
     ignore:
       # @types/node tracks the Node runtime major; bump it on purpose.
       - dependency-name: "@types/node"
@@ -37,3 +74,6 @@ updates:
       interval: "monthly"
     commit-message:
       prefix: "ci(deps)"
+    groups:
+      actions:
+        patterns: ["*"]

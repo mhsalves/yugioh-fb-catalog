@@ -1,0 +1,34 @@
+# Closes Dependabot npm PRs once main already has every version they bump to,
+# instead of waiting for Dependabot's next scheduled run to notice.
+# Every action is pinned by full commit SHA; Dependabot bumps the SHA and the version comment.
+name: Close stale Dependabot PRs
+
+on:
+  push:
+    branches: [main]
+    paths: [yarn.lock]
+  workflow_dispatch:
+
+permissions:
+  contents: write # delete the PR branch
+  pull-requests: write
+
+concurrency:
+  group: close-stale-dependabot-prs
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Close PRs whose updates are already on main
+        run: node scripts/close-stale-dependabot-prs.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
