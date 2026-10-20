@@ -18,6 +18,8 @@ Goal **G2**: the site must **keep being served from GitHub Pages**. Pages is fre
 | Data source | The **published npm** catalog version (`^0.1.1`) | `server/package.json` |
 | URL | `https://mhsalves.github.io/yugioh-fb-catalog` | `README.md` |
 
+The table describes **today's** Next.js setup. The future stack is open ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1). This spec is written so it applies to any static-site stack.
+
 **Why it is like this:** static export is the only Next.js mode Pages can host. The base path is required because Pages serves project sites under `/<repo>/`. The Express server was removed in `2e50981` because it was not needed.
 
 ## 3. Gaps
@@ -48,9 +50,9 @@ jobs:
       - checkout, setup-node (cache), install
       - test + validate data          # same as CI (01 R-4)
       - build catalog (workspace)     # 01 R-1
-      - build site  → server/out
-      - touch server/out/.nojekyll
-      - actions/upload-pages-artifact (path: server/out)
+      - build site  → <site>/<output dir>     # e.g. server/out for today's Next.js export
+      - touch <output dir>/.nojekyll          # needed when the output has _-prefixed folders (e.g. Next.js _next/)
+      - actions/upload-pages-artifact (path: <output dir>)
   deploy:
     needs: build
     uses: actions/deploy-pages
@@ -63,24 +65,24 @@ jobs:
 With workspaces ([01](./01-repository-and-workspaces.md) R-1), the site is built from the catalog source on `main`. Merged data goes live on the next deploy, with no npm publish needed (fixes P-gap-3). npm publishing ([05](./05-catalog-npm-distribution.md)) stays independent: the site may be ahead of the latest npm release. **TBD-P2:** is that acceptable, or should the site show only released data?
 
 ### P-3 Configurable base path
-```js
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? '/yugioh-fb-catalog' : '');
-```
-The workflow sets it from `actions/configure-pages` (`steps.pages.outputs.base_path`). Forks and a future custom domain then work without code edits (TBD-P3).
+The base path is read from one environment variable (for example `SITE_BASE_PATH`), defaulting to `/yugioh-fb-catalog` in production and `''` in development. The workflow sets it from `actions/configure-pages` (`steps.pages.outputs.base_path`). Forks and a future custom domain then work without code edits (TBD-P3).
 
-### P-4 Static-export constraints (guardrails for 06)
-Every page in [06](./06-site-ux-forbidden-memories.md) must respect:
-- no API routes, no middleware, no `getServerSideProps`, no ISR;
-- dynamic routes (`/cards/[id]`) must list all their paths at build time;
+How it is wired depends on the stack ([06](./06-site-ux-forbidden-memories.md) U-4). With today's Next.js it means `basePath`/`assetPrefix` in `next.config.js`; Astro uses `base`, Vite uses `base`, and SvelteKit uses `paths.base`.
+
+### P-4 Static hosting constraints (guardrails for 06, any stack)
+Whatever stack is chosen (TBD-U1), every page in [06](./06-site-ux-forbidden-memories.md) must respect:
+- **no server at runtime**: no API routes, middleware, server-side rendering per request, or incremental regeneration (in Next.js terms: no `getServerSideProps`, ISR or route handlers);
+- dynamic routes (`/cards/[id]`) list all their paths at build time;
 - client-side search only (the dataset is in the bundle);
-- every internal link and asset must go through `basePath` (`next/link` and `next/image` handle this; raw `<img src="/...">` does not);
-- a custom `404.tsx`, which Pages serves for unknown paths (fixes P-gap-6).
+- every internal link and asset goes through the base path, using the framework's link and asset helpers, never hard-coded `"/..."` URLs;
+- no image optimization that needs a server (in Next.js: `images.unoptimized: true`);
+- a custom 404 page emitted as `404.html` at the output root, which Pages serves for unknown paths (fixes P-gap-6).
 
 ### P-5 PR previews (optional)
-Build the site on every PR (already in CI, 01 R-4) and upload `out/` as a workflow artifact. A hosted per-PR preview (for example, Netlify or Cloudflare Pages) would be an extra service outside GitHub Pages. **TBD-P4**
+Build the site on every PR (already in CI, 01 R-4) and upload the output folder as a workflow artifact. A hosted per-PR preview (for example, Netlify or Cloudflare Pages) would be an extra service outside GitHub Pages. **TBD-P4**
 
 ### P-6 Publish API docs with the site
-Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `server/out/docs/api/` during the Pages build, so docs and site deploy together.
+Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `<output dir>/docs/api/` during the Pages build, so docs and site deploy together.
 
 ## 5. Acceptance criteria
 

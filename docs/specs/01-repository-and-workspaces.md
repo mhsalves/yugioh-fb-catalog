@@ -72,8 +72,8 @@ Runs on every PR and every push to `main`:
 
 Deploy and publish workflows are specified in [07](./07-site-github-pages-delivery.md) and [05](./05-catalog-npm-distribution.md).
 
-### R-5 Server `strict: true`
-Turn on strict mode in `server/tsconfig.json` and fix the resulting errors. The only file currently affected is `index.tsx` (`_: any`).
+### R-5 Site in TypeScript `strict: true`
+Whatever site stack is chosen ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1), the site uses strict TypeScript. On today's Next.js site, this means enabling it in `server/tsconfig.json` and fixing `index.tsx` (`_: any`). If the stack is replaced soon, do this as part of the migration instead.
 
 ### R-6 (Optional) Rename `server/` to `site/`
 The folder is a static site, not a server (see `ARCHITECTURE.md` §5). Renaming it removes the confusion. **TBD-R1**

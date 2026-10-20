@@ -122,7 +122,7 @@ Splitting `ISupportCard` into `IMagicCard`, `ITrapCard` and `IEquipCard` lets ea
 ### D-3 Relation collections
 
 ```ts
-// fusions.ts
+// fusions/*.json
 interface IFusion {
   result: CardId;
   materials: [MaterialRef, MaterialRef];       // order-insensitive
@@ -132,16 +132,16 @@ type MaterialRef =
   | { monsterType: TMonsterType }              // "any Dragon"   ┐ TBD-D2: how generic fusions
   | { group: string };                         // "any Female"   ┘ are expressed in FM
 
-// equips.ts
+// equips.json
 interface IEquipCompat { equip: CardId; targets: CardId[]; boost: number }  // boost usually 500, TBD-D8
 
-// rituals.ts  (moved out of IRitualCard.summon)
+// rituals.json  (moved out of IRitualCard.summon)
 interface IRitual { ritual: CardId; result: CardId; materials: CardId[] }
 
-// fields.ts
+// fields.json
 interface IFieldEffect { field: CardId; boosts: TMonsterType[]; weakens: TMonsterType[]; amount: number } // TBD-D8
 
-// duelists.ts
+// duelists/*.json
 interface IDuelist { id: string; name: string; campaignStage?: string /* TBD-D9 */ }
 interface IDeckEntry { duelist: string; card: CardId; weight: number }
 interface IDrop {
@@ -150,17 +150,23 @@ interface IDrop {
 }
 ```
 
-### D-4 Game rules as data (`rules.ts`)
+### D-4 Game rules as data (`rules.json` + schema enums)
 
-```ts
-export const TOTAL_CARDS = 722;                       // TBD-D10: confirm 722 vs 721
-export const MONSTER_TYPES = [/* full list */] as const;
-export const GUARDIAN_STARS = [/* 10 */] as const;
-export const GUARDIAN_STAR_ADVANTAGE: Record<TGuardianStar, TGuardianStar> = { /* TBD-D11 */ };
-export const GUARDIAN_STAR_BONUS = 500;               // TBD-D11
+The rules split across two places:
+
+- **Enumerations** (card types, monster types, guardian stars) are defined **in the schema** ([03](./03-catalog-data-authoring.md) A-1), for example `z.enum([...])`. Every TS type and the JSON Schema `enum` derive from that one list, and the API re-exports it as runtime arrays (`MONSTER_TYPES`, …) for the site's filters.
+- **Game rule values** are data, in `data/rules.json`, validated by the same schema:
+
+```json
+{
+  "$schema": "../schema/rules.schema.json",
+  "totalCards": 722,
+  "guardianStarAdvantage": { "Sun": "Moon", "Moon": "Venus" },
+  "guardianStarBonus": 500
+}
 ```
 
-Deriving `TMonsterType` from `MONSTER_TYPES` (`typeof MONSTER_TYPES[number]`) gives a runtime list for the site's filters **and** a compile-time type from one definition.
+(`totalCards`: confirm 722 vs 721, TBD-D10. The advantage map is partial and unverified, TBD-D11.)
 
 ### D-5 One organization rule for files
 Today there are three different rules (see D-gap-2). Proposal: **one folder per `cardType`, one file per sub-type**:
@@ -168,26 +174,26 @@ Today there are three different rules (see D-gap-2). Proposal: **one folder per 
 ```
 data/
 ├── cards/
-│   ├── monsters/<monster-type>.ts      # dragon.ts, thunder.ts, spellcaster.ts, ...
-│   ├── magic.ts                        # (or magic/<kind>.ts, if TBD-D5 resolves to sub-kinds)
-│   ├── trap.ts
-│   ├── equip.ts
-│   └── ritual.ts
+│   ├── monsters/<monster-type>.json    # dragon.json, thunder.json, spellcaster.json, ...
+│   ├── magic.json                      # (or magic/<kind>.json, if TBD-D5 resolves to sub-kinds)
+│   ├── trap.json
+│   ├── equip.json
+│   └── ritual.json
 ├── fusions/  (split by result monster type, to keep files small)
-├── equips.ts
-├── rituals.ts
-├── fields.ts
+├── equips.json
+├── rituals.json
+├── fields.json
 ├── duelists/
-└── rules.ts
+└── rules.json
 ```
 
-Drop the `pageN.ts` ID-range split. ID order is restored by the existing single sort in `cards/index.ts`, and file size is controlled by sub-type instead. Whether this layout is kept as TypeScript or moved to JSON/YAML is decided in [03](./03-catalog-data-authoring.md).
+Drop the `pageN.ts` ID-range split. ID order is restored by a single sort in the loader, and file size is controlled by sub-type instead. Each file in this layout is a **JSON** file (`.json`, not `.ts`), as agreed in [03](./03-catalog-data-authoring.md) A-1. The TypeScript interfaces above describe the shape that the JSON schema enforces.
 
 *Alternative (if TBD-D4 shows that pages map to something real, such as the in-game library pages):* keep `pageN` but apply it to **every** category consistently.
 
 ## 5. Acceptance criteria
 
-- [ ] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from runtime constant arrays in `rules.ts`.
+- [ ] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`.
 - [ ] Every FM concept listed in D-3 has a typed collection, even if it is still empty.
 - [ ] A contributor can find where any card belongs from **one** rule (D-5).
 - [ ] `TOTAL_CARDS` comes from the library. The site no longer hard-codes 721.

@@ -88,7 +88,8 @@ Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `ge
 
 ### Q-6 Metadata
 ```ts
-TOTAL_CARDS; MONSTER_TYPES; GUARDIAN_STARS; CARD_TYPES;     // re-exported from rules.ts
+TOTAL_CARDS;                                 // from data/rules.json
+MONSTER_TYPES; GUARDIAN_STARS; CARD_TYPES;   // from the schema enums (02 D-4)
 getCoverage(): { total: number; entered: number; byType: Record<string, { entered: number; total?: number }> };
 ```
 `byType.total` is known only once we have the full card list per type (TBD).

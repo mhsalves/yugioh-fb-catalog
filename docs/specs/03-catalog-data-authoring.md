@@ -1,6 +1,6 @@
 # 03 – Catalog data authoring (storage format and validation)
 
-> **Status: Proposed.** The format choice (A-1) is the main decision to agree on. Everything else follows from it.
+> **Status: Proposed.** Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
 
 ## 1. Why this spec exists
 
@@ -33,22 +33,29 @@ Goal **G3**: the catalog must be **saved in a simple way so more information can
 
 ## 4. Proposed improvements
 
-### A-1 Storage format (**decision needed: TBD-A1**)
+### A-1 Storage format: **JSON + schema** (**Agreed**)
 
-| Option | Simple to edit | Validation | Non-JS use | Bulk entry | Build impact |
-|---|---|---|---|---|---|
-| **a) Keep TS literals** + helpers + tests | Good (IDE types) | `tsc` + tests | No | Poor | None |
-| **b) JSON files + schema** *(recommended)* | Good (VS Code autocompletes from `$schema`; editable on github.com) | Schema (Zod / JSON Schema) in tests and the build | **Yes**, JSON can ship in the package | Fair | Small: a type-generation or validation step |
-| c) YAML files + schema | Best to read | Same as b) | Yes, after conversion | Fair | Needs a YAML parser at build time |
-| d) CSV per collection | Best for bulk/spreadsheets | Schema on rows | Yes | **Best** | Needs a parser and conversion; nested fields (stars, materials) get awkward |
+All catalog data, including cards **and** relation tables (fusions, equips, rituals, fields, duelists, drops), is stored as **JSON files** validated against a schema. TypeScript keeps only the query API ([04](./04-catalog-query-api.md)) and the schema definitions.
 
-**Recommendation: b) JSON + schema**, optionally with **d) CSV only for large relation tables** (fusions, drops) if that is easier to fill in from a spreadsheet.
+The other options and why they were not chosen:
 
-The reasons:
+| Option | Why not |
+|---|---|
+| Keep TS literals | Data stays locked in JS (A-gap-4), bulk entry is verbose, and every new folder needs `index.ts` boilerplate |
+| YAML | Easier to read, but it needs a parser at build time and has its own pitfalls (implicit types, indentation). JSON is enough |
+| CSV | Good for spreadsheets, but nested fields (guardian stars, ritual materials) get awkward. One format everywhere is simpler |
+
+Why JSON works for this project:
 - JSON can be edited in the GitHub web UI, so contributors need no tooling.
-- With a published JSON Schema, VS Code gives autocomplete and inline errors as you type. This keeps most of the "free validation" that TS gives today.
-- The same files can be shipped in the npm package (`@mhsalves/yugioh-fb-catalog/data/cards.json`) for non-JS consumers ([05](./05-catalog-npm-distribution.md)).
-- TS types are **generated from** or **inferred from** the schema (`z.infer<>`), so there is still one source of truth.
+- With a JSON Schema referenced through `$schema`, VS Code gives autocomplete and inline errors as you type. This keeps most of the "free validation" that TS gives today.
+- The same files can be shipped in the npm package (`@mhsalves/yugioh-fb-catalog/data/...`) for non-JS consumers ([05](./05-catalog-npm-distribution.md)).
+- TS types are **inferred from** the schema (for example Zod's `z.infer<>`, with the JSON Schema exported from Zod), so there is still one source of truth. The schema library is TBD-A6.
+- JSON imports natively in Node, in bundlers and in any site stack ([06](./06-site-ux-forbidden-memories.md)).
+
+Conventions:
+- Each file is an object with a `$schema` key and one array (`cards`, `fusions`, …). The object wrapper leaves room for file-level metadata later.
+- Two-space indentation, one record per array element, keys in schema order (Prettier enforces this, see [01](./01-repository-and-workspaces.md) R-3), so diffs stay small.
+- No comments (JSON has none). Notes go in an optional `notes` field (TBD-A5).
 
 Proposed layout (follows [02](./02-catalog-data-model.md) D-5):
 
@@ -58,7 +65,7 @@ catalog/
 │   ├── cards/monsters/dragon.json
 │   ├── cards/monsters/thunder.json
 │   ├── cards/magic.json  trap.json  equip.json  ritual.json
-│   ├── fusions/*.json   (or *.csv, see TBD-A2)
+│   ├── fusions/*.json   (split by result monster type)
 │   ├── equips.json  rituals.json  fields.json
 │   └── duelists/*.json
 ├── schema/                     # Zod schemas → JSON Schema export
@@ -87,7 +94,9 @@ Example record (`data/cards/monsters/thunder.json`):
 }
 ```
 
-If **option a)** is chosen instead, still apply A-2 to A-5. Add `defineMonsters([...])`-style helpers that run the same schema, and use folder auto-discovery (a generated `index.ts`) to remove the boilerplate from A-gap-3.
+Loading: a small loader in `src/` imports every JSON file. A build step generates the import list by scanning `data/`, so adding a file needs no code change (fixes A-gap-3). The loader then validates the data against the schema and builds the indexes from [04](./04-catalog-query-api.md) Q-2.
+
+Migration: the 5 existing TS records are converted to JSON once, the `pageN.ts`/`index.ts` data files are deleted, and `card-types.ts` is replaced by types inferred from the schema. The public type names (`ICard`, `IMonsterCard`, …) stay exported.
 
 ### A-2 Validation rules (enforced in tests and in `prebuild`)
 Implemented as one `validate` script that runs in CI ([01](./01-repository-and-workspaces.md) R-4) and before every build, with errors that point to the file and the record:
@@ -119,14 +128,16 @@ An optional script in `catalog/tools/` that converts a trusted external dump int
 
 - [ ] Adding a card = editing **one** data file. No `index.ts` or type edits.
 - [ ] Each rule in A-2 has a failing-fixture test that proves it catches the error.
-- [ ] VS Code (or the github.com editor, for JSON) flags a bad field before commit.
+- [ ] All data lives in `catalog/data/**/*.json`, with no card data left in `.ts` files.
+- [ ] VS Code flags a bad field in a JSON file before commit (via `$schema`).
 - [ ] `CONTRIBUTING-DATA.md` exists and matches the real format.
 - [ ] The existing 5 cards are migrated with no change to their data.
 
 ## 6. TBD / open questions
 
-- **TBD-A1:** Format: a) TS, b) JSON (recommended), c) YAML or d) CSV, or b+d.
-- **TBD-A2:** Fusions and drops: JSON or CSV? This depends on how the source data is shaped (TBD-X1).
+- ~~**TBD-A1:** Storage format.~~ **Resolved (2026-10-20): JSON** for all data.
+- ~~**TBD-A2:** Fusions and drops in JSON or CSV?~~ **Resolved: JSON**, the same as everything else. An importer (A-5) may *read* CSV from a source, but the repository stores JSON.
 - **TBD-A3:** While data is incomplete, should a missing referenced ID be an **error** or a **warning**? Proposal: a warning until coverage reaches 100%, then an error.
 - **TBD-A4:** Licensing and attribution for imported community data. Each source needs checking before any bulk import.
-- **TBD-A5:** Should each record carry a `source` field (for provenance), or should provenance live only in PR descriptions?
+- **TBD-A5:** Should each record carry a `source` field (for provenance) and an optional `notes` field? Or should provenance live only in PR descriptions?
+- **TBD-A6:** Schema tool: Zod (types + runtime validation, with JSON Schema exported from it), or a hand-written JSON Schema with Ajv plus generated types?

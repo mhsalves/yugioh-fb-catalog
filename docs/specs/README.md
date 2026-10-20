@@ -12,7 +12,7 @@ The project keeps **one repository with two deliverables**:
 |---|---|---|
 | G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
 | G2 | The site stays **served from GitHub Pages** | [07 – Site delivery](./07-site-github-pages-delivery.md) |
-| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later | [03 – Data authoring](./03-catalog-data-authoring.md) |
+| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | [03 – Data authoring](./03-catalog-data-authoring.md) |
 | G4 | The catalog stays **published on the npm registry** | [05 – npm distribution](./05-catalog-npm-distribution.md) |
 | G5 | The catalog offers **methods to search and read** the data | [04 – Query API](./04-catalog-query-api.md) |
 | G6 | The catalog **organizes the data correctly** by card type and other game concepts | [02 – Data model](./02-catalog-data-model.md) |
@@ -38,7 +38,14 @@ Each spec uses the same sections, so you can compare them side by side:
 | **Done** | Merged on `main` |
 | **TBD** | Open question, needs a decision or a verified source |
 
-All improvements are **Proposed** as of 2026-10-20, written against `main` @ `9a353ee`.
+All improvements are **Proposed** as of 2026-10-20, written against `main` @ `9a353ee`, except for the decisions logged below.
+
+## Decision log
+
+| Date | Decision | Status | Where |
+|---|---|---|---|
+| 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
+| 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
 
 ## Suggested delivery order
 
@@ -47,10 +54,10 @@ Each step makes the next one safer. This follows the roadmap in `ARCHITECTURE.md
 ```mermaid
 flowchart LR
     R["01 Repo:<br/>workspaces, tests, CI"] --> M["02 Data model:<br/>full type taxonomy"]
-    M --> A["03 Authoring:<br/>format + validation"]
+    M --> A["03 Authoring:<br/>JSON + validation"]
     A --> Q["04 Query API:<br/>search + indexes"]
     Q --> N["05 npm:<br/>ESM/CJS, automated release"]
-    Q --> U["06 Site UX:<br/>FM-inspired UI"]
+    Q --> U["06 Site UX:<br/>FM-inspired UI<br/>(stack TBD)"]
     U --> P["07 Pages:<br/>automated deploy"]
     R --> P
 ```

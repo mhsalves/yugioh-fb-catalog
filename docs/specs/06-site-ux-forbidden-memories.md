@@ -83,23 +83,44 @@ Pages whose data does not exist yet (fusions, duelists) are hidden from navigati
 
 ### U-3 Interaction details
 - **Instant search:** client-side, debounced. The whole dataset is in the bundle, so there are no requests.
-- **Virtualized grid** (for example, `@tanstack/react-virtual`) so only visible cards render (fixes U-gap-5).
+- **Virtualized grid** so only visible cards render (fixes U-gap-5). The library depends on the stack (U-4); `@tanstack/virtual` has React, Vue, Svelte and Solid adapters.
 - **Keyboard:** `/` focuses search, arrow keys move the selection in the grid, `Enter` opens the card, `Esc` closes. This nods to controller navigation.
 - **Mobile:** single-column list, a filter drawer, and 44px touch targets.
 - **Empty and loading states** in the FM style ("No cards match.").
 - **Optional sound effects** (menu blip), **off by default**, using original sounds only (**TBD-U6**).
 
-### U-4 Component and theming approach (**TBD-U1**)
+### U-4 Site technology stack (**TBD-U1: to be decided later**)
 
-| Option | Pros | Cons |
+The stack (framework, UI/component library, styling) is **not decided yet**. Today's site uses **Next.js + MUI** (§2), and that is one candidate among others. This spec fixes only the **requirements** any stack must meet, so the choice can be made later without changing the UX defined in U-1 to U-3.
+
+**Requirements for the stack:**
+
+| # | Requirement | Why |
 |---|---|---|
-| **a) Keep MUI**, with a full custom theme *(lowest effort)* | Accessible components (dialogs, sliders, chips), already installed | Hard to escape the "Material" look. Heavy bundle |
-| b) Replace MUI with CSS Modules or vanilla-extract plus a few headless primitives (Radix) | Full visual control, smaller bundle, fits the FM look | More code to write |
+| S-1 | Produces a **fully static** build (HTML/JS/CSS files) | GitHub Pages has no server ([07](./07-site-github-pages-delivery.md)) |
+| S-2 | Pre-renders **one page per card** (`/cards/1` … `/cards/722`) and per duelist at build time | Shareable URLs and SEO (U-5) |
+| S-3 | Supports a configurable **base path** (`/yugioh-fb-catalog/`) | Pages project sites live under `/<repo>/` |
+| S-4 | Consumes the catalog **only through its public npm API** ([04](./04-catalog-query-api.md)), and can use the local workspace copy ([01](./01-repository-and-workspaces.md) R-1) | The site is the reference consumer |
+| S-5 | Allows full **custom theming** (design tokens for card-type colors, stars, fonts) | The FM look (U-1) must not be fought against |
+| S-6 | Accessible interactive components: dialogs, sliders, chips, menus | U-3 and the acceptance criteria |
+| S-7 | TypeScript, strict mode | Same quality bar as the catalog |
+| S-8 | Can meet the Lighthouse targets in §5 | Performance on mobile |
 
-Recommendation: **b)** if the FM look is a priority, otherwise **a)**. In either case, define design tokens (colors per card type, star colors, spacing, fonts) in one theme file, and drop `@toolpad/core` (only `PageContainer` is used).
+**Candidates** (examples, not a decision):
+
+| Layer | Candidates | Notes |
+|---|---|---|
+| Framework | **Next.js** (current, static export), Astro, Vite + React with a pre-render step, SvelteKit (static adapter) | Must meet S-1 to S-3 |
+| UI / components | **MUI** (current) with a full custom theme, headless primitives (Radix, Ark UI) with custom styles, Chakra, Mantine | MUI is fast to build with but has a strong "Material" look (S-5). Headless options give full visual control |
+| Styling | MUI theme / Emotion (current), CSS Modules, vanilla-extract, Tailwind | Tokens defined once in a theme file, whatever the tool |
+
+**Rules until the stack is decided:**
+- UX and visual specs (U-1 to U-3, U-5) are written stack-neutral and stay valid whatever is chosen.
+- No new site features are built on the current stack beyond what is needed to keep it working, so nothing is thrown away if the stack changes.
+- The decision is recorded in this section (and in the [index](./README.md) decision log), with the reasons and a check against S-1 to S-8.
 
 ### U-5 Static generation and SEO
-- `getStaticPaths` / `generateStaticParams` for `/cards/[id]` and `/duelists/[id]`, which works with `output: 'export'` ([07](./07-site-github-pages-delivery.md)).
+- Every `/cards/[id]` and `/duelists/[id]` page is generated at build time (S-2). For example, `generateStaticParams` in Next.js, `getStaticPaths` in Astro, or `entries` in SvelteKit.
 - A `<title>` and meta description per card ("Thunder Dragon – Lv5 Thunder – 1600/1500 – Yu-Gi-Oh! FM Catalog"), plus Open Graph tags.
 - `sitemap.xml` generated at build time.
 
@@ -117,7 +138,7 @@ The current "Cards registered" page becomes **/progress** (U-2), so the coverage
 
 ## 6. TBD / open questions
 
-- **TBD-U1:** Keep MUI with a theme, or move to custom CSS and headless primitives?
+- **TBD-U1:** Site technology stack: framework, UI library and styling (U-4). **To be decided later.** Next.js + MUI is the current stack and one candidate; the choice must meet S-1 to S-8.
 - **TBD-U2:** Who produces the mock-ups, and in what tool? Could start as a static HTML prototype.
 - **TBD-U3:** Exact palette and fonts (pixel font licence must allow web use: OFL fonts are fine).
 - **TBD-U4:** Frame color for Equip cards (and whether FM visually separates Equip from Magic).
