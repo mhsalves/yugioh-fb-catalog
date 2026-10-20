@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { CardContent, Grid2, Stack, Switch, Typography } from "@mui/material";
 import { PageContainer } from "@toolpad/core";
+import { TOTAL_CARDS } from "@mhsalves/yugioh-fb-catalog";
 
 import Header from "../components/Header";
 import CardItemView from "../components/CardItemView";
-
-const TOTAL_CARDS = 721;
 
 export default function CardPage() {
     const [onlyAvailable, setOnlyAvailable] = useState(true);

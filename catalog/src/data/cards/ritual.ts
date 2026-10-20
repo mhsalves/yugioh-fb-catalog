@@ -1,9 +1,7 @@
-import type { IRitualCard } from "../../card-types";
+import type { IRitualCard } from "../card-types";
 
-/**
- * Rituals between ids 674 and 679
- */
-const rituals: IRitualCard[] = [
+/** Ritual cards. Each recipe (result and materials) is in ../rituals.ts. */
+const ritual: IRitualCard[] = [
     {
         id: 674,
         name: "Beastry Mirror Ritual",
@@ -13,11 +11,7 @@ const rituals: IRitualCard[] = [
             code: "81933259",
             cost: 100,
         },
-        summon: {
-            monsterResultId: 365,
-            monsterMaterialIds: [186, 261, 595],
-        },
     },
 ];
 
-export default rituals;
+export default ritual;

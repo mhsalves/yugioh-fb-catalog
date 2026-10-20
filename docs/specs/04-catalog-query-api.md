@@ -9,9 +9,9 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, `main` @ `9a353ee` (Q-5 and Q-6 rechecked after the spec 02 build PR). Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 6 not built**
+**0 built · 4 partial · 4 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -19,8 +19,8 @@ Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./READM
 | Q-2 | Indexes built once at module load | Proposed | ❌ Not built | `getCard` is a linear `find` |
 | Q-3 | Typed overloads and readonly results | Proposed | ❌ Not built | Returns `ICard[]` and the mutable internal array |
 | Q-4 | `searchCards` | Proposed | 🟡 Partial | Only single-field filters by card type and monster type |
-| Q-5 | Relation queries | Proposed | ❌ Not built | None (needs D-3 data) |
-| Q-6 | Metadata | Proposed | ❌ Not built | No `TOTAL_CARDS`, coverage or type lists exported |
+| Q-5 | Relation queries | Proposed | 🟡 Partial | `getRitual(ritualOrResultId)` only (added with the 02 data model); the others wait for their data |
+| Q-6 | Metadata | Proposed | 🟡 Partial | `TOTAL_CARDS`, `MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` (+ guardian-star rules) exported; no coverage helper yet |
 | Q-7 | Optional namespaced entry | TBD | ❌ Not built | Flat exports only (TBD-Q2) |
 | Q-8 | API docs from code | Proposed | ❌ Not built | Hand-written README API, out of date |
 
@@ -94,7 +94,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 - Pure and synchronous, with no dependencies, so it works in the browser (the site) and in Node.
 - The site's filters ([06](./06-site-ux-forbidden-memories.md)) are a thin UI over this function, so the site and npm users get the same behaviour.
 
-### Q-5 Relation queries (added as the data from 02 lands) · ❌ Not built
+### Q-5 Relation queries (added as the data from 02 lands) · 🟡 Partial
 | Function | Answers |
 |---|---|
 | `getFusion(a, b)` | What do these two cards fuse into? (`ICard \| undefined`) |
@@ -108,7 +108,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 
 Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `getFusion` must implement exactly what the agreed model says, and nothing more.
 
-### Q-6 Metadata · ❌ Not built
+### Q-6 Metadata · 🟡 Partial
 ```ts
 TOTAL_CARDS;                                 // from data/rules.json
 MONSTER_TYPES; GUARDIAN_STARS; CARD_TYPES;   // from the schema enums (02 D-4)

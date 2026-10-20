@@ -1,6 +1,6 @@
-import type { ISupportCard } from "../../card-types";
+import type { IEquipCard } from "../card-types";
 
-const equips: ISupportCard[] = [
+const equip: IEquipCard[] = [
     {
         id: 315,
         name: "Dragon Treasure",
@@ -13,4 +13,4 @@ const equips: ISupportCard[] = [
     },
 ];
 
-export default equips;
+export default equip;

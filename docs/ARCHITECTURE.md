@@ -58,22 +58,25 @@ The important detail: **the website imports the library from the repository**, t
 ├── .prettierrc.json         # Prettier (4 spaces, 120 columns; 2 for JSON/YAML)
 ├── scripts/check-action-pins.sh  # CI check: every action pinned by commit SHA
 ├── catalog/                 # The library (current source of truth)
-│   ├── package.json         # @mhsalves/yugioh-fb-catalog@0.1.1
+│   ├── package.json         # @mhsalves/yugioh-fb-catalog@0.2.0
+│   ├── CHANGELOG.md         # Release notes, with migration notes for breaking changes
 │   ├── tsconfig.json        # strict; type-checks src/ + test/
 │   ├── tsconfig.build.json  # CommonJS, ES2016, emits lib/ + .d.ts from src/
 │   ├── test/                # Vitest: query API + data integrity
 │   └── src/
-│       ├── index.ts         # Public API: re-exports types + tools
+│       ├── index.ts         # Public API: re-exports types, enums, rules + tools
 │       ├── data/
-│       │   ├── card-types.ts        # Domain model
-│       │   ├── duelists/            # Empty placeholder (.gitkeep)
-│       │   └── cards/
-│       │       ├── index.ts         # Merges every category, sorts by id
-│       │       ├── monsters/
-│       │       │   └── thunders/page0..3.ts
-│       │       ├── rituals/page0..3.ts
-│       │       └── support/{equip,magic,trap}.ts
-│       └── tools/cards.ts           # Query functions
+│       │   ├── enums.ts             # MONSTER_TYPES, CARD_TYPES, GUARDIAN_STARS (runtime lists)
+│       │   ├── rules.ts             # TOTAL_CARDS, guardian-star advantage and bonus
+│       │   ├── card-types.ts        # Card entities (types derived from enums.ts)
+│       │   ├── relation-types.ts    # IFusion, IRitual, IEquipCompat, IFieldEffect
+│       │   ├── cards/
+│       │   │   ├── index.ts         # Merges every file, sorts by id
+│       │   │   ├── monsters/<type>.ts   # one file per monster type (thunder.ts today)
+│       │   │   └── {magic,trap,equip,ritual}.ts
+│       │   ├── rituals.ts  equips.ts  fields.ts  fusions/   # relation collections
+│       │   └── duelists/            # Empty placeholder (.gitkeep), waits for TBD-D9
+│       └── tools/{cards,relations}.ts   # Query functions
 ├── .github/
 │   ├── dependabot.yml       # Weekly grouped dependency updates (root workspace + Actions)
 │   └── workflows/ci.yml     # CI on every PR and push to main
@@ -89,12 +92,14 @@ The important detail: **the website imports the library from the repository**, t
 
 ## 4. The library (`catalog/`)
 
-### 4.1 Domain model, `card-types.ts`
+### 4.1 Domain model, `card-types.ts`, `relation-types.ts`, `enums.ts`, `rules.ts`
+
+Shaped by [spec 02](./specs/02-catalog-data-model.md) (catalog `0.2.0`).
 
 ```mermaid
 classDiagram
     class ICardBase {
-        id: number
+        id: CardId
         name: string
         password: IPassword
         description: string
@@ -103,42 +108,51 @@ classDiagram
         code: string  // 8 digits
         cost: number  // 0..999999 starchips
     }
-    class ISupportCard {
-        cardType: "Equip" | "Magic" | "Trap"
-    }
-    class IRitualCard {
-        cardType: "Ritual"
-        summon: IRitualSummon
-    }
-    class IRitualSummon {
-        monsterResultId: number
-        monsterMaterialIds: number[]
-    }
     class IMonsterCard {
         cardType: "Monster"
+        monsterType: TMonsterType  // 20 types
         level: number  // 1..12
-        monsterType: TMonsterType
-        monsterPoints: attack, defense
-        guardianStars: first, second
+        attack: number
+        defense: number
+        guardianStars: [TGuardianStar, TGuardianStar]
     }
-    ICardBase <|-- ISupportCard
-    ICardBase <|-- IRitualCard
+    class IMagicCard { cardType: "Magic" }
+    class ITrapCard { cardType: "Trap" }
+    class IEquipCard { cardType: "Equip" }
+    class IRitualCard { cardType: "Ritual" }
+    class IRitual {
+        ritual: CardId
+        result: CardId
+        materials: CardId[]
+    }
+    class IFusion {
+        materials: [CardId, CardId]
+        result: CardId
+    }
     ICardBase <|-- IMonsterCard
+    ICardBase <|-- IMagicCard
+    ICardBase <|-- ITrapCard
+    ICardBase <|-- IEquipCard
+    ICardBase <|-- IRitualCard
     ICardBase *-- IPassword
-    IRitualCard *-- IRitualSummon
+    IRitual ..> IRitualCard : ritual
+    IRitual ..> IMonsterCard : result, materials
+    IFusion ..> IMonsterCard : materials, result
 ```
 
-`ICard = ISupportCard | IRitualCard | IMonsterCard` is a **discriminated union** on `cardType`.
+`ICard = IMonsterCard | IMagicCard | ITrapCard | IEquipCard | IRitualCard` is a **discriminated union** on `cardType`. `ISupportCard` is the union of the Magic, Trap and Equip cards.
 
 **Why:**
-- The union lets TypeScript narrow types. After `card.cardType === "Monster"`, the compiler knows `card.monsterPoints` exists. `getCardsByMonsterType` relies on this.
-- The fields follow the game's own concepts rather than the modern TCG. Forbidden Memories has **guardian stars** and **starchip costs**, and has no attributes. Rituals are modelled as a *recipe*: a result monster plus material monster IDs. The game treats ritual cards this way, so a later fusion or ritual calculator can work on IDs alone.
-- **`id` is the in-game card number** (1–722). It is a natural key and needs no extra mapping table.
-- References between cards (`monsterResultId`, `monsterMaterialIds`) use plain IDs, not nested objects. The data then stays flat and serialisable, and you can declare cards in any order.
+- The union lets TypeScript narrow types. After `card.cardType === "Monster"`, the compiler knows `card.attack` exists. `getCardsByMonsterType` relies on this.
+- The fields follow the game's own concepts rather than the modern TCG. Forbidden Memories has **guardian stars** and **starchip costs**. Whether it has attributes is still open (TBD-D3).
+- **Cards are entities; game mechanics are relations** (spec 02 D-1). Ritual recipes, fusions, equip compatibility and field effects are separate collections keyed by card ID, so a fusion between two cards is not duplicated in both, and relation data can grow without reshaping cards. Fusions are stored as the game stores them: specific card pairs, sorted, one entry per pair.
+- **`id` is the in-game card number** (1–`TOTAL_CARDS`, 722). It is a natural key and needs no extra mapping table.
+- References use plain IDs, not nested objects. The data then stays flat and serialisable, and you can declare cards in any order.
+- **Enumerations are runtime lists** (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` in `enums.ts`), and the TS types derive from them. The site's filters and the types cannot drift apart. **Rule values** (`TOTAL_CARDS`, `GUARDIAN_STAR_ADVANTAGE`, `GUARDIAN_STAR_BONUS`) are data in `rules.ts`. Every game fact is sourced in spec 02 §6.
 
 ### 4.2 Data storage: cards as TypeScript literals
 
-Every card is an object literal in a `.ts` file, typed against its interface (`IMonsterCard[]`, `IRitualCard[]` or `ISupportCard[]`).
+Every card is an object literal in a `.ts` file, typed against its interface (`MonsterCardsOf<"Thunder">`, `IMagicCard[]`, …). Spec 03 A-1 (agreed) moves this data to JSON plus a schema, at the same paths.
 
 **Why** *(inferred)*:
 - **Free validation.** `tsc` checks each record when it compiles. A missing field, a wrong `cardType` or a misspelled guardian star breaks the build. No JSON schema or runtime validator is needed.
@@ -146,38 +160,38 @@ Every card is an object literal in a `.ts` file, typed against its interface (`I
 - **Easy contributions.** Adding a card means pasting an object into a file that already shows the format.
 
 **Trade-offs:**
-- The compiler cannot check value ranges (8-digit password, level 1–12, cost 0–999999), unique IDs, or whether referenced IDs exist. Today these rules exist only as comments.
+- The compiler cannot check value ranges (8-digit password, level 1–12, cost 0–999999), unique IDs, or whether referenced IDs exist. The Vitest integrity tests (`catalog/test/data-integrity.test.ts`) check these.
 - The full dataset ends up in every consumer's bundle. At about 722 small records this is acceptable.
 - Non-JS consumers (Python scripts, other tools) cannot read the data directly.
 
-### 4.3 Data organization: category → sub-category → "page"
+### 4.3 Data organization: one file per card type (and monster type)
 
 ```
-cards/index.ts              concat(monsters, rituals, support).sort(by id)
-├── monsters/index.ts       concat(thunders)
-│   └── thunders/index.ts   concat(page0..page3)
-├── rituals/index.ts        concat(page0..page3)
-└── support/index.ts        concat(equip, magic, trap)
+cards/index.ts              concat(monsters, magic, trap, equip, ritual).sort(by id)
+├── monsters/index.ts       concat(thunder, …)   // one <monster-type>.ts per type
+│   └── thunder.ts
+└── magic.ts  trap.ts  equip.ts  ritual.ts
 ```
 
-Each `pageN.ts` file holds **one contiguous ID range**, recorded in its header comment. For example, `thunders/page1.ts` holds Thunder monsters 425–460 and `rituals/page1.ts` holds rituals 674–679.
+**One rule** (spec 02 D-5): a card goes in the file for its `cardType`, and a monster goes in `monsters/<monster-type>.ts`. `MonsterCardsOf<"Thunder">` makes a monster of another type in `thunder.ts` a compile error. Relations live beside the cards: `rituals.ts`, `fusions/`, `equips.ts`, `fields.ts`.
 
-**Why** *(inferred from commits `c8eebe5`, `3857bd4`, `b06fbd3`, `34a8813`)*:
-- **Small files.** Splitting about 722 cards over many files keeps diffs and merge conflicts local, and each file stays easy to review.
-- **Pages mirror the source.** Contiguous ID ranges match how the in-game library and most reference lists are browsed. One person can fill in one page at a time.
-- **Every level is a plain `concat`.** Adding a new monster type (for example `dragons/`) is a new folder plus one line in `monsters/index.ts`.
+**Why:**
+- **One rule to learn.** The earlier layout had three: monsters by type and then by unverified ID-range "pages", rituals by page only, and support cards by type only.
+- **Small files by sub-type.** Files stay reviewable without the `pageN` ID ranges, whose meaning was never verified (TBD-D4).
 - **One sort at the root.** File order does not matter, and the exported list is always in ID order.
 
-### 4.4 Public API, `tools/cards.ts` and `index.ts`
+### 4.4 Public API, `tools/*.ts` and `index.ts`
 
-| Function | Behaviour |
+| Export | Behaviour |
 |---|---|
 | `getCardList()` | Every card, sorted by `id` |
 | `getCard(id)` | One card or `undefined` (linear `find`) |
 | `getCardsByType(cardType)` | Filter on `cardType` |
-| `getCardsByMonsterType(monsterType)` | Monsters of one type |
+| `getCardsByMonsterType(monsterType)` | Monsters of one type (`IMonsterCard[]`) |
+| `getRitual(ritualOrResultId)` | Ritual recipe `{ ritual, result, materials }` or `undefined` |
+| `TOTAL_CARDS`, `MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS`, `GUARDIAN_STAR_ADVANTAGE`, `GUARDIAN_STAR_BONUS` | Game enumerations and rule values |
 
-`index.ts` re-exports all types (`export type *`) and the functions above. The raw `data/` modules are not part of the public API.
+`index.ts` re-exports all card and relation types (`export type *`), the enums and rules, and the functions above. The raw `data/` modules are not part of the public API.
 
 **Why:** consumers depend on a small function API rather than the file layout, so the data can be reorganised (for example, re-paged) without a breaking change.
 
@@ -197,7 +211,7 @@ This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). 
 
 ### 5.1 Behaviour
 
-`pages/index.tsx` renders `TOTAL_CARDS = 721` slots (`CardItemView` for IDs 1..721). Each slot calls `getCard(id)`:
+`pages/index.tsx` renders `TOTAL_CARDS` slots, imported from the library (722: `CardItemView` for IDs 1..722). Each slot calls `getCard(id)`:
 - the card exists → show name, description, type, password and cost
 - the card is missing → show "Not available yet", or hide it when the **Only Available** switch is on (the default)
 
@@ -235,7 +249,7 @@ sequenceDiagram
     participant CI as GitHub Actions (ci.yml)
     participant NPM as npm registry
     participant GH as GitHub Pages
-    Dev->>Cat: add card object to the right pageN.ts
+    Dev->>Cat: add card object to its card-type file (cards/monsters/<type>.ts, cards/magic.ts, …)
     Cat-->>Site: yarn dev: tsc --watch, site shows it live
     Dev->>CI: open PR
     CI->>CI: type-check, lint, format, test, build, pack smoke test
@@ -254,7 +268,7 @@ Publishing and deploying are still manual. They are automated in specs [05](./sp
 Checked on 2026-10-20 against `main` @ `4d80225`; tooling items (S3, Q1–Q3, Q5) rechecked after the spec 01 build. Both packages type-check cleanly in strict mode (`yarn typecheck`).
 
 ### 7.1 Data coverage
-Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674), and 1 each of equip (315), magic (332) and trap (690). Most `pageN.ts` files are empty arrays with a range comment. `TMonsterType` has only `"Thunder" | "Dragon"`, and `data/duelists/` is an empty placeholder (probably intended for duelist drop and deck tables).
+Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674, with its recipe in `rituals.ts`), and 1 each of equip (315), magic (332) and trap (690). (This section said 6 before; the count was wrong.) The model now covers all 20 monster types (spec 02), but only `monsters/thunder.ts` has data. The fusion, equip and field collections are typed and empty, and `data/duelists/` waits for TBD-D9.
 
 ### 7.2 Structural problems
 | # | Issue | Evidence | Impact |
@@ -262,7 +276,7 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 | S1 | ~~**Duplicated library.**~~ **Resolved.** Commit `7f15bd0` "Move all catalog files to a folder" *copied* `src/` into `catalog/src/` instead of moving it. The stale root `src/`, `package.json` (v0.1.0), `tsconfig.json`, `yarn.lock` and `.npmignore` have since been deleted. | — | — |
 | S2 | ~~**Dependency drift between the copies.**~~ **Resolved** together with S1. | — | — |
 | S3 | ~~**No workspace linking.**~~ **Resolved** by spec 01 R-1: a Yarn workspace links `mkt_site/` to `catalog/`. | — | — |
-| S4 | **Hard-coded card count** `TOTAL_CARDS = 721` in the UI. FM has 722 cards (verify). | `mkt_site/src/pages/index.tsx` | Duplicates knowledge that belongs in the library, and may be off by one. |
+| S4 | ~~**Hard-coded card count.**~~ **Resolved** by spec 02 D-4: the site imports `TOTAL_CARDS` (722, verified) from the library. | — | — |
 | S5 | **README docs do not match the code.** `src/README.md` and `catalog/README.md` describe `getCards`, `getCardById(id: string)`, string IDs, lowercase types and an `attribute` field, none of which exist. `mkt_site/README.md` lists search, theming, stats, `styles/`, `utils/` and `NEXT_PUBLIC_API_URL`, also not present. Reference links are `(URL)` placeholders. | READMEs vs `card-types.ts` / `tools/cards.ts` | Misleads contributors and package users. |
 
 ### 7.3 Quality and tooling gaps
@@ -271,7 +285,7 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 | Q1 | ~~No tests.~~ **Mostly resolved** by spec 01 R-2: Vitest covers the query API and data integrity (unique and sorted IDs, ranges, password format, ritual references in range). Still missing: ritual references pointing to *existing* monsters, page ranges matching the header comments. |
 | Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm and deploying to Pages are still manual. |
 | Q3 | ~~No linter or formatter.~~ **Resolved** by spec 01 R-3: ESLint (flat config) and Prettier at the root. |
-| Q4 | `getCard` is a linear scan, called 721 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
+| Q4 | `getCard` is a linear scan, called 722 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
 | Q5 | ~~The site has `strict: false`.~~ **Resolved** by spec 01 R-5. |
 | Q6 | The library emits only CommonJS/ES2016, with no `exports` map or ESM build. |
 | Q7 | The site shows only base fields. Monster stats, guardian stars and ritual recipes are in the data but not rendered. There is no search or filtering beyond the availability toggle. |
@@ -289,6 +303,6 @@ Ordered so that each step makes the next one safer.
 3. ~~**Tests and integrity checks (Q1).**~~ Done for the current data (spec 01 R-2): Vitest asserts unique and sorted IDs, value ranges and ritual references in range. Reference and page-range checks grow with the data ([03](./specs/03-catalog-data-authoring.md) A-2).
 4. **CI (Q2).** Partly done (spec 01 R-4): `ci.yml` type-checks, lints, tests and builds both packages on every PR. Still to do: automate the Pages deploy on push to `main` ([07](./specs/07-site-github-pages-delivery.md) P-1) and npm publishing ([05](./specs/05-catalog-npm-distribution.md) N-2).
 5. **Fix the docs (S5).** Rewrite the READMEs from the real API, or generate API docs with TypeDoc, and link to this file.
-6. **Library API polish (S4, Q4, Q6).** Export `TOTAL_CARDS` and a progress helper, index cards in a `Map` for `getCard`, and consider a dual ESM/CJS build with an `exports` map.
-7. **Fill in the data (§7.1).** Extend `TMonsterType` to every FM type, add the matching `monsters/<type>/` folders, and decide on the shape of `duelists/` (drop tables, decks). Consider a scraper or importer script in `tools/` that generates the page files from a trusted source.
+6. **Library API polish (Q4, Q6).** (`TOTAL_CARDS` is exported since spec 02.) Add a progress helper, index cards in a `Map` for `getCard`, and consider a dual ESM/CJS build with an `exports` map.
+7. **Fill in the data (§7.1).** `TMonsterType` already covers every FM type (spec 02); add each `monsters/<type>.ts` file with its first card, fill the relation collections, and decide on the shape of `duelists/` (TBD-D9). Consider an importer script that generates the data files from a trusted source (spec 03 A-5).
 8. **Website features (Q7).** Add a card detail view, search, filters by type, monster type and stars, a progress bar, and, once the data exists, fusion or ritual lookups.

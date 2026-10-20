@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getCard, getCardList, getCardsByMonsterType, getCardsByType } from "../src";
+import { getCard, getCardList, getCardsByMonsterType, getCardsByType, getRitual } from "../src";
 
 describe("getCardList", () => {
     it("returns every card", () => {
@@ -38,5 +38,21 @@ describe("getCardsByMonsterType", () => {
         expect(getCardsByMonsterType("Dragon")).toEqual(
             getCardList().filter((card) => card.cardType === "Monster" && card.monsterType === "Dragon"),
         );
+    });
+});
+
+describe("getRitual", () => {
+    const recipe = { ritual: 674, result: 365, materials: [186, 261, 595] };
+
+    it("finds a recipe by the ritual card id", () => {
+        expect(getRitual(674)).toEqual(recipe);
+    });
+
+    it("finds a recipe by the summoned monster id", () => {
+        expect(getRitual(365)).toEqual(recipe);
+    });
+
+    it("returns undefined when no recipe matches", () => {
+        expect(getRitual(1)).toBeUndefined();
     });
 });
