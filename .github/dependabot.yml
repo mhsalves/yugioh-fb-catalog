@@ -23,7 +23,18 @@ updates:
       # they fall through to `security-other`.
       security-mkt-site:
         applies-to: security-updates
-        patterns: ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*", "gh-pages"]
+        patterns:
+          [
+            "next",
+            "react",
+            "react-dom",
+            "@types/react",
+            "@types/react-dom",
+            "@mui/*",
+            "@emotion/*",
+            "@toolpad/*",
+            "gh-pages",
+          ]
       security-catalog:
         applies-to: security-updates
         patterns: ["vite", "vitest", "@vitest/*", "@types/node", "typescript"]
@@ -35,7 +46,8 @@ updates:
         patterns: ["*"]
       # React, Next and MUI move together; keep their bumps in one PR.
       framework:
-        patterns: ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*"]
+        patterns:
+          ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*"]
         update-types: ["minor", "patch"]
       # Lint, format and test tooling.
       tooling:
