@@ -4,7 +4,8 @@
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",
