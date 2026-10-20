@@ -62,7 +62,8 @@ A root `package.json` (private, never published), as built with Yarn 1 (TBD-R2):
     "build": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site build",
     // builds the catalog once, then runs `tsc --watch` for it next to `next dev`
     "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && (yarn workspace @mhsalves/yugioh-fb-catalog dev & yarn workspace yugioh-fb-catalog-mkt-site dev)",
-    "typecheck": "yarn workspaces run typecheck",
+    // the site type-checks against the catalog's built lib/*.d.ts, so build it first
+    "typecheck": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspaces run typecheck",
     "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
     "lint": "eslint .",
     "format": "prettier --write .",
