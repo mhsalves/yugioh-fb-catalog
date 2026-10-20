@@ -7,6 +7,6 @@
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  /* Type-checks sources and tests. The npm build uses tsconfig.build.json (src only). */
-  "include": ["src", "test"]
+  /* Type-checks sources, tests, schemas and scripts. The npm build uses tsconfig.build.json (src only). */
+  "include": ["src", "test", "schema", "scripts"]
 }

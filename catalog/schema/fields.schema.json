@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "boosts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Dragon",
+                "Spellcaster",
+                "Zombie",
+                "Warrior",
+                "Beast-Warrior",
+                "Beast",
+                "Winged Beast",
+                "Fiend",
+                "Fairy",
+                "Insect",
+                "Dinosaur",
+                "Reptile",
+                "Fish",
+                "Sea Serpent",
+                "Machine",
+                "Thunder",
+                "Aqua",
+                "Pyro",
+                "Rock",
+                "Plant"
+              ]
+            }
+          },
+          "weakens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Dragon",
+                "Spellcaster",
+                "Zombie",
+                "Warrior",
+                "Beast-Warrior",
+                "Beast",
+                "Winged Beast",
+                "Fiend",
+                "Fairy",
+                "Insect",
+                "Dinosaur",
+                "Reptile",
+                "Fish",
+                "Sea Serpent",
+                "Machine",
+                "Thunder",
+                "Aqua",
+                "Pyro",
+                "Rock",
+                "Plant"
+              ]
+            }
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "field",
+          "boosts",
+          "weakens",
+          "amount"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "fields"
+  ],
+  "additionalProperties": false
+}

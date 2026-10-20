@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cardType": {
+            "type": "string",
+            "const": "Trap"
+          },
+          "password": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              "cost": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 999999
+              }
+            },
+            "required": [
+              "code",
+              "cost"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "cardType",
+          "password"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "cards"
+  ],
+  "additionalProperties": false
+}

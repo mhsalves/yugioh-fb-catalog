@@ -1,4 +1,4 @@
-import rituals from "../data/rituals";
+import { rituals } from "../data/catalog.generated";
 import type { CardId } from "../data/card-types";
 
 /** Recipe for a ritual, looked up by the ritual card's id or by the id of the monster it summons. */

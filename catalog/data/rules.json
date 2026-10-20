@@ -1,0 +1,17 @@
+{
+  "$schema": "../schema/rules.schema.json",
+  "totalCards": 722,
+  "guardianStarAdvantage": {
+    "Mars": "Jupiter",
+    "Jupiter": "Saturn",
+    "Saturn": "Uranus",
+    "Uranus": "Pluto",
+    "Pluto": "Neptune",
+    "Neptune": "Mars",
+    "Mercury": "Sun",
+    "Sun": "Moon",
+    "Moon": "Venus",
+    "Venus": "Mercury"
+  },
+  "guardianStarBonus": 500
+}

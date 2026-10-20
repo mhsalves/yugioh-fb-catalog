@@ -1,0 +1,4 @@
+{
+  "$schema": "../schema/rituals.schema.json",
+  "rituals": [{ "ritual": 674, "result": 365, "materials": [186, 261, 595] }]
+}

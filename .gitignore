@@ -131,3 +131,5 @@ dist
 
 # Only build to NPM
 lib
+# Generated from catalog/data by `yarn data:build`
+catalog/src/data/catalog.generated.ts

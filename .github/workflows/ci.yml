@@ -33,6 +33,12 @@ jobs:
       - name: Install
         run: yarn install --frozen-lockfile
 
+      - name: Validate data (spec 03 A-2)
+        run: yarn validate
+
+      - name: Data coverage
+        run: yarn -s coverage:data
+
       - name: Type-check
         run: yarn typecheck
 

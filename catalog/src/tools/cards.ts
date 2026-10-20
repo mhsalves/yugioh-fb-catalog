@@ -1,4 +1,4 @@
-import cards from "../data/cards";
+import { cards } from "../data/catalog.generated";
 import type { CardId, IMonsterCard, TCardType, TMonsterType } from "../data/card-types";
 
 export const getCardList = () => cards;
