@@ -41,6 +41,8 @@ yarn typecheck        # TypeScript (strict) nos dois pacotes
 yarn lint             # ESLint
 yarn format:check     # Prettier (yarn format para corrigir)
 yarn test             # Vitest: API de consulta + integridade dos dados
+yarn validate         # valida os JSON em catalog/data (veja catalog/CONTRIBUTING-DATA.md)
+yarn coverage:data    # quantas cartas já foram cadastradas
 yarn build            # build do catálogo e do site
 ```
 

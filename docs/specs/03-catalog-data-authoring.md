@@ -1,6 +1,6 @@
 # 03 – Catalog data authoring (storage format and validation)
 
-> **Status: Proposed.** Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
+> **Status: Built** (A-5 deferred). Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
 
 
 
@@ -9,18 +9,18 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, after the spec 03 build PR (based on `main` @ `ce9dfcf`). Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 4 not built**
+**5 built · 0 partial · 1 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| A-1 | Storage format: JSON + schema | Agreed | ❌ Not built | Data is TypeScript literals |
-| A-2 | Validation rules | Proposed | 🟡 Partial | `tsc` checks shape only; no ranges, uniqueness or references |
-| A-3 | Contributor guide | Proposed | 🟡 Partial | Section in `catalog/README.md`, with an outdated format |
-| A-4 | Coverage report as a script | Proposed | ❌ Not built | Coverage only visible on the site grid |
-| A-5 | Import tooling | Proposed | ❌ Not built | None (depends on TBD-X1) |
-| A-6 | PR template for data changes | Proposed | ❌ Not built | None |
+| A-1 | Storage format: JSON + schema | Agreed | ✅ Built | `catalog/data/**/*.json` with `$schema`; Zod schemas in `catalog/schema/schemas.ts` export draft-07 JSON Schemas; a generated module feeds the library |
+| A-2 | Validation rules | Agreed | ✅ Built | `yarn validate` (CI and before every build), every rule with a failing-fixture test |
+| A-3 | Contributor guide | Agreed | ✅ Built | `catalog/CONTRIBUTING-DATA.md` (PT-BR, like the catalog README) |
+| A-4 | Coverage report as a script | Agreed | ✅ Built | `yarn coverage:data` (also printed in CI) |
+| A-5 | Import tooling | Proposed | ❌ Not built | Deferred: depends on TBD-X1 (source) and TBD-A4 (licensing) |
+| A-6 | PR template for data changes | Agreed | ✅ Built | `.github/PULL_REQUEST_TEMPLATE/data.md` |
 
 ## 1. Why this spec exists
 
@@ -31,6 +31,8 @@ Goal **G3**: the catalog must be **saved in a simple way so more information can
 - adding a *new kind* of information (for example, a `rarity` field) must not mean touching every file by hand.
 
 ## 2. What exists today
+
+> **Updated by the spec 03 build.** All data is JSON in `catalog/data/`, validated by `yarn validate` against Zod schemas (`catalog/schema/`). See the "As built" notes under A-1 and A-2. The list below describes the state **before** this spec was built (after [02](./02-catalog-data-model.md), the TS files were already at the target paths) and is kept for history.
 
 - Cards are **TypeScript object literals** typed against their interfaces, for example `IMonsterCard[]` in `monsters/thunders/page1.ts`.
 - `tsc` checks the record **shape** (field names, union values such as `cardType` and guardian stars).
@@ -53,7 +55,7 @@ Goal **G3**: the catalog must be **saved in a simple way so more information can
 
 ## 4. Proposed improvements
 
-### A-1 Storage format: **JSON + schema** (**Agreed**) · ❌ Not built
+### A-1 Storage format: **JSON + schema** (**Agreed**) · ✅ Built
 
 All catalog data, including cards **and** relation tables (fusions, equips, rituals, fields, duelists, drops), is stored as **JSON files** validated against a schema. TypeScript keeps only the query API ([04](./04-catalog-query-api.md)) and the schema definitions.
 
@@ -118,7 +120,19 @@ Loading: a small loader in `src/` imports every JSON file. A build step generate
 
 Migration: the 5 existing TS records are converted to JSON once, the `pageN.ts`/`index.ts` data files are deleted, and `card-types.ts` is replaced by types inferred from the schema. The public type names (`ICard`, `IMonsterCard`, …) stay exported.
 
-### A-2 Validation rules (enforced in tests and in `prebuild`) · 🟡 Partial
+**As built** (differences from the proposal above, and why):
+
+| Topic | Built |
+|---|---|
+| Layout | As proposed: `catalog/data/` (JSON), `catalog/schema/` (`schemas.ts` + the generated `<name>.schema.json` files), `catalog/src/` (query API). Plus `catalog/scripts/` for the CLI scripts. The files are `cards/monsters/<type>.json`, `cards/{magic,trap,equip,ritual}.json`, `rituals.json`, `equips.json`, `fields.json`, `fusions/<result type>.json`, `rules.json` |
+| Schema tool (TBD-A6) | **Zod 4**, as a **dev-only** dependency. `schemas.ts` uses the runtime lists from `src/data/enums.ts` (`z.enum(MONSTER_TYPES)`), so the enums stay single-source. `yarn schema:build` writes **draft-07** JSON Schemas, chosen for the widest editor support, and tests fail if the committed files are stale |
+| Public types | **Kept hand-written** in `src/data/card-types.ts` and `relation-types.ts`, instead of `z.infer`. `schemas.ts` asserts at compile time that each one equals what its schema accepts, so they cannot drift (checked: changing a field type fails `yarn typecheck`). This keeps Zod out of the published `.d.ts` files, so consumers install no new dependency, and keeps the types readable in editors |
+| Loader | `yarn data:build` (`scripts/build-data.ts`) validates `data/` and writes `src/data/catalog.generated.ts` (git-ignored). The library reads from that module, so the package still ships plain compiled JS with no runtime validation or file I/O. The data is validated before every build instead. It runs automatically before `build`, `dev`, `typecheck` and `test`, and `yarn dev` watches `data/`, so a saved JSON edit appears on the running site |
+| Indexes | Not built here; they belong to [04](./04-catalog-query-api.md) Q-2 |
+| Strictness | Objects are strict (`additionalProperties: false`), so a misspelled field is an error |
+| Migration | Done. The 5 cards, the ritual recipe and all rule values are identical to the TS data (compared against the packed `0.2.0` build) |
+
+### A-2 Validation rules (enforced in tests and in `prebuild`) · ✅ Built
 Implemented as one `validate` script that runs in CI ([01](./01-repository-and-workspaces.md) R-4) and before every build, with errors that point to the file and the record:
 
 | Rule | Example error |
@@ -132,32 +146,47 @@ Implemented as one `validate` script that runs in CI ([01](./01-repository-and-w
 | Fusion pairs not duplicated (order-insensitive) | — |
 | Names unique (warning) | — |
 
-### A-3 Contributor guide `catalog/CONTRIBUTING-DATA.md` · 🟡 Partial
+**As built:** every rule above is in `catalog/scripts/lib/data.ts`, run by `yarn validate`, by CI and before every build. Each rule has a failing-fixture test in `catalog/test/validate.test.ts`. Errors fail the build; warnings are listed by `yarn validate` and counted by `data:build`. Rules added while building, following [02](./02-catalog-data-model.md):
+
+| Rule | Level | Example message |
+|---|---|---|
+| Card in the file of its `cardType` (schema per file) | error | `cards/magic.json: cards[0].cardType: …` |
+| Monster type file names are real types (`winged-beast.json`) | error | `"dragons" is not a monster type file name` |
+| File outside the layout | error | `notes.json: unknown data file` |
+| `$schema` path matches the file | error | `$schema: expected "../../schema/magic-list.schema.json"` |
+| Relation points at the right kind of card (ritual → Ritual card, result/materials/targets → Monster, equip → Equip, field → Magic) | error | `equip 20 → target 30 is a Magic card, expected Monster` |
+| Relation ID within `1..totalCards` | error | `ritual 10 → result 900 is out of range (1..722)` |
+| One recipe per ritual, one entry per equip and field | error | `ritual 10 has more than one recipe` |
+| Fusion materials sorted (`a <= b`); result type matches `fusions/<type>.json` | error | `fusion 2 + 1: materials must be sorted (write 1 + 2)` |
+| Ritual card without a recipe | warning | `ritual card 10 has no recipe in rituals.json` |
+| Relation ID not entered yet (TBD-A3) | warning | `rituals.json: ritual 674 → material 186 not found (card not entered yet)` |
+
+### A-3 Contributor guide `catalog/CONTRIBUTING-DATA.md` · ✅ Built
 A one-page guide covering: where each kind of card goes, a copyable template per card type, how to add the card's image line to `data/images.json` (paste the wiki image URL, [08](./08-card-images.md) I-2), how to run `yarn validate`, and how to cite a source in the PR. It replaces the outdated section in `catalog/README.md`.
 
-### A-4 Coverage report as a script · ❌ Not built
+### A-4 Coverage report as a script · ✅ Built
 `yarn coverage:data` prints the entered count per category and overall (`5 / 722`). The site shows the same numbers ([06](./06-site-ux-forbidden-memories.md)), and CI can post them as a PR comment.
 
 ### A-5 (Later) Import tooling · ❌ Not built
 An optional script in `catalog/tools/` that converts a trusted external dump into the data files. It speeds up the initial bulk fill. It depends on **TBD-X1** (the source) and **TBD-A4** (licensing of that source).
 
-### A-6 PR template for data changes · ❌ Not built
+### A-6 PR template for data changes · ✅ Built
 `.github/PULL_REQUEST_TEMPLATE/data.md` with these checks: source cited, `yarn validate` passed, only data files touched.
 
 ## 5. Acceptance criteria
 
-- [ ] Adding a card = editing **one** data file. No `index.ts` or type edits.
-- [ ] Each rule in A-2 has a failing-fixture test that proves it catches the error.
-- [ ] All data lives in `catalog/data/**/*.json`, with no card data left in `.ts` files.
-- [ ] VS Code flags a bad field in a JSON file before commit (via `$schema`).
-- [ ] `CONTRIBUTING-DATA.md` exists and matches the real format.
-- [ ] The existing 5 cards are migrated with no change to their data.
+- [x] Adding a card = editing **one** data file. No `index.ts` or type edits. (A new monster type's first card means creating `cards/monsters/<type>.json`; no code changes.)
+- [x] Each rule in A-2 has a failing-fixture test that proves it catches the error (`catalog/test/validate.test.ts`).
+- [x] All data lives in `catalog/data/**/*.json`, with no card data left in `.ts` files.
+- [x] VS Code flags a bad field in a JSON file before commit (via `$schema`). Each file points at a draft-07 JSON Schema with strict objects, ranges and enums. VS Code reads `$schema` natively; this was not clicked through in an editor during the build.
+- [x] `CONTRIBUTING-DATA.md` exists and matches the real format.
+- [x] The existing 5 cards are migrated with no change to their data.
 
 ## 6. TBD / open questions
 
 - ~~**TBD-A1:** Storage format.~~ **Resolved (2026-10-20): JSON** for all data.
 - ~~**TBD-A2:** Fusions and drops in JSON or CSV?~~ **Resolved: JSON**, the same as everything else. An importer (A-5) may *read* CSV from a source, but the repository stores JSON.
-- **TBD-A3:** While data is incomplete, should a missing referenced ID be an **error** or a **warning**? Proposal: a warning until coverage reaches 100%, then an error.
-- **TBD-A4:** Licensing and attribution for imported community data. Each source needs checking before any bulk import.
-- **TBD-A5:** Should each record carry a `source` field (for provenance) and an optional `notes` field? Or should provenance live only in PR descriptions?
-- **TBD-A6:** Schema tool: Zod (types + runtime validation, with JSON Schema exported from it), or a hand-written JSON Schema with Ajv plus generated types?
+- **TBD-A3:** While data is incomplete, should a missing referenced ID be an **error** or a **warning**? Proposal: a warning until coverage reaches 100%, then an error. **Built as proposed (2026-10-20):** a missing card is a warning. A wrong card kind or an out-of-range ID is always an error. Switching to errors at 100% coverage is still to do.
+- **TBD-A4:** Licensing and attribution for imported community data. Each source needs checking before any bulk import. Open; blocks A-5.
+- **TBD-A5:** Should each record carry a `source` field (for provenance) and an optional `notes` field? Or should provenance live only in PR descriptions? Open. For now provenance is in PR descriptions (the data PR template asks for it), and the strict schema rejects unknown fields until this is decided.
+- **TBD-A6:** Schema tool: Zod (types + runtime validation, with JSON Schema exported from it), or a hand-written JSON Schema with Ajv plus generated types? **Built with Zod 4 (2026-10-20)**, dev-only, exporting draft-07 JSON Schemas. Public types stay hand-written and are asserted equal to the schemas (see A-1 "As built").

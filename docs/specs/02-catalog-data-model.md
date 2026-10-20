@@ -4,17 +4,17 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, after the spec 02 build PR (based on `main` @ `d06bf94`). Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, after the spec 02 build PR (based on `main` @ `d06bf94`); D-4 and D-5 rechecked after the spec 03 build PR. Legend in the [index](./README.md#status-system).
 
-**3 built · 2 partial · 0 not built**
+**4 built · 1 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | D-1 | Separate entities from relations | Agreed | ✅ Built | Cards describe what a card is; ritual recipes live in `data/rituals.ts`, keyed by card ID |
 | D-2 | Card entity (target shape) | Agreed | ✅ Built | `IMagicCard`/`ITrapCard`/`IEquipCard` split, flat `attack`/`defense`, `guardianStars` tuple, recipe out of `IRitualCard`. TBD-gated fields (attribute D3, magic/trap kinds D5, rarity D6) deferred |
 | D-3 | Relation collections | Agreed | 🟡 Partial | Typed `fusions`, `rituals`, `equips`, `fields` (only `rituals` has data). Duelists, decks and drops wait for TBD-D9 |
-| D-4 | Game rules as data | Agreed | 🟡 Partial | `MONSTER_TYPES` (all 20), `CARD_TYPES`, `GUARDIAN_STARS` as `as const` lists with derived TS types; `TOTAL_CARDS`, guardian-star advantage and bonus in `data/rules.ts`. Schema enums and `rules.json` come with [03](./03-catalog-data-authoring.md) A-1 |
-| D-5 | One organization rule for files | Agreed | ✅ Built | `cards/monsters/<type>.ts` and `cards/{magic,trap,equip,ritual}.ts`; no `pageN` split. Files are `.ts` until [03](./03-catalog-data-authoring.md) A-1 converts them to `.json` at the same paths |
+| D-4 | Game rules as data | Agreed | ✅ Built | `MONSTER_TYPES` (all 20), `CARD_TYPES`, `GUARDIAN_STARS` in `src/data/enums.ts` are the single list used by the schema enums (`z.enum(MONSTER_TYPES)`) and by the TS types; rule values in `data/rules.json`, validated by the `rules` schema ([03](./03-catalog-data-authoring.md)) |
+| D-5 | One organization rule for files | Agreed | ✅ Built | `data/cards/monsters/<type>.json` and `data/cards/{magic,trap,equip,ritual}.json`; no `pageN` split. The validator rejects a monster in another type's file |
 
 ## 1. Why this spec exists
 
@@ -28,7 +28,7 @@ Designing the full shape now (even if most of it stays empty) lets the data grow
 
 ## 2. What exists today
 
-> **Updated by the spec 02 build (catalog `0.2.0`).** The model below is the one shipped in `0.2.0`. The snapshot that follows it, and §3 Gaps, describe the model **before** this spec was built and are kept for history.
+> **Updated by the spec 02 build (catalog `0.2.0`).** The model below is the one shipped in `0.2.0`. Since spec 03 the data files are JSON in `catalog/data/` at the same paths (`.json` instead of `.ts`), and the rules are in `data/rules.json`. The snapshot that follows it, and §3 Gaps, describe the model **before** this spec was built and are kept for history.
 
 ```ts
 // data/enums.ts: runtime lists in the game's own order; the TS types derive from them
@@ -218,7 +218,7 @@ interface IDrop {
 }
 ```
 
-### D-4 Game rules as data (`rules.json` + schema enums) · 🟡 Partial
+### D-4 Game rules as data (`rules.json` + schema enums) · ✅ Built
 
 The rules split across two places:
 
@@ -236,7 +236,7 @@ The rules split across two places:
 
 (`totalCards`: confirm 722 vs 721, TBD-D10. The advantage map is partial and unverified, TBD-D11.)
 
-**Built (partial):** both TBDs are resolved (§6). Until the schema exists ([03](./03-catalog-data-authoring.md) A-1, tool TBD-A6), the enums are `as const` lists in `data/enums.ts` (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS`, in the game's own order), and the TS types derive from them. A schema can reuse the same lists (`z.enum(MONSTER_TYPES)`). The rule values are in `data/rules.ts`: `TOTAL_CARDS = 722`, the full `GUARDIAN_STAR_ADVANTAGE` map (each star → the star it beats) and `GUARDIAN_STAR_BONUS = 500` (+500 for the advantaged card, −500 for the other). Moving them to `rules.json` with a schema is the remaining part, delivered by spec 03.
+**Built:** both TBDs are resolved (§6). The enums are `as const` lists in `src/data/enums.ts` (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS`, in the game's own order). The TS types derive from them, and the schema reuses the same lists (`z.enum(MONSTER_TYPES)` in `catalog/schema/schemas.ts`, [03](./03-catalog-data-authoring.md) A-1), so there is one source. The rule values live in `catalog/data/rules.json`, validated by the `rules` schema: `totalCards: 722`, the full `guardianStarAdvantage` map (each star → the star it beats) and `guardianStarBonus: 500` (+500 for the advantaged card, −500 for the other). The API exports them as `TOTAL_CARDS`, `GUARDIAN_STAR_ADVANTAGE` and `GUARDIAN_STAR_BONUS`.
 
 ### D-5 One organization rule for files · ✅ Built
 Today there are three different rules (see D-gap-2). Proposal: **one folder per `cardType`, one file per sub-type**:
@@ -261,11 +261,11 @@ Drop the `pageN.ts` ID-range split. ID order is restored by a single sort in the
 
 *Alternative (if TBD-D4 shows that pages map to something real, such as the in-game library pages):* keep `pageN` but apply it to **every** category consistently.
 
-**Built:** the main proposal, with `.ts` files at the target paths under `catalog/src/data/` (`cards/monsters/<type>.ts`, `cards/{magic,trap,equip,ritual}.ts`, `fusions/`, `rituals.ts`, `equips.ts`, `fields.ts`). [03](./03-catalog-data-authoring.md) A-1 converts each file to `.json` without changing the layout. The `pageN` split is gone (TBD-D4 is moot). A monster file only accepts its own type: `MonsterCardsOf<"Thunder">` makes a Dragon in `thunder.ts` a type error. Only `thunder.ts` exists today; a type's file is created, and added to `cards/monsters/index.ts`, with its first card.
+**Built:** the main proposal, as JSON files at the target paths under `catalog/data/` (`cards/monsters/<type>.json`, `cards/{magic,trap,equip,ritual}.json`, `fusions/<type>.json`, `rituals.json`, `equips.json`, `fields.json`, `rules.json`). They were `.ts` files after the spec 02 build and were converted by [03](./03-catalog-data-authoring.md) A-1 without changing the layout. The `pageN` split is gone (TBD-D4 is moot). The validator rejects a monster in another type's file and file names that are not a monster type. Only `thunder.json` exists today; a type's file is created with its first card, with no code change.
 
 ## 5. Acceptance criteria
 
-- [ ] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`. *(Partial: derived from `as const` lists in `data/enums.ts`, with rule values in `data/rules.ts`. The schema and JSON come with spec 03.)*
+- [x] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`. *(The types and the Zod enums derive from the same `as const` lists in `src/data/enums.ts`; the rules are in `catalog/data/rules.json` since spec 03.)*
 - [ ] Every FM concept listed in D-3 has a typed collection, even if it is still empty. *(Fusions, rituals, equips and fields: yes. Duelists, decks and drops: deferred, TBD-D9.)*
 - [x] A contributor can find where any card belongs from **one** rule (D-5).
 - [x] `TOTAL_CARDS` comes from the library. The site no longer hard-codes 721.

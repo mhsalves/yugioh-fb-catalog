@@ -4,7 +4,7 @@ All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a
 
 ## 0.2.0
 
-Data model update (spec 02, `docs/specs/02-catalog-data-model.md`).
+Data model update (spec 02, `docs/specs/02-catalog-data-model.md`). The data is now authored as JSON validated by schemas (spec 03); the data itself and the public API are the same either way.
 
 ### BREAKING
 
@@ -41,6 +41,7 @@ const result = getRitual(ritualCard.id)?.result;
 ### Changed
 
 - `getCardsByMonsterType` returns `IMonsterCard[]` (was `ICard[]`).
+- The card data and the game rules are stored as JSON in the repository (`catalog/data/`) and validated before every build. The package still ships compiled JS, so consumers see no difference. `TOTAL_CARDS` is typed `number` (its value is still 722).
 
 ## 0.1.1
 
