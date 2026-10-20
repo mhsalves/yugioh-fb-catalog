@@ -6,6 +6,7 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -110,7 +111,7 @@ interface ICardBase {
   name: string;               // English name; see TBD-X2 for localization
   description: string;
   password: { code: string; cost: number };   // code: 8 digits; cost: starchips
-  // TBD-D6: rarity / in-game "card number" display, artwork reference
+  // TBD-D6: rarity / in-game "card number" display. Artwork lives in data/images.json (spec 08), not on the card
 }
 
 interface IMonsterCard extends ICardBase {
@@ -228,9 +229,9 @@ Drop the `pageN.ts` ID-range split. ID order is restored by a single sort in the
 | **TBD-D3** | Does FM have card attributes that matter (or are at least shown)? | Unclear. Listed in some databases, possibly unused in gameplay |
 | **TBD-D4** | What do the `pageN.ts` ID ranges mean, and are they correct? | Possibly how the author planned to split work. Not verified against the game |
 | **TBD-D5** | Sub-classification of Magic and Trap cards (field, damage, heal, destroy, power-up, ...) | Needed for filters. The categories are not settled |
-| **TBD-D6** | Extra card fields: rarity, artwork reference, Japanese/PAL names | — |
+| **TBD-D6** | Extra card fields: rarity, Japanese/PAL names | Artwork reference resolved: a separate relation file, `data/images.json` ([08](./08-card-images.md) I-2) |
 | **TBD-D7** | Breaking-change strategy for reshaping fields (D-2) | Do it in `0.2.0` with a migration note |
 | **TBD-D8** | Equip boost values (+500 typical, larger for some cards?) and field-effect amounts | — |
 | **TBD-D9** | Duelist list, campaign stages, drop rank categories, and whether we store drop weights or percentages | — |
-| **TBD-D10** | Total card count: 722 or 721? | Believed to be 722 (IDs 001–722) |
+| **TBD-D10** | Total card count: 722 or 721? | Believed to be 722 (IDs 001–722). **Evidence (2026-10-20):** the Yu-Gi-Oh! Fandom gallery groups cards 001–722 by `FMR number` ([08](./08-card-images.md) §2). Confirm against a second source before closing |
 | **TBD-D11** | Guardian-star advantage cycle and bonus | Believed to be two cycles (Sun→Moon→Venus→Mercury→Sun; Mars→Jupiter→Saturn→Uranus→Pluto→Neptune→Mars), with +500 for the advantaged star |

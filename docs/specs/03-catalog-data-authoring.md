@@ -6,6 +6,7 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -132,7 +133,7 @@ Implemented as one `validate` script that runs in CI ([01](./01-repository-and-w
 | Names unique (warning) | — |
 
 ### A-3 Contributor guide `catalog/CONTRIBUTING-DATA.md` · 🟡 Partial
-A one-page guide covering: where each kind of card goes, a copyable template per card type, how to run `yarn validate`, and how to cite a source in the PR. It replaces the outdated section in `catalog/README.md`.
+A one-page guide covering: where each kind of card goes, a copyable template per card type, how to add the card's image line to `data/images.json` (paste the wiki image URL, [08](./08-card-images.md) I-2), how to run `yarn validate`, and how to cite a source in the PR. It replaces the outdated section in `catalog/README.md`.
 
 ### A-4 Coverage report as a script · ❌ Not built
 `yarn coverage:data` prints the entered count per category and overall (`5 / 722`). The site shows the same numbers ([06](./06-site-ux-forbidden-memories.md)), and CI can post them as a PR comment.

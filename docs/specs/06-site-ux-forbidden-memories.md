@@ -6,6 +6,7 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -71,7 +72,7 @@ Recreate the **mood** of FM with original CSS and assets:
 | Card "library" list with ID numbers | The main Library page (U-2) mirrors this browse-by-number feel |
 | Menu cursor and selection | Keyboard focus ring styled as the game's selection cursor |
 
-**No Konami artwork, logos, sprites or ripped fonts** unless TBD-X3 decides otherwise. Card images are a styled **placeholder frame** that shows the type color, name, level stars, ATK/DEF and guardian-star icons. This renders well and avoids copyright problems.
+**No Konami logos, sprites or ripped fonts are copied into the site.** Card pictures are **linked** from the Yu-Gi-Oh! Fandom wiki, never stored by us ([08](./08-card-images.md), the interim decision for TBD-X3). The **styled card frame** (type color, name, level stars, ATK/DEF, guardian-star icons) stays the default visual and is used whenever an image is missing or fails to load, so the site looks complete with or without external images.
 
 Accessibility: WCAG AA contrast on the dark theme, `prefers-reduced-motion` respected, all actions keyboard-reachable. Optional light theme (**TBD-U5**).
 
@@ -152,7 +153,7 @@ The current "Cards registered" page becomes **/progress** (U-2), so the coverage
 - [ ] Lighthouse: Performance ≥ 90 and Accessibility ≥ 95 on Library and Card detail (mobile).
 - [ ] Filter and search state round-trips through the URL.
 - [ ] `/cards/1` … `/cards/722` all exist in the static export.
-- [ ] No third-party copyrighted asset is shipped (see the TBD-X3 decision).
+- [ ] No third-party copyrighted asset is shipped in the build. Card images are only linked ([08](./08-card-images.md)), with attribution.
 - [ ] Design mock-ups for Library and Card detail are approved before implementation (TBD-U2).
 
 ## 6. TBD / open questions
@@ -164,4 +165,4 @@ The current "Cards registered" page becomes **/progress** (U-2), so the coverage
 - **TBD-U5:** Dark only, or dark plus light?
 - **TBD-U6:** Sound effects at all?
 - **TBD-U7:** Internationalization of the UI (PT-BR / EN), linked to TBD-X2 and TBD-X4.
-- **TBD-U8:** Card artwork. See TBD-X3. Options: none (styled frame), user-supplied, or external links.
+- ~~**TBD-U8:** Card artwork.~~ **Resolved (interim, 2026-10-20):** linked from the Yu-Gi-Oh! Fandom wiki, with the styled frame as fallback. See [08](./08-card-images.md).

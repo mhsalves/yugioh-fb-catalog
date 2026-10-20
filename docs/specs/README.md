@@ -17,6 +17,7 @@ The project keeps **one repository with two deliverables**:
 | G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: 4 read/filter functions; no search | [04 – Query API](./04-catalog-query-api.md) |
 | G6 | The catalog **organizes the data correctly** by card type and other game concepts | 🟡 Partial: 5 card types modeled, 2 of ~20 monster types, no fusions or duelists | [02 – Data model](./02-catalog-data-model.md) |
 | — | Shared foundation: repo layout, workspaces, tests, CI | ❌ Not built: no workspaces, tests or CI | [01 – Repository](./01-repository-and-workspaces.md) |
+| — | Card images: free and optimized, without hosting copyrighted art ourselves | ❌ Not built: no images anywhere | [08 – Card images](./08-card-images.md) |
 
 A goal's status says whether the **goal is met today**. Item statuses in the specs say whether each **proposed improvement** is built, so a goal can be ✅ while its spec's improvements are still ❌. For example, G2 works today, but automated deploys (07 P-1) are not built.
 
@@ -71,7 +72,8 @@ Checked as of 2026-10-20, `main` @ `9a353ee`.
 | [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 2 | 6 | 0 |
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 3 | 1 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 0 | 2 | 4 | 0 |
-| **Total** | **0** | **15** | **29** | **1** |
+| [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
+| **Total** | **0** | **15** | **36** | **1** |
 
 ## Automation rules
 
@@ -111,6 +113,7 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 | 2026-10-20 | **npm trusted publishing (OIDC)** for releases. No `NPM_TOKEN`; provenance on every version | **Agreed** | [05](./05-catalog-npm-distribution.md) N-2b |
 | 2026-10-20 | **All GitHub Actions pinned by full commit SHA** (version in a comment, updated by Dependabot, enforced in CI) | **Agreed** | [01](./01-repository-and-workspaces.md) R-4 |
 | 2026-10-20 | **Rename the site folder `server/` → `mkt_site/`**. Target-state specs use `mkt_site/` | **Agreed** | [01](./01-repository-and-workspaces.md) R-6 |
+| 2026-10-20 | **Card images are linked from the Yu-Gi-Oh! Fandom wiki** (interim). The wiki URL is stored as copied, including `?cb=`, in `data/images.json`, filled by hand per card or by an import script. No images in the repo or npm package | **Agreed** (interim) | [08](./08-card-images.md) I-1, I-2 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
 | 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
 
@@ -127,6 +130,8 @@ flowchart LR
     Q --> U["06 Site UX:<br/>FM-inspired UI<br/>(stack TBD)"]
     U --> P["07 Pages:<br/>automated deploy"]
     R --> P
+    A --> I["08 Images:<br/>Fandom links + fallback"]
+    I --> U
 ```
 
 ## Cross-cutting TBDs
@@ -135,5 +140,5 @@ These questions affect more than one spec and are tracked here once:
 
 - **TBD-X1, source of truth for game data.** Which reference (game dump, community database, manual play-through) do we treat as authoritative for card stats, fusions and drops? See [02](./02-catalog-data-model.md) and [03](./03-catalog-data-authoring.md).
 - **TBD-X2, game version/region.** NTSC-U (English), PAL (multi-language) and the Japanese release differ in names and possibly in some data. Which do we catalog? Do we support several?
-- **TBD-X3, card artwork.** Card art and game sprites are Konami's copyright. Do we show none, show placeholders, or link to external images? See [06](./06-site-ux-forbidden-memories.md).
+- ~~**TBD-X3, card artwork.**~~ **Resolved (interim, 2026-10-20):** card images are **linked** from the [Yu-Gi-Oh! Fandom wiki gallery](https://yugioh.fandom.com/wiki/Gallery_of_Yu-Gi-Oh!_Forbidden_Memories_cards), not stored by us. The styled frame is the fallback, and self-hosting through jsDelivr is the exit plan. See [08](./08-card-images.md).
 - **TBD-X4, documentation language.** The READMEs are in Portuguese, while `ARCHITECTURE.md` and these specs are in English. Pick one, or keep both with a clear rule (for example, user READMEs in PT-BR and technical docs in EN).
