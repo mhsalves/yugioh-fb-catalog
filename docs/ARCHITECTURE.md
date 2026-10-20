@@ -265,6 +265,8 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 
 ## 8. Suggested improvement roadmap
 
+> Detailed, reviewable proposals for each item below live in [`specs/`](./specs/README.md).
+
 Ordered so that each step makes the next one safer.
 
 1. ~~**Single source of truth (S1, S2).**~~ Done: the root copy was deleted and `catalog/` is the only library.
