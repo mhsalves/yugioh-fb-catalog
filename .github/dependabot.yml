@@ -17,8 +17,20 @@ updates:
     commit-message:
       prefix: "build(deps)"
     groups:
-      # All security fixes in one PR.
-      security:
+      # Security fixes: one PR per area. The workspace shares one root lockfile,
+      # so areas are told apart by package name, and a package goes to the first
+      # group it matches. Transitive packages can't be traced to a workspace, so
+      # they fall through to `security-other`.
+      security-mkt-site:
+        applies-to: security-updates
+        patterns: ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*", "gh-pages"]
+      security-catalog:
+        applies-to: security-updates
+        patterns: ["vite", "vitest", "@vitest/*", "@types/node", "typescript"]
+      security-tooling:
+        applies-to: security-updates
+        patterns: ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier"]
+      security-other:
         applies-to: security-updates
         patterns: ["*"]
       # React, Next and MUI move together; keep their bumps in one PR.
