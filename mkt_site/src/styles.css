@@ -188,13 +188,14 @@ select {
 
 .catalog-version {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
     font-size: 0.875rem;
 }
 
 .catalog-version__copy,
-.catalog-version__npm {
+.catalog-version__link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -210,11 +211,13 @@ select {
 
 .catalog-version__copy {
     font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+    text-align: start;
     cursor: pointer;
 }
 
 .catalog-version__copy:hover,
-.catalog-version__npm:hover {
+.catalog-version__link:hover {
     border-color: var(--color-accent);
 }
 
