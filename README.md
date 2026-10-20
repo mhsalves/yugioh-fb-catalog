@@ -20,6 +20,8 @@ O projeto está dividido em três componentes principais, cada um com seu própr
    - Base de dados estruturada das cartas
    - [Documentação do Catálogo](./catalog/README.md)
 
+Para a arquitetura, as decisões de design e o roadmap de melhorias, veja [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
 ## Início Rápido
 
 ```bash
