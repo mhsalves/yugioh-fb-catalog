@@ -1,24 +1,23 @@
 import { useEffect } from "react";
+import Footer from "./components/Footer";
 import Header from "./components/Header";
+import CatalogPage from "./pages/CatalogPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { usePath } from "./router";
-import { routes } from "./routes";
 
+// The site is one page (spec 09 C-1); any other path is the 404 view.
 export default function App() {
-    const path = usePath();
-    const route = routes.find((r) => r.path === path);
-    const Page = route?.component ?? NotFoundPage;
+    const isCatalog = usePath() === "/";
 
     useEffect(() => {
-        document.title = route ? route.title : "Page not found · Yu-Gi-Oh! FM Catalog";
-    }, [route]);
+        if (!isCatalog) document.title = "Page not found · Yu-Gi-Oh! FM Catalog";
+    }, [isCatalog]);
 
     return (
         <>
             <Header />
-            <main className="page">
-                <Page />
-            </main>
+            <main className="page">{isCatalog ? <CatalogPage /> : <NotFoundPage />}</main>
+            <Footer />
         </>
     );
 }

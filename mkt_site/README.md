@@ -4,11 +4,15 @@ Interface web do catálogo Yu-Gi-Oh! Forbidden Memories: uma SPA estática feita
 
 ## O que existe hoje
 
-- Cabeçalho com logo, menu de páginas (vira um botão no celular), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fb-catalog@<versão>`) e link para essa versão no npm
-- Página inicial provisória ("Hello, duelist!")
-- Página 404 para endereços desconhecidos
+Uma única página, o catálogo ([spec 09](../docs/specs/09-site-catalog-page.md)):
 
-As próximas páginas seguem a [spec 06](../docs/specs/06-site-ux-forbidden-memories.md).
+- Cabeçalho com logo (volta ao catálogo completo), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fb-catalog@<versão>`) e link para essa versão no npm
+- Busca por nome, filtro **By type** ("All types" + os 5 tipos de carta) e um painel com os outros filtros (tipo de monstro, guardian star, level, ATK, DEF, custo); no celular o painel abre em tela cheia
+- Resultados em grade, vindos de `searchCards` do catálogo; sem resultados aparece um placeholder com "Clear filters"
+- Clique numa carta para abrir os detalhes (atributos, guardian stars, senha com botão de copiar, custo, descrição, ritual)
+- Filtros e carta aberta ficam na URL (`?type=Monster&card=425`), então dá para compartilhar
+- Rodapé com links para https://matheusalves.dev e https://github.com/mhsalves
+- Página 404 para outros endereços
 
 ## Tecnologias
 
@@ -47,11 +51,10 @@ O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/li
 - `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fb-catalog/`
 - `yarn typecheck`: verifica os tipos (TypeScript strict)
 
-## Adicionar uma página
+## Regras
 
-1. Crie o componente em `src/pages/`.
-2. Registre a rota em `src/routes.ts`. Ela aparece no menu do cabeçalho.
-3. Use `<Link to="/caminho">` de `src/router.tsx` para links internos (nunca `href="/..."` fixo, por causa do base path).
+- Filtrar e ordenar cartas é trabalho do catálogo (`searchCards`); o site só monta a consulta e mostra o resultado.
+- Use `<Link to="/...">` e `navigate()` de `src/router.tsx` para links internos (nunca `href="/..."` fixo, por causa do base path).
 
 ## Deploy
 
@@ -70,13 +73,14 @@ mkt_site/
 ├── vite.config.ts       # Base path, 404.html, versão do catálogo
 └── src/
     ├── main.tsx         # Entrada
-    ├── App.tsx          # Cabeçalho + página da rota atual
-    ├── routes.ts        # Lista de páginas (alimenta o menu)
-    ├── router.tsx       # usePath, navigate, <Link>
+    ├── App.tsx          # Cabeçalho, catálogo (ou 404) e rodapé
+    ├── router.tsx       # usePath, useSearch, navigate, <Link>
+    ├── catalogUrl.ts    # Query string ⇄ CardQuery
+    ├── useCopy.ts       # Copiar para a área de transferência
     ├── styles.css       # Tokens e estilos globais
     ├── assets/logo.svg
-    ├── components/      # Header, CatalogVersion, ícones
-    └── pages/           # HomePage, NotFoundPage
+    ├── components/      # Header, Footer, CatalogVersion, Filters, CardTile, CardDetails, ícones
+    └── pages/           # CatalogPage, NotFoundPage
 ```
 
 ## Licença

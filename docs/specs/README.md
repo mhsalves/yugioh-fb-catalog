@@ -10,11 +10,11 @@ The project keeps **one repository with two deliverables**:
 
 | # | Goal | Build status today | Spec |
 |---|---|---|---|
-| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: Vite site with header and a placeholder page; the catalog page (filter, grid, details) is specified, not built | [06 – Site UX](./06-site-ux-forbidden-memories.md), [09 – Catalog page](./09-site-catalog-page.md) |
+| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: one catalog page (filter over `searchCards`, grid, card details, footer) is built; the FM look waits for the style guide | [06 – Site UX](./06-site-ux-forbidden-memories.md), [09 – Catalog page](./09-site-catalog-page.md) |
 | G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (`pages.yml` deploys on every merge that changes the site) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
 | G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | ✅ Built: JSON files in `catalog/data/` with schemas, `yarn validate` in CI, contributor guide | [03 – Data authoring](./03-catalog-data-authoring.md) |
 | G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
-| G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: 4 read/filter functions; no search | [04 – Query API](./04-catalog-query-api.md) |
+| G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: read functions plus `searchCards` (catalog 0.3.0); relation queries wait for their data | [04 – Query API](./04-catalog-query-api.md) |
 | G6 | The catalog **organizes the data correctly** by card type and other game concepts | 🟡 Partial: all 5 card types and 20 monster types modeled, fusion/ritual/equip/field relations typed; duelists wait for TBD-D9 | [02 – Data model](./02-catalog-data-model.md) |
 | — | Shared foundation: repo layout, workspaces, tests, CI | ✅ Built: Yarn workspaces, Vitest, ESLint/Prettier, `ci.yml` (version-bump check waits for 05 N-2) | [01 – Repository](./01-repository-and-workspaces.md) |
 | — | Card images: free and optimized, without hosting copyrighted art ourselves | ❌ Not built: no images anywhere | [08 – Card images](./08-card-images.md) |
@@ -68,13 +68,13 @@ Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which
 | [01 – Repository, workspaces, tests and CI](./01-repository-and-workspaces.md) | 5 | 1 | 0 | 0 |
 | [02 – Catalog data model and organization](./02-catalog-data-model.md) | 4 | 1 | 0 | 0 |
 | [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 5 | 0 | 1 | 0 |
-| [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 4 | 4 | 0 |
+| [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 1 | 3 | 4 | 0 |
 | [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 4 | 4 | 0 |
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 2 | 2 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 4 | 0 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
-| [09 – Site: single catalog page](./09-site-catalog-page.md) | 0 | 1 | 5 | 0 |
-| **Total** | **18** | **13** | **25** | **2** |
+| [09 – Site: single catalog page](./09-site-catalog-page.md) | 6 | 0 | 0 | 0 |
+| **Total** | **25** | **11** | **20** | **2** |
 
 ## Automation rules
 

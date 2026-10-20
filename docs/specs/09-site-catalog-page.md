@@ -1,21 +1,21 @@
 # 09 – Site: single catalog page (filter, grid, card details)
 
-> **Status: Agreed.** Requested by the project owner on 2026-10-20 (open details in §6). Replaces the multi-page plan in [06](./06-site-ux-forbidden-memories.md) U-2 with **one page**: a filter over the catalog library, a grid of results and a details card. Visuals follow the style guide when it arrives (06 U-1, TBD-U3); this spec fixes structure and behaviour only.
+> **Status: Built** (2026-10-20, with the §6 defaults). Requested by the project owner on 2026-10-20. Replaces the multi-page plan in [06](./06-site-ux-forbidden-memories.md) U-2 with **one page**: a filter over the catalog library, a grid of results and a details card. Visuals follow the style guide when it arrives (06 U-1, TBD-U3); this spec fixes structure and behaviour only.
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `d72f97e`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `main` @ `d72f97e`). Legend in the [index](./README.md#status-system).
 
-**0 built · 1 partial · 5 not built**
+**6 built · 0 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| C-1 | One page, header without menu | Agreed | 🟡 Partial | Header has logo, copyable catalog version and npm link, plus a one-item menu ("Home") to remove |
-| C-2 | Filter bound to the library (`searchCards`) | Agreed | ❌ Not built | No filter; `searchCards` (04 Q-4) not built |
-| C-3 | Results grid | Agreed | ❌ Not built | Placeholder "Hello, duelist!" page |
-| C-4 | Card details card | Agreed | ❌ Not built | None |
-| C-5 | Footer with owner links | Agreed | ❌ Not built | No footer |
-| C-6 | Filter and open card kept in the URL | Agreed | ❌ Not built | Router handles paths only |
+| C-1 | One page, header without menu | Agreed | ✅ Built | Header: logo (back to the full catalog), copyable catalog version, npm link; no menu. `App.tsx` renders the catalog at `/` and the 404 view elsewhere |
+| C-2 | Filter bound to the library (`searchCards`) | Agreed | ✅ Built | `searchCards` (catalog 0.3.0); "By type" row with "All types" above the grid; filter panel (desktop column, phone sheet) for the other fields |
+| C-3 | Results grid | Agreed | ✅ Built | `CardTile` grid, 2 columns on phones; zero results show a placeholder with "Clear filters" |
+| C-4 | Card details card | Agreed | ✅ Built | `CardDetails` on `<dialog>`: stats, stars, copyable password, ritual recipe, previous/next |
+| C-5 | Footer with owner links | Agreed | ✅ Built | `Footer`: "Made by Matheus Alves", Home page and GitHub links |
+| C-6 | Filter and open card kept in the URL | Agreed | ✅ Built | `catalogUrl.ts` maps the query string to `CardQuery` and back; opening a card pushes history |
 
 ## 1. Why this spec exists
 
@@ -60,33 +60,32 @@ Library functions available on `main` (`catalog/src/tools/`, exported from the p
 ### Layout
 
 ```
-Desktop (≥ 1024px)                                   Phone (< 720px)
+Desktop (≥ 720px)                                    Phone (< 720px)
 ┌──────────────────────────────────────────────────┐  ┌──────────────────────┐
-│ [logo] FM Catalog            v0.2.0 ⧉   npm ↗    │  │ [logo] FM Catalog  ⋯ │  ⋯ = version + npm
+│ [logo] FM Catalog            v0.3.0 ⧉   npm ↗    │  │ [logo]  v0.3.0⧉ npm↗ │
 ├────────────┬─────────────────────────────────────┤  ├──────────────────────┤
-│ Search ___ │ 5 cards · 5 of 722 catalogued  Sort▾│  │ Search ____ [Filters]│  Filters opens a sheet
-│ Card type  │ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐     │  │ 5 cards        Sort▾ │
-│ □ Monster… │ │#315 │ │#332 │ │#425 │ │#674 │     │  │ ┌────────┐┌────────┐ │
-│ Monster    │ │name │ │name │ │name │ │name │     │  │ │ #315   ││ #332   │ │
-│ type …     │ │type │ │type │ │type │ │type │     │  │ └────────┘└────────┘ │
-│ Star …     │ └─────┘ └─────┘ └─────┘ └─────┘     │  │ ┌────────┐┌────────┐ │
-│ Level ▢–▢  │                                     │  │ │ #425   ││ #674   │ │
-│ ATK ▢–▢    │                                     │  │ └────────┘└────────┘ │
+│ Filters    │ Search ___________________________  │  │ Search ____ [Filters]│  Filters opens a sheet
+│ ☐ descr.   │ By type (All types) Monster Magic … │  │ By type (All types)… │
+│ Monster    │ 5 cards · 5 of 722 catalogued Sort▾ │  │ 5 cards        Sort▾ │
+│ type …     │ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐     │  │ ┌────────┐┌────────┐ │
+│ Star …     │ │#315 │ │#332 │ │#425 │ │#674 │     │  │ │ #315   ││ #332   │ │
+│ Level ▢–▢  │ └─────┘ └─────┘ └─────┘ └─────┘     │  │ └────────┘└────────┘ │
+│ ATK ▢–▢    │                                     │  │                      │
 │ [Clear]    │                                     │  │                      │
 ├────────────┴─────────────────────────────────────┤  ├──────────────────────┤
-│ Matheus Alves · Home page ↗ · GitHub ↗           │  │ Home page ↗ GitHub ↗ │
+│ Made by Matheus Alves      Home page ↗  GitHub ↗ │  │ Home page ↗ GitHub ↗ │
 └──────────────────────────────────────────────────┘  └──────────────────────┘
 ```
 
 Clicking a grid item opens the **details card** over the page (C-4).
 
-### C-1 One page, header without menu · 🟡 Partial
+### C-1 One page, header without menu · ✅ Built
 - The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
-- The header keeps the **logo** (scrolls back to top and clears the open card), the **catalog version** button (copy) and the **npm** link. The **menu is removed**, with its mobile toggle and the `label` field of `routes.ts`.
+- The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog version** button (copy) and the **npm** link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).
-- On phones the version and npm link stay visible if they fit; otherwise they go behind a small "⋯" button. That is the only collapsible part of the header.
+- On phones the version and npm link stay visible; below 400px the "FM Catalog" text next to the logo is hidden so they fit.
 
-### C-2 Filter bound to the library · ❌ Not built
+### C-2 Filter bound to the library · ✅ Built
 **Rule:** the page calls **one library function**, `searchCards(query)` from [04](./04-catalog-query-api.md) Q-4, and renders what it returns. Every filter control maps to one `CardQuery` field. Option lists come from the library's exported enums, so a new monster type in the data appears in the filter with no site change.
 
 **Prerequisite:** build 04 Q-4 first, in the catalog, with tests. The site uses the workspace catalog (07 P-2), so it does not wait for an npm release.
@@ -95,28 +94,28 @@ Clicking a grid item opens the **details card** over the page (C-4).
 |---|---|---|---|
 | Search box | `text` | Free text | Case- and accent-insensitive substring on the name (Q-4). Debounced ~150 ms |
 | "Also search descriptions" checkbox | `includeDescription` | On / off | Off by default |
-| Card type chips | `cardType[]` | `CARD_TYPES` | Multi-select; none selected = all |
+| **By type** row, above the grid | `cardType[]` | "All types" + `CARD_TYPES` | Always visible (not inside the panel). Multi-select; "All types" clears the selection and is shown selected when none is chosen (owner request, 2026-10-20) |
 | Monster type chips | `monsterType[]` | `MONSTER_TYPES` | Multi-select. Disabled, with a hint, when card types are selected and "Monster" is not one of them |
 | Guardian star chips | `guardianStar[]` | `GUARDIAN_STARS` | Matches either of a monster's two stars |
 | Level | `level { min, max }` | Two number inputs, 1–12 | Monster-only, like ATK and DEF |
 | ATK / DEF | `attack`, `defense` `{ min, max }` | Two number inputs each | Empty = no limit |
 | Cost | `cost { min, max }` | Two number inputs | Starchips |
 | Sort | `sort { by, dir }` | ID, name, ATK, DEF, level, cost; ascending or descending | Default: ID ascending |
-| Clear filters | — | Button | Resets every field, keeps the sort |
+| Clear filters (panel) | — | Button | Resets the panel fields; keeps the search text, "By type" and the sort |
 
 - Results update as the user types or clicks; there is no "Apply" button.
 - The page shows the result count from `searchCards(...).total` and the catalogue coverage: "**N cards** · 5 of 722 catalogued" (`getCardList().length` of `TOTAL_CARDS`).
-- **Empty state:** "No cards match these filters." with a "Clear filters" button.
+- **Zero results:** a placeholder in place of the grid: an empty dashed card frame, "No cards found", "No cards match these filters. Try another type or clear the filters." and a "Clear filters" button that resets everything except the sort (owner request, 2026-10-20).
 - Monster-only filters (monster type, star, level, ATK, DEF) leave non-monster cards out of the results while they are set. That follows Q-4 and is said in a hint under the group.
 - Desktop: filters in a left column. Phones: a "Filters" button opens them in a full-screen sheet with "Show N cards" to close (TBD-C2).
 
-### C-3 Results grid · ❌ Not built
+### C-3 Results grid · ✅ Built
 - A responsive grid: `repeat(auto-fill, minmax(~180px, 1fr))`, which gives 2 columns on phones and 4–6 on desktop.
 - **Each grid item** shows: `#id`, name, card type badge (color per type, 06 U-1), and for monsters the monster type, level and ATK/DEF. The image area shows the styled placeholder frame until card images land ([08](./08-card-images.md) I-4).
 - Each item is a **button** (keyboard focusable, `Enter`/`Space` opens the details card) with an accessible name such as "Thunder Dragon, #425, Monster".
 - Only catalogued cards appear (TBD-C3). With at most 722 cards, the grid renders them all; virtualization is added only if it measurably helps (06 U-3).
 
-### C-4 Card details card · ❌ Not built
+### C-4 Card details card · ✅ Built
 Opens when a grid item is clicked. A modal **details card** built on the native `<dialog>` element (focus trap, `Esc` to close, backdrop click closes). Full-screen on phones.
 
 | Section | Content | Library source |
@@ -133,7 +132,7 @@ Opens when a grid item is clicked. A modal **details card** built on the native 
 - Closing returns focus to the grid item that opened it.
 - Fusions, equips, fields and drops are added to this card when their data and library functions exist (04 Q-5). The card shows nothing for relations that have no data, with no empty sections.
 
-### C-5 Footer with owner links · ❌ Not built
+### C-5 Footer with owner links · ✅ Built
 At the bottom of the page, on every view (including 404):
 
 | Link | URL |
@@ -144,7 +143,7 @@ At the bottom of the page, on every view (including 404):
 - Plain text links with an external-link icon, opening in a new tab (`rel="noopener"`), and visible on phones.
 - Text: "Made by Matheus Alves", then the two links. A fan-project notice is optional (TBD-C4).
 
-### C-6 Filter and open card kept in the URL · ❌ Not built
+### C-6 Filter and open card kept in the URL · ✅ Built
 Shareable views, with no extra pages. The query string holds the filter and the open card:
 
 ```
@@ -158,13 +157,13 @@ Shareable views, with no extra pages. The query string holds the filter and the 
 
 ## 5. Acceptance criteria
 
-- [ ] `searchCards` (04 Q-4) is built in the catalog with unit tests, and the page calls only `searchCards`, `getCard`, `getCardList`, `getRitual` and exported constants. No filtering or sorting code in `mkt_site/`.
-- [ ] Every filter control in C-2 changes the results, and its options come from the library enums.
-- [ ] Clicking or pressing `Enter` on a grid item opens its details card; `Esc`, the close button and Back all close it, and focus returns to the item.
-- [ ] Reloading a URL with filters and `card=` restores the same view.
-- [ ] The header has no menu; the footer links to https://matheusalves.dev and https://github.com/mhsalves.
-- [ ] Works at 360px width with no horizontal scroll; all controls reachable by keyboard; WCAG AA contrast.
-- [ ] `yarn typecheck`, `yarn lint`, `yarn test` and the Pages deploy pass.
+- [x] `searchCards` (04 Q-4) is built in the catalog with unit tests, and the page calls only `searchCards`, `getCard`, `getCardList`, `getRitual` and exported constants. No filtering or sorting code in `mkt_site/`.
+- [x] Every filter control in C-2 changes the results, and its options come from the library enums.
+- [x] Clicking or pressing `Enter` on a grid item opens its details card; `Esc`, the close button and Back all close it, and focus returns to the item.
+- [x] Reloading a URL with filters and `card=` restores the same view.
+- [x] The header has no menu; the footer links to https://matheusalves.dev and https://github.com/mhsalves.
+- [x] Works at 375px width with no horizontal scroll; all controls are native buttons and inputs, reachable by keyboard. (A formal WCAG AA contrast audit waits for the style guide, TBD-C5.)
+- [x] `yarn typecheck`, `yarn lint`, `yarn test` and the Pages deploy pass.
 
 ## 6. TBD / open questions
 
@@ -174,9 +173,6 @@ Shareable views, with no extra pages. The query string holds the filter and the 
 - **TBD-C4:** Add a footer notice such as "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami." (pairs with 08 I-5 attribution)?
 - **TBD-C5:** Colors, fonts, card-type colors and the placeholder frame come from the style guide (06 U-1, TBD-U3, TBD-U4).
 
-## Delivery plan
+## Delivery
 
-1. **Catalog:** build 04 Q-4 `searchCards` with tests (minor version bump, changelog).
-2. **Site:** C-1 header change and C-5 footer (small, can ship first).
-3. **Site:** C-2 filter, C-3 grid, C-4 details card and C-6 URL state, in one PR.
-4. **Style:** apply the style guide when it arrives.
+Built in one PR (#38) with the §6 defaults: `searchCards` in catalog 0.3.0 (spec 04 Q-4, 16 tests), then C-1 to C-6 in `mkt_site/`. No catalog data was added. Next: apply the style guide (TBD-C5).
