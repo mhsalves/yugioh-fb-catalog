@@ -57,8 +57,13 @@ jobs:
           npm install "$RUNNER_TEMP"/mhsalves-yugioh-fb-catalog-*.tgz
           node -e '
             const catalog = require("@mhsalves/yugioh-fb-catalog");
-            const cards = catalog.getCardList();
-            if (!cards.length) throw new Error("packed catalog has no cards");
-            if (!catalog.getCard(cards[0].id)) throw new Error("getCard failed on the packed catalog");
-            console.log(`packed catalog OK: ${cards.length} cards`);
+            if (!catalog.getCardList().length) throw new Error("require: packed catalog has no cards");
+            if (catalog.getCard(425)?.id !== 425) throw new Error("require: getCard(425) failed");
+            console.log(`require OK: ${catalog.getCardList().length} cards`);
+          '
+          node --input-type=module -e '
+            import { getCard, getCardList } from "@mhsalves/yugioh-fb-catalog";
+            if (!getCardList().length) throw new Error("import: packed catalog has no cards");
+            if (getCard(425)?.id !== 425) throw new Error("import: getCard(425) failed");
+            console.log(`import OK: ${getCardList().length} cards`);
           '
