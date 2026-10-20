@@ -39,7 +39,7 @@ flowchart LR
     end
 
     catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fb-catalog")]
-    site -- "vite build → dist/ → gh-pages" --> pages[("GitHub Pages")]
+    site -- "pages.yml: vite build → dist/ → deploy-pages" --> pages[("GitHub Pages")]
     npm --> consumers["Third-party apps"]
 ```
 
@@ -222,7 +222,7 @@ data/rituals.json  equips.json  fields.json  fusions/<result-type>.json  rules.j
 
 ## 5. The website (`mkt_site/`)
 
-This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). It is a Vite + React single-page app built into static files in `dist/`, then pushed to the `gh-pages` branch. It replaced a Next.js 15 + MUI 6 static export (spec 06 U-4).
+This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). It is a Vite + React single-page app built into static files in `dist/`, then deployed by GitHub Actions (`pages.yml`). It replaced a Next.js 15 + MUI 6 static export (spec 06 U-4).
 
 ### 5.1 Behaviour
 
@@ -249,15 +249,7 @@ The old "Cards registered" coverage grid was removed; it comes back as `/progres
 
 ### 5.3 Deploy
 
-`.github/workflows/pages.yml` deploys after every merge to `main` that changes the site, the catalog data or code, or the dependencies (spec 07 P-1): validate → test → `yarn build` (base path from `actions/configure-pages`) → upload `mkt_site/dist` → `actions/deploy-pages`. It can also be started by hand (`workflow_dispatch`). It needs the repository's Pages source set to **GitHub Actions**.
-
-The manual fallback, until the first Actions deploy succeeds:
-
-```
-yarn gh:deploy  =  vite build  →  gh-pages -d dist
-```
-
-It runs from `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists). No `.nojekyll` is needed: Vite's output has no `_`-prefixed folders.
+`.github/workflows/pages.yml` deploys after every merge to `main` that changes the site, the catalog data or code, or the dependencies (spec 07 P-1): validate → test → `yarn build` (base path from `actions/configure-pages`) → upload `mkt_site/dist` → `actions/deploy-pages`. It can also be started by hand (`workflow_dispatch`) to redeploy without changes. There is no manual deploy script any more (the `gh-pages` package and `gh:deploy` were removed after the first Actions deploy, 2026-10-20). No `.nojekyll` is needed: Vite's output has no `_`-prefixed folders.
 
 ---
 

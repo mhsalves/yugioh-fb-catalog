@@ -11,11 +11,11 @@
 
 Build status as of 2026-10-20, `main` @ `9a353ee` (P-2 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
 
-**3 built · 1 partial · 2 not built**
+**4 built · 0 partial · 2 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| P-1 | Deploy with GitHub Actions after site changes | Agreed | 🟡 Partial | `.github/workflows/pages.yml` built; runs once the Pages source is switched to GitHub Actions (TBD-P1). `yarn gh:deploy` stays as a fallback until then |
+| P-1 | Deploy with GitHub Actions after site changes | Agreed | ✅ Built | `.github/workflows/pages.yml`; first deploy on 2026-10-20 (merge of #35). `gh-pages` package and `gh:deploy` removed |
 | P-2 | Site builds from the workspace catalog | Proposed | ✅ Built | Built by [01](./01-repository-and-workspaces.md) R-1: `mkt_site/` links the workspace `catalog/` (TBD-P2 still open) |
 | P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fb-catalog/` (`pages.yml` sets it from `actions/configure-pages`) |
 | P-4 | Static hosting constraints | Proposed | ✅ Built | Static Vite SPA, links through the router's base-path helper, `dist/404.html` fallback with the site's own 404 view |
@@ -34,7 +34,7 @@ Goal **G2**: the site must **keep being served from GitHub Pages**. Pages is fre
 | Base path | `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview, `/` in dev | `mkt_site/vite.config.ts` |
 | Unknown paths | The build copies `index.html` to `404.html`; Pages serves it and the router renders the page or the 404 view | `mkt_site/vite.config.ts` |
 | Jekyll | No `.nojekyll` needed: the output has no `_`-prefixed folders | — |
-| Deploy | Manual: `yarn gh:deploy` = `vite build` → `gh-pages -d dist` (pushes to the `gh-pages` branch) from a dev machine | `mkt_site/package.json` |
+| Deploy | Automatic after a merge to `main` (P-1): `pages.yml` builds and deploys with `actions/deploy-pages`. No manual deploy script | `.github/workflows/pages.yml` |
 | Data source | The **workspace** catalog (`catalog/`, linked by Yarn; see [01](./01-repository-and-workspaces.md) R-1) | `mkt_site/package.json` |
 | URL | `https://mhsalves.github.io/yugioh-fb-catalog` | `README.md` |
 
@@ -55,7 +55,7 @@ The table describes **today's** Next.js setup. The future stack is open ([06](./
 
 ## 4. Proposed improvements
 
-### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · 🟡 Partial
+### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · ✅ Built
 **Rule (Agreed, 2026-10-20):** after a merge to `main`, if the merge **updates the site**, the GitHub Pages deploy runs automatically. Merges that do not affect what the site shows deploy nothing. The npm release has its own rule ([05](./05-catalog-npm-distribution.md) N-2), and the [index](./README.md#automation-rules) summarizes both.
 
 **What counts as "a site update"** (path filter):
@@ -99,8 +99,8 @@ jobs:
 
 - `cancel-in-progress: true` is safe here. A newer merge replaces an older deploy in progress, so the site always ends on the latest `main`.
 - **If TBD-P2 picks "released data only":** remove the `catalog/**` paths and add `workflow_run: { workflows: [release], types: [completed] }` (deploy only if the release succeeded). The site then redeploys after each npm publish, and builds against the published package instead of the workspace.
-- Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**).
-- Remove `gh-pages` from devDependencies and the `gh:*` scripts once this works. Keep the old branch until the first successful Actions deploy, then delete it.
+- Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**). The first Actions deploy went live while the setting still read "Deploy from a branch: `gh-pages`", but switch it anyway: in branch mode a push to `gh-pages` would rebuild and replace the site.
+- ✅ `gh-pages` removed from devDependencies and the `gh:deploy` script removed after the first successful Actions deploy. Delete the old `gh-pages` branch **after** switching the source (deleting it first could unpublish the site).
 
 **As built** (`.github/workflows/pages.yml`): the path filter above, plus `package.json` and `yarn.lock` (dependency changes alter the build). The build job runs `yarn validate`, `yarn test` and `yarn build` with `SITE_BASE_PATH` from `actions/configure-pages`, then uploads `mkt_site/dist`. Type-check, lint and format already ran on the PR (`ci.yml`), so they are not repeated. Only the `deploy` job gets `pages: write` and `id-token: write`; the workflow default is `contents: read`. Actions are pinned by SHA (01 R-4).
 
@@ -129,12 +129,12 @@ Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `mkt_site/dist/d
 
 ## 5. Acceptance criteria
 
-- [ ] Merging to `main` a PR that changes the site (or catalog data, while P-2 applies) deploys the site with no manual step, and a failing test blocks the deploy.
+- [x] Merging to `main` a PR that changes the site (or catalog data, while P-2 applies) deploys the site with no manual step, and a failing test blocks the deploy.
 - [ ] Merging a PR that changes only docs or tests does not deploy.
 - [ ] `https://mhsalves.github.io/yugioh-fb-catalog/` and `/cards/425` load with no 404s on assets.
-- [ ] Unknown URLs show the project's own 404 page.
-- [ ] `gh-pages` package and `gh:*` scripts removed.
-- [ ] The base path can be overridden by an environment variable.
+- [x] Unknown URLs show the project's own 404 page.
+- [x] `gh-pages` package and `gh:*` scripts removed.
+- [x] The base path can be overridden by an environment variable.
 
 ## 6. TBD / open questions
 
