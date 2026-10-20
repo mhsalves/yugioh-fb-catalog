@@ -1,23 +1,23 @@
-# Yu-Gi-Oh! FB Catalog - Servidor Web
+# Yu-Gi-Oh! FB Catalog - Site
 
-Interface web do catálogo Yu-Gi-Oh! Forbidden Memories, desenvolvida com Next.js e Material-UI.
+Interface web do catálogo Yu-Gi-Oh! Forbidden Memories: uma SPA estática feita com Vite, React e CSS puro, publicada no GitHub Pages.
 
-## Funcionalidades
+## O que existe hoje
 
-- 🎴 Visualização de todas as cartas do jogo
-- 🔍 Busca avançada por nome, tipo e atributos
-- 📱 Interface responsiva para desktop e mobile
-- 🌓 Tema claro/escuro
-- 📊 Estatísticas e informações detalhadas
+- Cabeçalho com logo, menu de páginas (vira um botão no celular), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fb-catalog@<versão>`) e link para essa versão no npm
+- Página inicial provisória ("Hello, duelist!")
+- Página 404 para endereços desconhecidos
+
+As próximas páginas seguem a [spec 06](../docs/specs/06-site-ux-forbidden-memories.md).
 
 ## Tecnologias
 
-- [Next.js](https://nextjs.org/)
-- [Material-UI](https://mui.com/)
-- [Emotion](https://emotion.sh/)
-- [@mhsalves/yugioh-fb-catalog](../README.md)
+- [Vite](https://vite.dev/) + [React](https://react.dev/)
+- CSS puro com variáveis em `src/styles.css` (sem biblioteca de UI)
+- Roteador próprio em `src/router.tsx` (sem biblioteca de rotas)
+- [@mhsalves/yugioh-fb-catalog](../catalog/README.md) (cópia local do workspace)
 
-## Desenvolvimento Local
+## Desenvolvimento local
 
 ### Pré-requisitos
 
@@ -36,59 +36,50 @@ yarn install
 yarn dev
 ```
 
-O site estará disponível em `http://localhost:3000`
+O site estará disponível em `http://localhost:5173`.
 
-### Scripts Disponíveis (dentro de `mkt_site/`)
+### Scripts (dentro de `mkt_site/`)
 
 O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/lib/`).
 
-- `yarn dev`: Inicia o site em modo desenvolvimento (sem observar o catálogo)
-- `yarn typecheck`: Verifica os tipos (TypeScript strict)
-- `yarn build`: Constrói o projeto para produção
-- `yarn start`: Inicia o servidor em modo produção
-- `yarn gh:deploy`: Faz deploy para GitHub Pages
+- `yarn dev`: inicia o servidor de desenvolvimento
+- `yarn build`: gera o site estático em `dist/`
+- `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fb-catalog/`
+- `yarn typecheck`: verifica os tipos (TypeScript strict)
+- `yarn gh:deploy`: gera o build e publica `dist/` no GitHub Pages
+
+## Adicionar uma página
+
+1. Crie o componente em `src/pages/`.
+2. Registre a rota em `src/routes.ts`. Ela aparece no menu do cabeçalho.
+3. Use `<Link to="/caminho">` de `src/router.tsx` para links internos (nunca `href="/..."` fixo, por causa do base path).
 
 ## Deploy
 
-### GitHub Pages
-
 ```bash
-# Construir e fazer deploy
 yarn gh:deploy
 ```
 
-O site estará disponível em: `https://mhsalves.github.io/yugioh-fb-catalog`
+O site fica em `https://mhsalves.github.io/yugioh-fb-catalog`.
 
-### Hospedagem Personalizada
+- O base path vem de `SITE_BASE_PATH` (padrão `/yugioh-fb-catalog` no build e no preview, `/` no dev). Para um domínio próprio, use `SITE_BASE_PATH=/ yarn build`.
+- O build copia `index.html` para `404.html`, assim links diretos (por exemplo `/yugioh-fb-catalog/qualquer-pagina`) carregam a SPA no GitHub Pages.
 
-1. Construa o projeto:
-```bash
-yarn build
-```
-
-2. Os arquivos estáticos estarão na pasta `out`
-
-## Estrutura do Projeto
+## Estrutura
 
 ```
 mkt_site/
-├── src/
-│   ├── components/    # Componentes React reutilizáveis
-│   ├── pages/        # Páginas Next.js
-│   ├── styles/       # Estilos globais e temas
-│   └── utils/        # Utilitários e helpers
-├── public/           # Arquivos estáticos
-└── package.json
-```
-
-## Configuração
-
-### Variáveis de Ambiente
-
-Crie um arquivo `.env.local`:
-
-```env
-NEXT_PUBLIC_API_URL=sua_url_api
+├── index.html           # Shell da SPA
+├── vite.config.ts       # Base path, 404.html, versão do catálogo
+└── src/
+    ├── main.tsx         # Entrada
+    ├── App.tsx          # Cabeçalho + página da rota atual
+    ├── routes.ts        # Lista de páginas (alimenta o menu)
+    ├── router.tsx       # usePath, navigate, <Link>
+    ├── styles.css       # Tokens e estilos globais
+    ├── assets/logo.svg
+    ├── components/      # Header, CatalogVersion, ícones
+    └── pages/           # HomePage, NotFoundPage
 ```
 
 ## Licença

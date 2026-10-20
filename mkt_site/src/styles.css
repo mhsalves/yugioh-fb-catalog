@@ -1,0 +1,232 @@
+/* Placeholder tokens until the style guide lands (spec 06 U-1). Change colors and fonts here only. */
+:root {
+    --color-bg: #0b1530;
+    --color-surface: #14244a;
+    --color-border: #2c3f6e;
+    --color-text: #e8ecf6;
+    --color-text-muted: #a4b0cc;
+    --color-accent: #d4a937;
+    --color-accent-contrast: #14244a;
+
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --radius: 8px;
+    --header-height: 64px;
+    --page-width: 1120px;
+    --gutter: 16px;
+
+    color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+}
+
+a {
+    color: var(--color-accent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+.icon-button {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: transparent;
+    color: inherit;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+/* Header */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--color-surface);
+    border-bottom: 2px solid var(--color-accent);
+}
+
+.header__bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: var(--page-width);
+    min-height: var(--header-height);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.header__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 1.125rem;
+    text-decoration: none;
+}
+
+.header__menu-toggle {
+    display: none;
+}
+
+.header__menu {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.header__nav {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.header__nav a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    text-decoration: none;
+}
+
+.header__nav a:hover {
+    color: var(--color-text);
+}
+
+.header__nav a[aria-current="page"] {
+    color: var(--color-accent);
+    background: rgb(212 169 55 / 12%);
+}
+
+/* Catalog version */
+
+.catalog-version {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+}
+
+.catalog-version__copy,
+.catalog-version__npm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    font: inherit;
+    text-decoration: none;
+}
+
+.catalog-version__copy {
+    background: transparent;
+    font-family: var(--font-mono);
+    cursor: pointer;
+}
+
+.catalog-version__copy:hover,
+.catalog-version__npm:hover {
+    border-color: var(--color-accent);
+}
+
+/* Pages */
+
+.page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 48px var(--gutter);
+}
+
+.hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-accent);
+}
+
+.hero p {
+    margin: 0 0 12px;
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+}
+
+/* Phones: the menu collapses behind a toggle */
+
+@media (max-width: 720px) {
+    .header__bar {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    /* Keeps the top row at the header height when the menu wraps below it. */
+    .header__brand,
+    .header__menu-toggle {
+        margin-block: 10px;
+    }
+
+    .header__menu-toggle {
+        display: inline-grid;
+    }
+
+    .header__menu {
+        flex-basis: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 0 16px;
+    }
+
+    .header__menu[data-open="false"] {
+        display: none;
+    }
+
+    .header__nav {
+        flex-direction: column;
+    }
+
+    .header__nav a {
+        padding: 12px;
+    }
+}

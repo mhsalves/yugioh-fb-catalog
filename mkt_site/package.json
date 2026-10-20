@@ -2,7 +2,6 @@
   "name": "yugioh-fb-catalog-mkt-site",
   "private": true,
   "version": "0.0.1",
-  "main": "index.js",
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
   "license": "MIT",
   "type": "module",
@@ -11,24 +10,14 @@
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "gh:predeploy": "next build",
-    "gh:theme": "touch ./out/.nojekyll",
-    "gh:prepare": "gh-pages -d out",
-    "gh:deploy": "yarn gh:predeploy && yarn gh:theme && yarn gh:prepare"
+    "gh:deploy": "yarn build && gh-pages -d dist"
   },
   "dependencies": {
-    "@emotion/cache": "^11.14.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
     "@mhsalves/yugioh-fb-catalog": "*",
-    "@mui/icons-material": "^6.4.2",
-    "@mui/material": "^6.4.2",
-    "@toolpad/core": "^0.12.0",
-    "next": "^15.5.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -43,9 +32,12 @@
     "catalog"
   ],
   "devDependencies": {
-    "@types/node": "22.13.4",
-    "@types/react": "19.0.8",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^6.1.2",
     "gh-pages": "^6.3.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^8"
   }
 }

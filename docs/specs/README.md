@@ -118,7 +118,8 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 | 2026-10-20 | **Spec 01 built** with these defaults for its open questions: **Yarn 1** workspaces (TBD-R2), **Node 22** for development and CI (TBD-R3, the consumer minimum stays open), site package **`yugioh-fb-catalog-mkt-site`** (TBD-R5), **plain grep** for the SHA-pin check (TBD-R6) | Built (defaults; open to change) | [01](./01-repository-and-workspaces.md) §6 |
 | 2026-10-20 | **Card images are linked from the Yu-Gi-Oh! Fandom wiki** (interim). The wiki URL is stored as copied, including `?cb=`, in `data/images.json`, filled by hand per card or by an import script. No images in the repo or npm package | **Agreed** (interim) | [08](./08-card-images.md) I-1, I-2 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
-| 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
+| 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | Superseded (next row) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
+| 2026-10-20 | **Site stack: Vite + React + plain CSS** (drops Next.js, MUI, Emotion, Toolpad, MUI icons). Pages are rebuilt from a hello-world Home and a shared header; per-card pre-rendering (S-2) is added when card pages land | **Agreed** | [06](./06-site-ux-forbidden-memories.md) U-4 |
 
 ## Suggested delivery order
 

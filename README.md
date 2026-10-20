@@ -13,7 +13,7 @@ O projeto está dividido em dois componentes principais, cada um com seu própri
 
 2. **[Site](./mkt_site/README.md)** (`mkt_site/`)
    - Interface visual do catálogo, publicada no GitHub Pages
-   - Desenvolvido com Next.js e Material-UI
+   - Desenvolvido com Vite, React e CSS puro
    - [Documentação do Site](./mkt_site/README.md)
 
 Para a arquitetura, as decisões de design e o roadmap de melhorias, veja [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).

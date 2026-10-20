@@ -24,7 +24,6 @@
     "browserslist": "^4.28.7",
     "@babel/core": "^7.29.6",
     "**/cosmiconfig/yaml": "^1.10.3",
-    "**/@toolpad/utils/yaml": "^2.8.3",
     "**/yaml-diff-patch/yaml": "^2.8.3"
   },
   "devDependencies": {
