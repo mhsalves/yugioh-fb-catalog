@@ -35,7 +35,6 @@ flowchart LR
             item["components/CardItemView.tsx"]
             page --> item
         end
-        legacy["src/ + root package.json<br/>(stale copy of the library, see §7)"]
     end
 
     catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fb-catalog")]
@@ -67,13 +66,12 @@ The important detail: **the website does not import the library from the reposit
 │       │       ├── rituals/page0..3.ts
 │       │       └── support/{equip,magic,trap}.ts
 │       └── tools/cards.ts           # Query functions
+├── .github/dependabot.yml   # Weekly grouped dependency updates
 ├── server/                  # Next.js 15 + MUI static site
 │   ├── next.config.js       # output: 'export', basePath for GH Pages
 │   └── src/
 │       ├── pages/index.tsx
 │       └── components/{Header,CardItemView}.tsx
-├── src/, package.json,      # Old library location (v0.1.0), see §7
-│   tsconfig.json, yarn.lock
 └── README.md                # Project overview (Portuguese)
 ```
 
@@ -246,8 +244,8 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 ### 7.2 Structural problems
 | # | Issue | Evidence | Impact |
 |---|---|---|---|
-| S1 | **Duplicated library.** Commit `7f15bd0` "Move all catalog files to a folder" *copied* `src/` into `catalog/src/` (852 lines added, 0 deleted). The root `src/`, `package.json` (v0.1.0, same package name), `tsconfig.json` and `yarn.lock` remain. | `diff -r src catalog/src` shows them identical, apart from `src/README.md` | Edits can go to the wrong copy, and publishing from the root would release a stale v0.1.0 tree. |
-| S2 | **Dependency drift between the copies.** Root uses TypeScript `^6.0.2`, catalog uses `^5.7.3`. | `package.json` vs `catalog/package.json` | Different compiler behaviour depending on where you build. |
+| S1 | ~~**Duplicated library.**~~ **Resolved.** Commit `7f15bd0` "Move all catalog files to a folder" *copied* `src/` into `catalog/src/` instead of moving it. The stale root `src/`, `package.json` (v0.1.0), `tsconfig.json`, `yarn.lock` and `.npmignore` have since been deleted. | — | — |
+| S2 | ~~**Dependency drift between the copies.**~~ **Resolved** together with S1. | — | — |
 | S3 | **No workspace linking.** The server consumes the published npm version. | `server/package.json` | Every data change needs publish + bump + deploy. Unpublished changes cannot be previewed locally. |
 | S4 | **Hard-coded card count** `TOTAL_CARDS = 721` in the UI. FM has 722 cards (verify). | `server/src/pages/index.tsx` | Duplicates knowledge that belongs in the library, and may be off by one. |
 | S5 | **README docs do not match the code.** `src/README.md` and `catalog/README.md` describe `getCards`, `getCardById(id: string)`, string IDs, lowercase types and an `attribute` field, none of which exist. `server/README.md` lists search, theming, stats, `styles/`, `utils/` and `NEXT_PUBLIC_API_URL`, also not present. Reference links are `(URL)` placeholders. | READMEs vs `card-types.ts` / `tools/cards.ts` | Misleads contributors and package users. |
@@ -257,9 +255,9 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 |---|---|
 | Q1 | No tests and no data integrity checks (unique IDs, value ranges, ritual references pointing to real monsters, page range matching the header comment). |
 | Q2 | No CI. Publishing to npm and deploying to Pages are manual, and nothing type-checks PRs (Dependabot PRs are merged unverified). |
-| Q3 | `tslint` is listed but deprecated since 2019 and unconfigured. There is no ESLint or Prettier. |
+| Q3 | There is no linter or formatter. The unused, deprecated `tslint` was removed; ESLint and Prettier are the usual replacements. |
 | Q4 | `getCard` is a linear scan, called 721 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
-| Q5 | The server has `strict: false`, and `typescript`, `tslint`, `ts-node` and `gh-pages` are runtime `dependencies` instead of `devDependencies`. |
+| Q5 | The server has `strict: false`. |
 | Q6 | The library emits only CommonJS/ES2016, with no `exports` map or ESM build. |
 | Q7 | The site shows only base fields. Monster stats, guardian stars and ritual recipes are in the data but not rendered. There is no search or filtering beyond the availability toggle. |
 
@@ -269,7 +267,7 @@ Only **6 of about 722 cards** have been entered: 1 Thunder monster (425), 1 ritu
 
 Ordered so that each step makes the next one safer.
 
-1. **Single source of truth (S1, S2).** Delete the root `src/`, `package.json`, `tsconfig.json`, `yarn.lock` and `.npmignore`. Keep `catalog/` as the library.
+1. ~~**Single source of truth (S1, S2).**~~ Done: the root copy was deleted and `catalog/` is the only library.
 2. **Monorepo workspaces (S3).** Add a root `package.json` with `"workspaces": ["catalog", "server"]` (Yarn, npm or pnpm). The server then imports the local library during development, and data changes appear immediately.
 3. **Tests and integrity checks (Q1).** Add Vitest or Jest tests that assert unique IDs, value ranges, valid ritual references, IDs inside each page's declared range, and that `getCardList()` is sorted. These matter most once many people contribute data.
 4. **CI (Q2).** Add a GitHub Actions workflow that type-checks, tests and builds both packages on every PR. Then automate the Pages deploy on push to `main` (`actions/deploy-pages`), and npm publishing on tags or with Changesets.
