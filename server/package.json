@@ -44,7 +44,7 @@
     "@types/node": "22.13.4",
     "@types/react": "19.0.8",
     "gh-pages": "^6.3.0",
-    "typescript": "^5.7.3"
+    "typescript": "^7.0.2"
   },
   "resolutions": {
     "postcss": "^8.5.23",
