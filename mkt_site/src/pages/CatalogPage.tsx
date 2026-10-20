@@ -84,22 +84,26 @@ function SearchBox({ value, onChange }: { value: string; onChange: (value: strin
     );
 }
 
-/** The single page of the site (spec 09): a filter over searchCards, a results grid and the details card. */
+/** The single page of the site (spec 09): a filter over searchCards, a results grid and the details panel. */
 export default function CatalogPage() {
     const search = useSearch();
     const { query, cardId } = useMemo(() => parseCatalogUrl(search), [search]);
     const result = useMemo(() => searchCards(query), [query]);
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    // Filter changes replace the history entry; opening a card adds one, so Back closes it (C-6).
+    // Filter changes replace the history entry; opening a card adds one, so Back closes it (C-6). With the panel
+    // already open, picking another card swaps it in place, so Back still closes the panel in one step.
     const setQuery = useCallback(
         (next: CardQuery) => navigate(catalogUrl({ query: next, cardId }), { replace: true }),
         [cardId],
     );
     const setText = useCallback((text: string) => setQuery({ ...query, text: text || undefined }), [query, setQuery]);
     const openCard = useCallback(
-        (id: CardId) => navigate(catalogUrl({ query, cardId: id }), { state: { card: true } }),
-        [query],
+        (id: CardId) =>
+            cardId === undefined
+                ? navigate(catalogUrl({ query, cardId: id }), { state: { card: true } })
+                : navigate(catalogUrl({ query, cardId: id }), { replace: true, state: window.history.state }),
+        [query, cardId],
     );
     const selectCard = useCallback(
         (id: CardId) => navigate(catalogUrl({ query, cardId: id }), { replace: true, state: window.history.state }),
@@ -125,7 +129,7 @@ export default function CatalogPage() {
     const filterCount = countFilters(query);
 
     return (
-        <div className="catalog">
+        <div className="catalog" data-panel={cardId !== undefined}>
             <Filters query={query} onChange={setQuery} total={result.total} open={filtersOpen} onClose={closeFilters} />
 
             <section className="results" aria-labelledby="results-title">
@@ -207,7 +211,7 @@ export default function CatalogPage() {
                     <ul className="grid">
                         {result.items.map((card) => (
                             <li key={card.id}>
-                                <CardTile card={card} onOpen={openCard} />
+                                <CardTile card={card} onOpen={openCard} selected={card.id === cardId} />
                             </li>
                         ))}
                     </ul>

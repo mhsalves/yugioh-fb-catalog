@@ -1,7 +1,8 @@
 import type { ICard } from "@mhsalves/yugioh-fb-catalog";
 
 /** One grid item (spec 09 C-3). The art area is a styled frame until card images land (spec 08). */
-export default function CardTile({ card, onOpen }: { card: ICard; onOpen: (id: number) => void }) {
+export default function CardTile(props: { card: ICard; onOpen: (id: number) => void; selected?: boolean }) {
+    const { card, onOpen, selected = false } = props;
     const isMonster = card.cardType === "Monster";
 
     return (
@@ -10,6 +11,7 @@ export default function CardTile({ card, onOpen }: { card: ICard; onOpen: (id: n
             className="card-tile"
             data-type={card.cardType}
             data-card-id={card.id}
+            aria-current={selected || undefined}
             aria-label={`${card.name}, #${card.id}, ${card.cardType}`}
             onClick={() => onOpen(card.id)}
         >

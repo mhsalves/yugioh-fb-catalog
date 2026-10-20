@@ -580,27 +580,38 @@ fieldset:disabled {
     color: var(--color-text-muted);
 }
 
-/* Card details */
+/* Card details: a side panel (spec 09 C-4). A third column on wide screens, a drawer over the grid on medium
+   screens (see the media queries at the end), full screen on phones. */
 
-.details {
-    width: min(560px, calc(100vw - 32px));
-    max-height: calc(100vh - 32px);
-    padding: 0;
-    border: 2px solid var(--color-accent);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
-.details::backdrop {
-    background: rgb(5 10 25 / 75%);
-}
-
-.details__panel {
+.card-panel {
+    --panel-top: calc(var(--header-height) + 16px);
+    position: sticky;
+    top: var(--panel-top);
+    max-height: calc(100vh - var(--panel-top) - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding: 20px;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+}
+
+.card-panel h2:focus {
+    outline: none;
+}
+
+.catalog[data-panel="true"] {
+    grid-template-columns: 300px minmax(0, 1fr) 380px;
+}
+
+.card-tile[aria-current="true"] {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
 }
 
 .details__head {
@@ -819,10 +830,40 @@ fieldset:disabled {
     min-height: 44px;
 }
 
+/* Medium screens: with a card open, the filter column folds into the "Filters" button (the phone sheet) so the
+   grid and the panel sit side by side and nothing is covered. */
+
+@media (min-width: 721px) and (max-width: 1199px) {
+    .catalog[data-panel="true"] {
+        grid-template-columns: minmax(0, 1fr) 360px;
+    }
+
+    .catalog[data-panel="true"] .filters {
+        display: none;
+    }
+
+    .catalog[data-panel="true"] .filters[data-open="true"] {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: flex;
+        overflow-y: auto;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .catalog[data-panel="true"] .toolbar__filters,
+    .catalog[data-panel="true"] .filters__head .icon-button,
+    .catalog[data-panel="true"] .filters__show {
+        display: inline-flex;
+    }
+}
+
 /* Phones: filters become a full-screen sheet, the details card fills the screen */
 
 @media (max-width: 720px) {
-    .catalog {
+    .catalog,
+    .catalog[data-panel="true"] {
         grid-template-columns: minmax(0, 1fr);
     }
 
@@ -863,12 +904,12 @@ fieldset:disabled {
         gap: 8px;
     }
 
-    .details {
-        width: 100vw;
-        max-width: none;
-        height: 100dvh;
+    .card-panel {
+        position: fixed;
+        inset: 0;
+        width: auto;
         max-height: none;
-        margin: 0;
+        z-index: 30;
         border: 0;
         border-radius: 0;
     }

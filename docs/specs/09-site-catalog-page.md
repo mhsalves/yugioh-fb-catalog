@@ -13,7 +13,7 @@ Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `m
 | C-1 | One page, header without menu | Agreed | ✅ Built | Header: logo (back to the full catalog), copyable catalog version, npm link; no menu. `App.tsx` renders the catalog at `/` and the 404 view elsewhere |
 | C-2 | Filter bound to the library (`searchCards`) | Agreed | ✅ Built | `searchCards` (catalog 0.3.0); "By type" row with "All types" above the grid; filter panel (desktop column, phone sheet) for the other fields |
 | C-3 | Results grid | Agreed | ✅ Built | `CardTile` grid, 2 columns on phones; zero results show a placeholder with "Clear filters" |
-| C-4 | Card details card | Agreed | ✅ Built | `CardDetails` on `<dialog>`: stats, stars, copyable password, ritual recipe, **Share**, previous/next |
+| C-4 | Card details card | Agreed | ✅ Built | `CardDetails` as a side panel (like Google Drive's details pane): stats, stars, copyable password, ritual recipe, **Share**, previous/next |
 | C-5 | Footer with owner links | Agreed | ✅ Built | `Footer`: "Made by Matheus Alves", Home page and GitHub links |
 | C-6 | Filter and open card kept in the URL | Agreed | ✅ Built | `catalogUrl.ts` maps the query string to `CardQuery` and back; opening a card pushes history |
 | C-7 | Shared card pages | Agreed | ✅ Built | `/cards/<id>/`: the link the Share button hands out; a standalone card page with "Back to the catalog" (`CardPage`). The build writes one per catalogued card plus `sitemap.xml` (TBD-C1 resolved 2026-10-20) |
@@ -117,7 +117,15 @@ Clicking a grid item opens the **details card** over the page (C-4).
 - Only catalogued cards appear (TBD-C3). With at most 722 cards, the grid renders them all; virtualization is added only if it measurably helps (06 U-3).
 
 ### C-4 Card details card · ✅ Built
-Opens when a grid item is clicked. A modal **details card** built on the native `<dialog>` element (focus trap, `Esc` to close, backdrop click closes). Full-screen on phones.
+Opens when a grid item is clicked, as a **side panel** next to the grid, like a file manager's details pane (owner choice, 2026-10-20, replacing a modal `<dialog>`). The grid and the filters stay usable while it is open: clicking another card swaps the panel's content and highlights its tile.
+
+| Screen width | Layout |
+|---|---|
+| ≥ 1200px | Three columns: filters, grid, panel (380px, sticky, scrolls inside if taller than the screen) |
+| 721–1199px | The filter column folds into the "Filters" button (the phone sheet) while a card is open; grid and panel (360px) side by side |
+| ≤ 720px | Full screen |
+
+Focus moves to the panel's title when it opens and back to the card's tile when it closes. `Esc` and the close button close it; ←/→ move through the results, except while typing in a field.
 
 | Section | Content | Library source |
 |---|---|---|
