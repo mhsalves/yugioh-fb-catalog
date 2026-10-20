@@ -8,16 +8,7 @@ export type TCardType = TSupportCardType | "Monster" | "Ritual";
 
 export type TMonsterType = "Thunder" | "Dragon";
 export type TGuardianStars =
-    | "Sun"
-    | "Mercury"
-    | "Venus"
-    | "Moon"
-    | "Mars"
-    | "Jupiter"
-    | "Saturn"
-    | "Uranus"
-    | "Neptune"
-    | "Pluto";
+    "Sun" | "Mercury" | "Venus" | "Moon" | "Mars" | "Jupiter" | "Saturn" | "Uranus" | "Neptune" | "Pluto";
 
 /** Definitions */
 export interface IPassword {
