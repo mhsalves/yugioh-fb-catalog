@@ -11,13 +11,13 @@
 
 Build status as of 2026-10-20, `main` @ `9a353ee` (P-2 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
 
-**3 built · 0 partial · 3 not built**
+**3 built · 1 partial · 2 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| P-1 | Deploy with GitHub Actions after site changes | Agreed | ❌ Not built | Manual `yarn gh:deploy` pushes the `gh-pages` branch |
+| P-1 | Deploy with GitHub Actions after site changes | Agreed | 🟡 Partial | `.github/workflows/pages.yml` built; runs once the Pages source is switched to GitHub Actions (TBD-P1). `yarn gh:deploy` stays as a fallback until then |
 | P-2 | Site builds from the workspace catalog | Proposed | ✅ Built | Built by [01](./01-repository-and-workspaces.md) R-1: `mkt_site/` links the workspace `catalog/` (TBD-P2 still open) |
-| P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fb-catalog/` (workflow wiring comes with P-1) |
+| P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fb-catalog/` (`pages.yml` sets it from `actions/configure-pages`) |
 | P-4 | Static hosting constraints | Proposed | ✅ Built | Static Vite SPA, links through the router's base-path helper, `dist/404.html` fallback with the site's own 404 view |
 | P-5 | PR previews | TBD | ❌ Not built | None (TBD-P4) |
 | P-6 | Publish API docs with the site | Proposed | ❌ Not built | No API docs generated |
@@ -55,7 +55,7 @@ The table describes **today's** Next.js setup. The future stack is open ([06](./
 
 ## 4. Proposed improvements
 
-### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · ❌ Not built
+### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · 🟡 Partial
 **Rule (Agreed, 2026-10-20):** after a merge to `main`, if the merge **updates the site**, the GitHub Pages deploy runs automatically. Merges that do not affect what the site shows deploy nothing. The npm release has its own rule ([05](./05-catalog-npm-distribution.md) N-2), and the [index](./README.md#automation-rules) summarizes both.
 
 **What counts as "a site update"** (path filter):
@@ -101,6 +101,8 @@ jobs:
 - **If TBD-P2 picks "released data only":** remove the `catalog/**` paths and add `workflow_run: { workflows: [release], types: [completed] }` (deploy only if the release succeeded). The site then redeploys after each npm publish, and builds against the published package instead of the workspace.
 - Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**).
 - Remove `gh-pages` from devDependencies and the `gh:*` scripts once this works. Keep the old branch until the first successful Actions deploy, then delete it.
+
+**As built** (`.github/workflows/pages.yml`): the path filter above, plus `package.json` and `yarn.lock` (dependency changes alter the build). The build job runs `yarn validate`, `yarn test` and `yarn build` with `SITE_BASE_PATH` from `actions/configure-pages`, then uploads `mkt_site/dist`. Type-check, lint and format already ran on the PR (`ci.yml`), so they are not repeated. Only the `deploy` job gets `pages: write` and `id-token: write`; the workflow default is `contents: read`. Actions are pinned by SHA (01 R-4).
 
 ### P-2 Site builds from the **workspace** catalog · ✅ Built
 With workspaces ([01](./01-repository-and-workspaces.md) R-1), the site is built from the catalog source on `main`. Merged data goes live on the next deploy, with no npm publish needed (fixes P-gap-3). npm publishing ([05](./05-catalog-npm-distribution.md)) stays independent: the site may be ahead of the latest npm release. **TBD-P2:** is that acceptable, or should the site show only released data?

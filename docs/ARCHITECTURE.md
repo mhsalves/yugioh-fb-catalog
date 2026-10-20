@@ -249,11 +249,15 @@ The old "Cards registered" coverage grid was removed; it comes back as `/progres
 
 ### 5.3 Deploy
 
+`.github/workflows/pages.yml` deploys after every merge to `main` that changes the site, the catalog data or code, or the dependencies (spec 07 P-1): validate → test → `yarn build` (base path from `actions/configure-pages`) → upload `mkt_site/dist` → `actions/deploy-pages`. It can also be started by hand (`workflow_dispatch`). It needs the repository's Pages source set to **GitHub Actions**.
+
+The manual fallback, until the first Actions deploy succeeds:
+
 ```
 yarn gh:deploy  =  vite build  →  gh-pages -d dist
 ```
 
-This runs manually from a developer machine, inside `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists). No `.nojekyll` is needed: Vite's output has no `_`-prefixed folders.
+It runs from `mkt_site/` (after `yarn build` at the root, so the catalog's `lib/` exists). No `.nojekyll` is needed: Vite's output has no `_`-prefixed folders.
 
 ---
 
@@ -273,11 +277,10 @@ sequenceDiagram
     CI->>CI: type-check, lint, format, test, build, pack smoke test
     Dev->>Cat: after merge: bump version, yarn npm:publish
     Cat->>NPM: lib/ (JS + .d.ts)
-    Dev->>Site: yarn gh:deploy
-    Site->>GH: static dist/
+    CI->>GH: after merge: pages.yml builds and deploys dist/
 ```
 
-Publishing and deploying are still manual. They are automated in specs [05](./specs/05-catalog-npm-distribution.md) N-2 and [07](./specs/07-site-github-pages-delivery.md) P-1.
+The site deploy is automated ([07](./specs/07-site-github-pages-delivery.md) P-1). Publishing to npm is still manual; it is automated in spec [05](./specs/05-catalog-npm-distribution.md) N-2.
 
 ---
 
@@ -301,7 +304,7 @@ Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (67
 | # | Issue |
 |---|---|
 | Q1 | ~~No tests.~~ **Mostly resolved** by spec 01 R-2: Vitest covers the query API and data integrity (unique and sorted IDs, ranges, password format, ritual references in range). Still missing: ritual references pointing to *existing* monsters, page ranges matching the header comments. |
-| Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm and deploying to Pages are still manual. |
+| Q2 | ~~No CI.~~ **Partly resolved** by spec 01 R-4: `ci.yml` type-checks, lints, tests and builds every PR (including Dependabot's). Publishing to npm is still manual; `pages.yml` deploys the site on merge (spec 07 P-1). |
 | Q3 | ~~No linter or formatter.~~ **Resolved** by spec 01 R-3: ESLint (flat config) and Prettier at the root. |
 | Q4 | `getCard` is a linear scan, called 722 times per render (O(n²)). This is negligible at the current size but trivial to fix with a `Map` index. |
 | Q5 | ~~The site has `strict: false`.~~ **Resolved** by spec 01 R-5. |
