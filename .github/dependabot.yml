@@ -8,7 +8,7 @@
 version: 2
 updates:
   # Yarn workspace: one root lockfile covers the root tooling, catalog/ (npm library)
-  # and mkt_site/ (static website, Next.js).
+  # and mkt_site/ (static website, Vite + React).
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -23,18 +23,7 @@ updates:
       # they fall through to `security-other`.
       security-mkt-site:
         applies-to: security-updates
-        patterns:
-          [
-            "next",
-            "react",
-            "react-dom",
-            "@types/react",
-            "@types/react-dom",
-            "@mui/*",
-            "@emotion/*",
-            "@toolpad/*",
-            "gh-pages",
-          ]
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom", "@vitejs/*", "gh-pages"]
       security-catalog:
         applies-to: security-updates
         patterns: ["vite", "vitest", "@vitest/*", "@types/node", "typescript"]
@@ -44,20 +33,20 @@ updates:
       security-other:
         applies-to: security-updates
         patterns: ["*"]
-      # React, Next and MUI move together; keep their bumps in one PR.
+      # React and its types move together; keep their bumps in one PR.
       framework:
-        patterns:
-          ["next", "react", "react-dom", "@types/react", "@types/react-dom", "@mui/*", "@emotion/*", "@toolpad/*"]
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
         update-types: ["minor", "patch"]
       # Lint, format and test tooling.
       tooling:
-        patterns: ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier", "vitest", "vite"]
+        patterns:
+          ["eslint", "@eslint/*", "typescript-eslint", "eslint-*", "globals", "prettier", "vitest", "vite", "@vitejs/*"]
         update-types: ["minor", "patch"]
       # One PR for every other non-major bump.
       minor-and-patch:
         patterns: ["*"]
         update-types: ["minor", "patch"]
-      # Breaking upgrades (next, typescript, ...) in one PR to review on purpose,
+      # Breaking upgrades (react, vite, typescript, ...) in one PR to review on purpose,
       # instead of one PR per package.
       major:
         patterns: ["*"]

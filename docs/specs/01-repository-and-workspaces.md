@@ -120,7 +120,7 @@ Workflow conventions:
 3. run lint (and the Prettier check) ✅
 4. run tests, including data validation ✅
 5. build the catalog, `npm pack`, and install the tarball into a temporary project to smoke-test the published shape ✅
-6. build the site (with today's stack, `next build`), but do not deploy it ✅
+6. build the site (`vite build`, see [06](./06-site-ux-forbidden-memories.md) U-4), but do not deploy it ✅
 7. on PRs that change the catalog's code or data: the version-bump and changelog check ([05](./05-catalog-npm-distribution.md) N-2) ❌ not built
 
 Node comes from `.nvmrc` (22, TBD-R3). The workflow has `permissions: contents: read`, checks out without persisted credentials, and cancels superseded runs on the same ref.
@@ -128,7 +128,7 @@ Node comes from `.nvmrc` (22, TBD-R3). The workflow has `permissions: contents: 
 Deploy and publish workflows are specified in [07](./07-site-github-pages-delivery.md) and [05](./05-catalog-npm-distribution.md).
 
 ### R-5 Site in TypeScript `strict: true` · ✅ Built
-Whatever site stack is chosen ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1), the site uses strict TypeScript. On today's Next.js site, `mkt_site/tsconfig.json` has `strict: true`, and the `_: any` handler in `index.tsx` is typed as `React.ChangeEvent<HTMLInputElement>`. A future stack must keep strict mode.
+The site uses strict TypeScript whatever its stack. On today's Vite + React site ([06](./06-site-ux-forbidden-memories.md) U-4), `mkt_site/tsconfig.json` has `strict: true` (plus `noUnusedLocals`/`noUnusedParameters`). A future stack must keep strict mode.
 
 ### R-6 Rename `server/` to `mkt_site/` · ✅ Built
 **Agreed (2026-10-20):** the site folder is renamed from `server/` to **`mkt_site/`**. The folder is a static site, not a server (see `ARCHITECTURE.md` §5), so the old name was misleading.
@@ -144,7 +144,7 @@ What the rename touched (all in one PR):
 | Root workspaces (R-1) | `"workspaces": ["catalog", "mkt_site"]` ✅ |
 | `.github/dependabot.yml` | One `npm` entry at `directory: "/"` for the whole workspace (one root lockfile), instead of `/catalog` + `/server`. Groups: `framework`, `tooling`, `minor-and-patch` ✅ |
 | Workflow path filters | `mkt_site/**` in `pages.yml` ([07](./07-site-github-pages-delivery.md) P-1) and the "does not release" list in `release.yml` ([05](./05-catalog-npm-distribution.md) N-2). Those workflows do not exist yet, so they use the new name from the start |
-| Pages artifact path | `mkt_site/out` (with today's Next.js export). The manual `yarn gh:deploy` runs from `mkt_site/` ✅ |
+| Pages artifact path | `mkt_site/dist` (Vite build; was `mkt_site/out` with the Next.js export). The manual `yarn gh:deploy` runs from `mkt_site/` ✅ |
 | Docs | Root `README.md`, `mkt_site/README.md`, `docs/ARCHITECTURE.md`, specs ✅ |
 | `.gitignore` | No `server/`-specific entries ✅ |
 
