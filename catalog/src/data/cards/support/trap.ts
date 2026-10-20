@@ -9,7 +9,7 @@ const traps: ISupportCard[] = [
         password: {
             code: "03027001",
             cost: 999999,
-        }
+        },
     },
 ];
 

@@ -23,9 +23,11 @@ export default function CardPage() {
                     <Switch defaultChecked={onlyAvailable} onChange={handleChangeAvailable} />
                 </Stack>
                 <Grid2 container spacing={2}>
-                    {Array(TOTAL_CARDS).fill(0).map((_, index) => (
-                        <CardItemView id={index + 1} onlyAvailable={onlyAvailable} key={`card-${index + 1}`} />
-                    ))}
+                    {Array(TOTAL_CARDS)
+                        .fill(0)
+                        .map((_, index) => (
+                            <CardItemView id={index + 1} onlyAvailable={onlyAvailable} key={`card-${index + 1}`} />
+                        ))}
                 </Grid2>
             </CardContent>
         </PageContainer>

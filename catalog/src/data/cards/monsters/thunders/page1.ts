@@ -6,8 +6,8 @@ import type { IMonsterCard } from "../../../card-types";
 const thunder: IMonsterCard[] = [
     {
         id: 425,
-        name: 'Thunder Dragon',
-        description: 'A dragon that summons thunder and lightning to attack its opponents.',
+        name: "Thunder Dragon",
+        description: "A dragon that summons thunder and lightning to attack its opponents.",
         level: 5,
         cardType: "Monster",
         password: {
@@ -20,8 +20,8 @@ const thunder: IMonsterCard[] = [
             defense: 1500,
         },
         guardianStars: {
-            first: 'Pluto',
-            second: 'Jupiter',
+            first: "Pluto",
+            second: "Jupiter",
         },
     },
 ];

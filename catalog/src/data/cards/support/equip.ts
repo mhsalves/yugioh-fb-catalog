@@ -9,7 +9,7 @@ const equips: ISupportCard[] = [
         password: {
             code: "01435851",
             cost: 800,
-        }
+        },
     },
 ];
 

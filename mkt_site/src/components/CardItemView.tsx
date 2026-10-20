@@ -17,19 +17,33 @@ function CardItemView(props: CardItemViewProps) {
         <Grid2 size={{ xs: 6, sm: 4, md: 3 }}>
             <Card>
                 <DialogTitle variant="body2">#{id}</DialogTitle>
-                <Divider /> 
+                <Divider />
                 <DialogContent>
-                    {!card && (<Typography variant="body2" color="red">Not available yet</Typography>)}
+                    {!card && (
+                        <Typography variant="body2" color="red">
+                            Not available yet
+                        </Typography>
+                    )}
                     {card && (
                         <Stack spacing={1}>
-                            <Typography><b>Name:</b> {card.name}</Typography>
+                            <Typography>
+                                <b>Name:</b> {card.name}
+                            </Typography>
                             <Divider />
-                            <Typography><b>Description:</b> <br/> {card.description}</Typography>
+                            <Typography>
+                                <b>Description:</b> <br /> {card.description}
+                            </Typography>
                             <Divider />
-                            <Typography><b>Card Type:</b> {card.cardType}</Typography>
+                            <Typography>
+                                <b>Card Type:</b> {card.cardType}
+                            </Typography>
                             <Divider />
-                            <Typography><b>Code:</b> {card.password.code}</Typography>
-                            <Typography><b>Cost:</b> {card.password.cost}</Typography>
+                            <Typography>
+                                <b>Code:</b> {card.password.code}
+                            </Typography>
+                            <Typography>
+                                <b>Cost:</b> {card.password.cost}
+                            </Typography>
                         </Stack>
                     )}
                 </DialogContent>
