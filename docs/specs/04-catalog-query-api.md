@@ -2,6 +2,24 @@
 
 > **Status: Proposed.**
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 2 partial · 6 not built**
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| Q-1 | Keep the existing functions | Proposed | 🟡 Partial | All 4 functions work; regression tests missing |
+| Q-2 | Indexes built once at module load | Proposed | ❌ Not built | `getCard` is a linear `find` |
+| Q-3 | Typed overloads and readonly results | Proposed | ❌ Not built | Returns `ICard[]` and the mutable internal array |
+| Q-4 | `searchCards` | Proposed | 🟡 Partial | Only single-field filters by card type and monster type |
+| Q-5 | Relation queries | Proposed | ❌ Not built | None (needs D-3 data) |
+| Q-6 | Metadata | Proposed | ❌ Not built | No `TOTAL_CARDS`, coverage or type lists exported |
+| Q-7 | Optional namespaced entry | TBD | ❌ Not built | Flat exports only (TBD-Q2) |
+| Q-8 | API docs from code | Proposed | ❌ Not built | Hand-written README API, out of date |
+
 ## 1. Why this spec exists
 
 Goal **G5**: the catalog must **offer methods to search and read** the data. The public functions are the package's contract with its consumers (the site, and third-party apps). `ARCHITECTURE.md` §4.4 explains why the API matters: consumers depend on functions, not on the file layout, so the data can be reorganized ([02](./02-catalog-data-model.md), [03](./03-catalog-data-authoring.md)) **without breaking anyone**. For that to hold, the API must cover what consumers need, so they never have to reach into raw data files.
@@ -37,13 +55,13 @@ All types are exported with `export type *`.
 
 ## 4. Proposed improvements
 
-### Q-1 Keep the existing functions (non-breaking)
+### Q-1 Keep the existing functions (non-breaking) · 🟡 Partial
 `getCardList`, `getCard`, `getCardsByType` and `getCardsByMonsterType` keep working. They are reimplemented on top of the indexes in Q-2.
 
-### Q-2 Indexes built once at module load
+### Q-2 Indexes built once at module load · ❌ Not built
 `Map<id, card>`, plus maps by `cardType`, by `monsterType` and by guardian star, and a fusion lookup keyed by material pair. With about 722 cards and a few thousand fusions, this is cheap and makes every read O(1) or O(k).
 
-### Q-3 Typed overloads
+### Q-3 Typed overloads · ❌ Not built
 ```ts
 function getCardsByType(t: "Monster"): readonly IMonsterCard[];
 function getCardsByType(t: "Magic"):   readonly IMagicCard[];
@@ -51,7 +69,7 @@ function getCardsByType(t: "Magic"):   readonly IMagicCard[];
 ```
 Return `readonly` arrays, and deep-freeze the data in development builds (fixes Q-gap-7).
 
-### Q-4 `searchCards`: one flexible query function
+### Q-4 `searchCards`: one flexible query function · 🟡 Partial
 ```ts
 interface CardQuery {
   text?: string;                       // matches name (and description if includeDescription)
@@ -72,7 +90,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 - Pure and synchronous, with no dependencies, so it works in the browser (the site) and in Node.
 - The site's filters ([06](./06-site-ux-forbidden-memories.md)) are a thin UI over this function, so the site and npm users get the same behaviour.
 
-### Q-5 Relation queries (added as the data from 02 lands)
+### Q-5 Relation queries (added as the data from 02 lands) · ❌ Not built
 | Function | Answers |
 |---|---|
 | `getFusion(a, b)` | What do these two cards fuse into? (`ICard \| undefined`) |
@@ -86,7 +104,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 
 Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `getFusion` must implement exactly what the agreed model says, and nothing more.
 
-### Q-6 Metadata
+### Q-6 Metadata · ❌ Not built
 ```ts
 TOTAL_CARDS;                                 // from data/rules.json
 MONSTER_TYPES; GUARDIAN_STARS; CARD_TYPES;   // from the schema enums (02 D-4)
@@ -94,10 +112,10 @@ getCoverage(): { total: number; entered: number; byType: Record<string, { entere
 ```
 `byType.total` is known only once we have the full card list per type (TBD).
 
-### Q-7 Optional namespaced entry
+### Q-7 Optional namespaced entry · ❌ Not built
 Also export `catalog.cards.search(...)`, `catalog.fusions.of(...)` and so on, for discoverability. **TBD-Q2:** add this, or keep flat named exports only (flat exports tree-shake better)?
 
-### Q-8 API docs from code
+### Q-8 API docs from code · ❌ Not built
 Write TSDoc on every export and generate the reference with TypeDoc, published with the site at `/docs/api` ([07](./07-site-github-pages-delivery.md)). This replaces the hand-written, outdated API section in the READMEs.
 
 ## 5. Acceptance criteria

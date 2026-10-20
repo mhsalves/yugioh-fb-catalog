@@ -2,6 +2,22 @@
 
 > **Status: Proposed.** Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 2 partial · 4 not built**
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| A-1 | Storage format: JSON + schema | Agreed | ❌ Not built | Data is TypeScript literals |
+| A-2 | Validation rules | Proposed | 🟡 Partial | `tsc` checks shape only; no ranges, uniqueness or references |
+| A-3 | Contributor guide | Proposed | 🟡 Partial | Section in `catalog/README.md`, with an outdated format |
+| A-4 | Coverage report as a script | Proposed | ❌ Not built | Coverage only visible on the site grid |
+| A-5 | Import tooling | Proposed | ❌ Not built | None (depends on TBD-X1) |
+| A-6 | PR template for data changes | Proposed | ❌ Not built | None |
+
 ## 1. Why this spec exists
 
 Goal **G3**: the catalog must be **saved in a simple way so more information can be added later**. About 717 cards are still missing, and relation data (fusions, equips, drops: [02](./02-catalog-data-model.md) D-3) runs to thousands more records. Most of the project's future work is **data entry**, so the authoring experience matters more than any other design choice:
@@ -33,7 +49,7 @@ Goal **G3**: the catalog must be **saved in a simple way so more information can
 
 ## 4. Proposed improvements
 
-### A-1 Storage format: **JSON + schema** (**Agreed**)
+### A-1 Storage format: **JSON + schema** (**Agreed**) · ❌ Not built
 
 All catalog data, including cards **and** relation tables (fusions, equips, rituals, fields, duelists, drops), is stored as **JSON files** validated against a schema. TypeScript keeps only the query API ([04](./04-catalog-query-api.md)) and the schema definitions.
 
@@ -98,7 +114,7 @@ Loading: a small loader in `src/` imports every JSON file. A build step generate
 
 Migration: the 5 existing TS records are converted to JSON once, the `pageN.ts`/`index.ts` data files are deleted, and `card-types.ts` is replaced by types inferred from the schema. The public type names (`ICard`, `IMonsterCard`, …) stay exported.
 
-### A-2 Validation rules (enforced in tests and in `prebuild`)
+### A-2 Validation rules (enforced in tests and in `prebuild`) · 🟡 Partial
 Implemented as one `validate` script that runs in CI ([01](./01-repository-and-workspaces.md) R-4) and before every build, with errors that point to the file and the record:
 
 | Rule | Example error |
@@ -112,16 +128,16 @@ Implemented as one `validate` script that runs in CI ([01](./01-repository-and-w
 | Fusion pairs not duplicated (order-insensitive) | — |
 | Names unique (warning) | — |
 
-### A-3 Contributor guide `catalog/CONTRIBUTING-DATA.md`
+### A-3 Contributor guide `catalog/CONTRIBUTING-DATA.md` · 🟡 Partial
 A one-page guide covering: where each kind of card goes, a copyable template per card type, how to run `yarn validate`, and how to cite a source in the PR. It replaces the outdated section in `catalog/README.md`.
 
-### A-4 Coverage report as a script
+### A-4 Coverage report as a script · ❌ Not built
 `yarn coverage:data` prints the entered count per category and overall (`5 / 722`). The site shows the same numbers ([06](./06-site-ux-forbidden-memories.md)), and CI can post them as a PR comment.
 
-### A-5 (Later) Import tooling
+### A-5 (Later) Import tooling · ❌ Not built
 An optional script in `catalog/tools/` that converts a trusted external dump into the data files. It speeds up the initial bulk fill. It depends on **TBD-X1** (the source) and **TBD-A4** (licensing of that source).
 
-### A-6 PR template for data changes
+### A-6 PR template for data changes · ❌ Not built
 `.github/PULL_REQUEST_TEMPLATE/data.md` with these checks: source cited, `yarn validate` passed, only data files touched.
 
 ## 5. Acceptance criteria

@@ -2,6 +2,21 @@
 
 > **Status: Proposed.** Many items are **TBD** because they are game facts that must be checked against a trusted source (see TBD-X1 in the [index](./README.md)) before they are coded.
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 4 partial · 1 not built**
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| D-1 | Separate entities from relations | Proposed | 🟡 Partial | Ritual recipe uses ID references, but lives inside the card |
+| D-2 | Card entity (target shape) | Proposed | 🟡 Partial | Base, monster, ritual, support shapes exist; no Magic/Trap/Equip split, no attribute |
+| D-3 | Relation collections | Proposed | 🟡 Partial | Only ritual recipes (embedded); no fusions, equips, fields, duelists |
+| D-4 | Game rules as data | Proposed | 🟡 Partial | Types and stars exist as TS unions only; 2 of ~20 monster types; card total hard-coded in site |
+| D-5 | One organization rule for files | Proposed | ❌ Not built | Three different rules (type + page, page only, type only) |
+
 ## 1. Why this spec exists
 
 Goal **G6**: the catalog must organize the data **correctly by card type and the other game concepts**. *Forbidden Memories* (FM) has its own rules, different from the modern TCG. Fusions, guardian stars, starchip costs, equip compatibility and duelist drops are what players actually look up. If the model does not capture these concepts as first-class data:
@@ -65,7 +80,7 @@ duelists/                            # empty placeholder
 
 ## 4. Proposed improvements
 
-### D-1 Separate *entities* from *relations*
+### D-1 Separate *entities* from *relations* · 🟡 Partial
 Card records describe **what a card is**. Game mechanics that link cards (fusions, equips, rituals, drops) live in their **own collections**, keyed by ID. The reasons:
 
 - one fusion involves 2–3 cards, so storing it inside a card would duplicate it;
@@ -84,7 +99,7 @@ erDiagram
     FIELD_EFFECT }o--|| CARD : "field magic card"
 ```
 
-### D-2 Card entity (target shape)
+### D-2 Card entity (target shape) · 🟡 Partial
 
 ```ts
 interface ICardBase {
@@ -119,7 +134,7 @@ Splitting `ISupportCard` into `IMagicCard`, `ITrapCard` and `IEquipCard` lets ea
 
 **Compatibility:** renaming or flattening fields (`monsterPoints` → `attack`/`defense`, the `guardianStars` object → tuple, `summon` moving out) is **breaking**. Either do it in a `0.x` minor (allowed under semver for 0.x) with a migration note, or keep the old fields as deprecated getters for one release (**TBD-D7**).
 
-### D-3 Relation collections
+### D-3 Relation collections · 🟡 Partial
 
 ```ts
 // fusions/*.json
@@ -150,7 +165,7 @@ interface IDrop {
 }
 ```
 
-### D-4 Game rules as data (`rules.json` + schema enums)
+### D-4 Game rules as data (`rules.json` + schema enums) · 🟡 Partial
 
 The rules split across two places:
 
@@ -168,7 +183,7 @@ The rules split across two places:
 
 (`totalCards`: confirm 722 vs 721, TBD-D10. The advantage map is partial and unverified, TBD-D11.)
 
-### D-5 One organization rule for files
+### D-5 One organization rule for files · ❌ Not built
 Today there are three different rules (see D-gap-2). Proposal: **one folder per `cardType`, one file per sub-type**:
 
 ```

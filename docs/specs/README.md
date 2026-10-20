@@ -1,6 +1,6 @@
 # Specs: catalog library + Forbidden Memories site
 
-> **Status: Draft, proposal only.** Nothing in this folder has been implemented. These specs describe the target. Each change should be agreed here first and then built in its own PR.
+> **Status: Draft.** These specs describe the target. Each item shows what is already **built**, **partial** or **not built** (see [Status system](#status-system)). Each change should be agreed here first and then built in its own PR.
 
 These specs turn the project goals into concrete, reviewable proposals. They build on [`../ARCHITECTURE.md`](../ARCHITECTURE.md), which describes how the code works today and why. These documents describe **where it should go next**.
 
@@ -8,20 +8,23 @@ These specs turn the project goals into concrete, reviewable proposals. They bui
 
 The project keeps **one repository with two deliverables**:
 
-| # | Goal | Spec |
-|---|---|---|
-| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
-| G2 | The site stays **served from GitHub Pages** | [07 – Site delivery](./07-site-github-pages-delivery.md) |
-| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | [03 – Data authoring](./03-catalog-data-authoring.md) |
-| G4 | The catalog stays **published on the npm registry** | [05 – npm distribution](./05-catalog-npm-distribution.md) |
-| G5 | The catalog offers **methods to search and read** the data | [04 – Query API](./04-catalog-query-api.md) |
-| G6 | The catalog **organizes the data correctly** by card type and other game concepts | [02 – Data model](./02-catalog-data-model.md) |
-| — | Shared foundation: repo layout, workspaces, tests, CI | [01 – Repository](./01-repository-and-workspaces.md) |
+| # | Goal | Build status today | Spec |
+|---|---|---|---|
+| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: a basic MUI coverage grid exists; no FM look, search or detail pages | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
+| G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (deploy is manual) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
+| G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | 🟡 Partial: data is saved and type-checked, but as TS literals, not JSON | [03 – Data authoring](./03-catalog-data-authoring.md) |
+| G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
+| G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: 4 read/filter functions; no search | [04 – Query API](./04-catalog-query-api.md) |
+| G6 | The catalog **organizes the data correctly** by card type and other game concepts | 🟡 Partial: 5 card types modeled, 2 of ~20 monster types, no fusions or duelists | [02 – Data model](./02-catalog-data-model.md) |
+| — | Shared foundation: repo layout, workspaces, tests, CI | ❌ Not built: no workspaces, tests or CI | [01 – Repository](./01-repository-and-workspaces.md) |
+
+A goal's status says whether the **goal is met today**. Item statuses in the specs say whether each **proposed improvement** is built, so a goal can be ✅ while its spec's improvements are still ❌. For example, G2 works today, but automated deploys (07 P-1) are not built.
 
 ## How every spec is structured
 
 Each spec uses the same sections, so you can compare them side by side:
 
+0. **Status**: the build and decision status of every item (see [Status system](#status-system)).
 1. **Why this spec exists**: the goal it serves and the reasoning behind it.
 2. **What exists today**: the current implementation on `main`, with file references.
 3. **Gaps**: where today's implementation falls short of the goal.
@@ -29,16 +32,46 @@ Each spec uses the same sections, so you can compare them side by side:
 5. **Acceptance criteria**: how we will know it is done.
 6. **TBD / open questions**: decisions not taken yet, or game facts not verified yet. **Nothing marked TBD should be implemented until it is resolved.**
 
-## Status legend
+## Status system
+
+Every improvement item has **two independent statuses**, shown in each spec's **§0 Status** table and next to the item's heading.
+
+**Build status: what exists in the code on `main`.**
+
+| Badge | Meaning |
+|---|---|
+| ✅ **Built** | Fully implemented on `main` and meets the item's acceptance criteria |
+| 🟡 **Partial** | Some of it exists on `main`. The "What exists today" column says what is missing |
+| ❌ **Not built** | Nothing of it exists yet |
+| ➖ **N/A** | Not a build item (a pure decision, for example the site stack) |
+
+**Decision status: whether we agreed to build it.**
 
 | Tag | Meaning |
 |---|---|
 | **Proposed** | Suggested in a spec, not agreed yet |
 | **Agreed** | Accepted, ready to build |
-| **Done** | Merged on `main` |
-| **TBD** | Open question, needs a decision or a verified source |
+| **TBD** | Open question; needs a decision or a verified source before building |
 
-All improvements are **Proposed** as of 2026-10-20, written against `main` @ `9a353ee`, except for the decisions logged below.
+**Rules for keeping it true:**
+- A PR that builds (or partly builds) an item **updates its badge in the same PR**: the heading, the spec's §0 table and the board below.
+- An item is ✅ only when **all** of its acceptance criteria are met; otherwise it stays 🟡.
+- Each spec's §0 says the date and commit the statuses were last checked against.
+
+## Status board
+
+Checked as of 2026-10-20, `main` @ `9a353ee`.
+
+| Spec | ✅ Built | 🟡 Partial | ❌ Not built | ➖ N/A |
+|---|---|---|---|---|
+| [01 – Repository, workspaces, tests and CI](./01-repository-and-workspaces.md) | 0 | 1 | 5 | 0 |
+| [02 – Catalog data model and organization](./02-catalog-data-model.md) | 0 | 4 | 1 | 0 |
+| [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 0 | 2 | 4 | 0 |
+| [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 2 | 6 | 0 |
+| [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 2 | 4 | 0 |
+| [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 3 | 1 |
+| [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 0 | 2 | 4 | 0 |
+| **Total** | **0** | **15** | **27** | **1** |
 
 ## Decision log
 

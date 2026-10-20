@@ -2,6 +2,22 @@
 
 > **Status: Proposed.** Foundation for every other spec.
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 1 partial · 5 not built**
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| R-1 | Root workspace | Proposed | ❌ Not built | Two separate packages, no root `package.json` |
+| R-2 | Tests with Vitest | Proposed | ❌ Not built | No tests |
+| R-3 | Lint and format | Proposed | ❌ Not built | No linter (`tslint` removed) |
+| R-4 | CI workflow | Proposed | ❌ Not built | Only Dependabot, no workflow checks PRs |
+| R-5 | Site in TypeScript `strict: true` | Proposed | 🟡 Partial | `catalog/` is strict, `server/` is `strict: false` |
+| R-6 | Rename `server/` to `site/` | TBD | ❌ Not built | Folder still named `server/` (TBD-R1) |
+
 ## 1. Why this spec exists
 
 The project ships **two deliverables from one repository**: the npm catalog (`catalog/`) and the GitHub Pages site (`server/`). Every other goal (easy data entry, a reliable npm package, an automatically deployed site) depends on:
@@ -34,7 +50,7 @@ Without this foundation, each data change costs a publish, a version bump and a 
 
 ## 4. Proposed improvements
 
-### R-1 Root workspace
+### R-1 Root workspace · ❌ Not built
 Add a root `package.json` (private, never published):
 
 ```jsonc
@@ -53,14 +69,14 @@ Add a root `package.json` (private, never published):
 - One lockfile at the root.
 - **Trade-off:** we lose the "site tests the published package" property. That check moves to CI instead (R-4, a smoke test that installs the packed tarball).
 
-### R-2 Tests with Vitest
+### R-2 Tests with Vitest · ❌ Not built
 - `catalog/` gets Vitest, with tests for the query API ([04](./04-catalog-query-api.md)) and **data integrity checks** ([03](./03-catalog-data-authoring.md) §4).
 - `server/` gets a minimal render test for the main pages (optional, later).
 
-### R-3 Lint and format
+### R-3 Lint and format · ❌ Not built
 ESLint (flat config, `typescript-eslint`) plus Prettier at the root, with one shared config.
 
-### R-4 CI workflow (`.github/workflows/ci.yml`)
+### R-4 CI workflow (`.github/workflows/ci.yml`) · ❌ Not built
 Runs on every PR and every push to `main`:
 
 1. install (cached)
@@ -72,10 +88,10 @@ Runs on every PR and every push to `main`:
 
 Deploy and publish workflows are specified in [07](./07-site-github-pages-delivery.md) and [05](./05-catalog-npm-distribution.md).
 
-### R-5 Site in TypeScript `strict: true`
+### R-5 Site in TypeScript `strict: true` · 🟡 Partial
 Whatever site stack is chosen ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1), the site uses strict TypeScript. On today's Next.js site, this means enabling it in `server/tsconfig.json` and fixing `index.tsx` (`_: any`). If the stack is replaced soon, do this as part of the migration instead.
 
-### R-6 (Optional) Rename `server/` to `site/`
+### R-6 (Optional) Rename `server/` to `site/` · ❌ Not built
 The folder is a static site, not a server (see `ARCHITECTURE.md` §5). Renaming it removes the confusion. **TBD-R1**
 
 ## 5. Acceptance criteria

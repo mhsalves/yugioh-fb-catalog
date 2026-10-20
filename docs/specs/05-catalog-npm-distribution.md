@@ -2,6 +2,22 @@
 
 > **Status: Proposed.**
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 2 partial · 4 not built**
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| N-1 | Dual ESM + CJS build with `exports` map | Proposed | 🟡 Partial | CJS + `.d.ts` only; no ESM, `exports` or `files` allowlist |
+| N-2 | Automated release from CI | Proposed | ❌ Not built | Manual `yarn npm:publish` works (v0.1.1 on npm) |
+| N-3 | Versioning policy | Proposed | ❌ Not built | No written policy or changelog |
+| N-4 | Package README | Proposed | 🟡 Partial | `catalog/README.md` exists but documents the wrong API |
+| N-5 | Pack check in CI | Proposed | ❌ Not built | No CI |
+| N-6 | Size budget | Proposed | ❌ Not built | Not tracked |
+
 ## 1. Why this spec exists
 
 Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalves/yugioh-fb-catalog`. npm is how third-party apps (and today, the site) get the data. For that to be dependable, a release must be:
@@ -36,7 +52,7 @@ Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalv
 
 ## 4. Proposed improvements
 
-### N-1 Dual ESM + CJS build with an `exports` map
+### N-1 Dual ESM + CJS build with an `exports` map · 🟡 Partial
 Build with `tsup` (or two `tsc` configs):
 
 ```jsonc
@@ -58,7 +74,7 @@ Build with `tsup` (or two `tsc` configs):
 - Use a **`files` allowlist** instead of `.npmignore` (fixes N-gap-3), and delete `catalog/.npmignore`.
 - Target ES2020 or later (TBD-N2). Nothing in the data needs ES2016.
 
-### N-2 Automated release from CI
+### N-2 Automated release from CI · ❌ Not built
 `.github/workflows/release.yml`, using **Changesets** *(recommended)*:
 
 1. Contributors add a `.changeset/*.md` in their PR ("patch: add 40 Dragon monsters").
@@ -67,7 +83,7 @@ Build with `tsup` (or two `tsc` configs):
 
 Alternative: publish on a `v*` git tag push. This is simpler but does not generate the changelog automatically. **TBD-N1**
 
-### N-3 Versioning policy
+### N-3 Versioning policy · ❌ Not built
 While the package is `0.x`:
 
 | Change | Bump |
@@ -78,13 +94,13 @@ While the package is `0.x`:
 
 Release `1.0.0` when the model in 02 is agreed and the card list is complete (**TBD-N3**).
 
-### N-4 Package README
+### N-4 Package README · 🟡 Partial
 `catalog/README.md` becomes the npm landing page: install, five-line usage, a link to the TypeDoc API ([04](./04-catalog-query-api.md) Q-8), a coverage badge, and a link to the site.
 
-### N-5 Pack check in CI
+### N-5 Pack check in CI · ❌ Not built
 Covered by [01](./01-repository-and-workspaces.md) R-4 step 5: `npm pack`, install the tarball into a scratch project, then `require` **and** `import` it and call `getCard(425)`. Optionally add `publint` and `@arethetypeswrong/cli` to lint the package shape.
 
-### N-6 Size budget
+### N-6 Size budget · ❌ Not built
 Track the packed size in CI. At about 722 cards plus relations, a few hundred KB is the expected ceiling (**TBD-N4**). If relations grow large, offer subpath entries (`@mhsalves/yugioh-fb-catalog/fusions`) so consumers load only what they use.
 
 ## 5. Acceptance criteria

@@ -2,6 +2,22 @@
 
 > **Status: Proposed.** Visual direction and page list. Final visuals need a design pass (mock-ups) before they are built.
 
+
+## 0. Status
+
+Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+
+**0 built · 2 partial · 3 not built** · 1 n/a
+
+| ID | Item | Decision | Build | What exists today |
+|---|---|---|---|---|
+| U-1 | Visual language inspired by FM | Proposed | ❌ Not built | Default MUI light theme |
+| U-2 | Information architecture (pages) | Proposed | 🟡 Partial | One page: a coverage grid (becomes `/progress`) |
+| U-3 | Interaction details | Proposed | ❌ Not built | Only an "Only Available" switch; no search, keyboard or virtualization |
+| U-4 | Site technology stack | TBD | ➖ N/A | Today: Next.js 15 + MUI 6 (decision deferred, TBD-U1) |
+| U-5 | Static generation and SEO | Proposed | 🟡 Partial | Static export works; no per-card pages, meta tags or sitemap |
+| U-6 | Migration of the current page | Proposed | ❌ Not built | Page still at `/` |
+
 ## 1. Why this spec exists
 
 Goal **G1**: the project keeps a **site that displays the catalog data** with **a good UI/UX based on *Yu-Gi-Oh! Forbidden Memories***. The site is how most people will meet the project. Players of a 1999 PS1 game come for:
@@ -38,7 +54,7 @@ A generic Material UI grid (what exists today) serves neither well. A themed, se
 
 ## 4. Proposed improvements
 
-### U-1 Visual language: "inspired by", not copied
+### U-1 Visual language: "inspired by", not copied · ❌ Not built
 Recreate the **mood** of FM with original CSS and assets:
 
 | FM element | Site treatment |
@@ -56,7 +72,7 @@ Recreate the **mood** of FM with original CSS and assets:
 
 Accessibility: WCAG AA contrast on the dark theme, `prefers-reduced-motion` respected, all actions keyboard-reachable. Optional light theme (**TBD-U5**).
 
-### U-2 Information architecture (pages)
+### U-2 Information architecture (pages) · 🟡 Partial
 
 ```mermaid
 flowchart TD
@@ -81,7 +97,7 @@ flowchart TD
 
 Pages whose data does not exist yet (fusions, duelists) are hidden from navigation until the data lands. No empty screens ship.
 
-### U-3 Interaction details
+### U-3 Interaction details · ❌ Not built
 - **Instant search:** client-side, debounced. The whole dataset is in the bundle, so there are no requests.
 - **Virtualized grid** so only visible cards render (fixes U-gap-5). The library depends on the stack (U-4); `@tanstack/virtual` has React, Vue, Svelte and Solid adapters.
 - **Keyboard:** `/` focuses search, arrow keys move the selection in the grid, `Enter` opens the card, `Esc` closes. This nods to controller navigation.
@@ -89,7 +105,7 @@ Pages whose data does not exist yet (fusions, duelists) are hidden from navigati
 - **Empty and loading states** in the FM style ("No cards match.").
 - **Optional sound effects** (menu blip), **off by default**, using original sounds only (**TBD-U6**).
 
-### U-4 Site technology stack (**TBD-U1: to be decided later**)
+### U-4 Site technology stack (**TBD-U1: to be decided later**) · ➖ N/A
 
 The stack (framework, UI/component library, styling) is **not decided yet**. Today's site uses **Next.js + MUI** (§2), and that is one candidate among others. This spec fixes only the **requirements** any stack must meet, so the choice can be made later without changing the UX defined in U-1 to U-3.
 
@@ -119,12 +135,12 @@ The stack (framework, UI/component library, styling) is **not decided yet**. Tod
 - No new site features are built on the current stack beyond what is needed to keep it working, so nothing is thrown away if the stack changes.
 - The decision is recorded in this section (and in the [index](./README.md) decision log), with the reasons and a check against S-1 to S-8.
 
-### U-5 Static generation and SEO
+### U-5 Static generation and SEO · 🟡 Partial
 - Every `/cards/[id]` and `/duelists/[id]` page is generated at build time (S-2). For example, `generateStaticParams` in Next.js, `getStaticPaths` in Astro, or `entries` in SvelteKit.
 - A `<title>` and meta description per card ("Thunder Dragon – Lv5 Thunder – 1600/1500 – Yu-Gi-Oh! FM Catalog"), plus Open Graph tags.
 - `sitemap.xml` generated at build time.
 
-### U-6 Migration of the current page
+### U-6 Migration of the current page · ❌ Not built
 The current "Cards registered" page becomes **/progress** (U-2), so the coverage use case is kept.
 
 ## 5. Acceptance criteria
