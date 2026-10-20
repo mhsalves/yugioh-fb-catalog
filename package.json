@@ -10,6 +10,8 @@
     "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && (yarn workspace @mhsalves/yugioh-fb-catalog dev & yarn workspace yugioh-fb-catalog-mkt-site dev)",
     "typecheck": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspaces run typecheck",
     "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
+    "validate": "yarn workspace @mhsalves/yugioh-fb-catalog validate",
+    "coverage:data": "yarn workspace @mhsalves/yugioh-fb-catalog coverage:data",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

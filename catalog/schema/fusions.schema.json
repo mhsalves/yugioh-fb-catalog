@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "fusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "materials": {
+            "type": "array",
+            "items": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            ],
+            "additionalItems": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "result": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "materials",
+          "result"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "fusions"
+  ],
+  "additionalProperties": false
+}

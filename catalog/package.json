@@ -14,18 +14,29 @@
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
+    "prebuild": "yarn data:build",
     "build": "rm -rf ./lib && tsc -p tsconfig.build.json",
-    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "predev": "yarn data:build",
+    "dev": "tsx scripts/build-data.ts --watch & tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "pretypecheck": "yarn data:build",
     "typecheck": "tsc --noEmit",
+    "pretest": "yarn data:build",
     "test": "vitest run",
+    "data:build": "tsx scripts/build-data.ts",
+    "validate": "tsx scripts/validate.ts",
+    "schema:build": "tsx scripts/build-schemas.ts",
+    "schema:check": "tsx scripts/build-schemas.ts --check",
+    "coverage:data": "tsx scripts/coverage.ts",
     "npm:build": "yarn build",
     "npm:publish": "yarn build && npm publish"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.3",
     "vite": "^8",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "zod": "^4.6.7"
   },
   "bugs": {
     "url": "https://github.com/mhsalves/yugioh-fb-catalog/issues"

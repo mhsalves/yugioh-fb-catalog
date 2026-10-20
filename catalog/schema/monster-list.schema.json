@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cardType": {
+            "type": "string",
+            "const": "Monster"
+          },
+          "password": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              "cost": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 999999
+              }
+            },
+            "required": [
+              "code",
+              "cost"
+            ],
+            "additionalProperties": false
+          },
+          "monsterType": {
+            "type": "string",
+            "enum": [
+              "Dragon",
+              "Spellcaster",
+              "Zombie",
+              "Warrior",
+              "Beast-Warrior",
+              "Beast",
+              "Winged Beast",
+              "Fiend",
+              "Fairy",
+              "Insect",
+              "Dinosaur",
+              "Reptile",
+              "Fish",
+              "Sea Serpent",
+              "Machine",
+              "Thunder",
+              "Aqua",
+              "Pyro",
+              "Rock",
+              "Plant"
+            ]
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "attack": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "defense": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "guardianStars": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "enum": [
+                  "Mars",
+                  "Jupiter",
+                  "Saturn",
+                  "Uranus",
+                  "Pluto",
+                  "Neptune",
+                  "Mercury",
+                  "Sun",
+                  "Moon",
+                  "Venus"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "Mars",
+                  "Jupiter",
+                  "Saturn",
+                  "Uranus",
+                  "Pluto",
+                  "Neptune",
+                  "Mercury",
+                  "Sun",
+                  "Moon",
+                  "Venus"
+                ]
+              }
+            ],
+            "additionalItems": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "cardType",
+          "password",
+          "monsterType",
+          "level",
+          "attack",
+          "defense",
+          "guardianStars"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "cards"
+  ],
+  "additionalProperties": false
+}

@@ -6,7 +6,14 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
     {
-        ignores: ["**/node_modules/", "catalog/lib/", "mkt_site/.next/", "mkt_site/out/", "mkt_site/next-env.d.ts"],
+        ignores: [
+            "**/node_modules/",
+            "catalog/lib/",
+            "mkt_site/.next/",
+            "mkt_site/out/",
+            "mkt_site/next-env.d.ts",
+            "catalog/src/data/catalog.generated.ts",
+        ],
     },
     js.configs.recommended,
     tseslint.configs.recommended,
