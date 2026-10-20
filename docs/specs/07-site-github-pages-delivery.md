@@ -9,14 +9,14 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, `main` @ `9a353ee` (P-2 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
 
-**0 built · 2 partial · 4 not built**
+**1 built · 2 partial · 3 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | P-1 | Deploy with GitHub Actions after site changes | Agreed | ❌ Not built | Manual `yarn gh:deploy` pushes the `gh-pages` branch |
-| P-2 | Site builds from the workspace catalog | Proposed | ❌ Not built | Site uses the published npm version |
+| P-2 | Site builds from the workspace catalog | Proposed | ✅ Built | Built by [01](./01-repository-and-workspaces.md) R-1: `mkt_site/` links the workspace `catalog/` (TBD-P2 still open) |
 | P-3 | Configurable base path | Proposed | 🟡 Partial | Base path works but is hard-coded in `next.config.js` |
 | P-4 | Static hosting constraints | Proposed | 🟡 Partial | Static export, unoptimized images, `.nojekyll` in place; no custom 404 |
 | P-5 | PR previews | TBD | ❌ Not built | None (TBD-P4) |
@@ -30,12 +30,12 @@ Goal **G2**: the site must **keep being served from GitHub Pages**. Pages is fre
 
 | Item | Current state | Reference |
 |---|---|---|
-| Rendering | Next.js `output: 'export'` → static `out/` | `server/next.config.js` |
-| Base path | `basePath` and `assetPrefix` = `/yugioh-fb-catalog` in production | `server/next.config.js` |
-| Images | `images.unoptimized: true` (no image server on Pages) | `server/next.config.js` |
-| Jekyll | `touch out/.nojekyll` so `_next/` is served | `server/package.json` `gh:theme` |
-| Deploy | Manual: `yarn gh:deploy` = `next build` → `.nojekyll` → `gh-pages -d out` (pushes to the `gh-pages` branch) from a dev machine | `server/package.json` |
-| Data source | The **published npm** catalog version (`^0.1.1`) | `server/package.json` |
+| Rendering | Next.js `output: 'export'` → static `out/` | `mkt_site/next.config.js` |
+| Base path | `basePath` and `assetPrefix` = `/yugioh-fb-catalog` in production | `mkt_site/next.config.js` |
+| Images | `images.unoptimized: true` (no image server on Pages) | `mkt_site/next.config.js` |
+| Jekyll | `touch out/.nojekyll` so `_next/` is served | `mkt_site/package.json` `gh:theme` |
+| Deploy | Manual: `yarn gh:deploy` = `next build` → `.nojekyll` → `gh-pages -d out` (pushes to the `gh-pages` branch) from a dev machine | `mkt_site/package.json` |
+| Data source | The **workspace** catalog (`catalog/`, linked by Yarn; see [01](./01-repository-and-workspaces.md) R-1) | `mkt_site/package.json` |
 | URL | `https://mhsalves.github.io/yugioh-fb-catalog` | `README.md` |
 
 The table describes **today's** Next.js setup. The future stack is open ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1). This spec is written so it applies to any static-site stack.
@@ -103,7 +103,7 @@ jobs:
 - Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**).
 - Remove `gh-pages` from devDependencies and the `gh:*` scripts once this works. Keep the old branch until the first successful Actions deploy, then delete it.
 
-### P-2 Site builds from the **workspace** catalog · ❌ Not built
+### P-2 Site builds from the **workspace** catalog · ✅ Built
 With workspaces ([01](./01-repository-and-workspaces.md) R-1), the site is built from the catalog source on `main`. Merged data goes live on the next deploy, with no npm publish needed (fixes P-gap-3). npm publishing ([05](./05-catalog-npm-distribution.md)) stays independent: the site may be ahead of the latest npm release. **TBD-P2:** is that acceptable, or should the site show only released data?
 
 ### P-3 Configurable base path · 🟡 Partial
