@@ -37,6 +37,15 @@ export const ExternalIcon = () => (
     </Icon>
 );
 
+export const ShareIcon = () => (
+    <Icon>
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />
+    </Icon>
+);
+
 export const CloseIcon = () => (
     <Icon>
         <path d="M18 6 6 18M6 6l12 12" />

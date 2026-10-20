@@ -5,7 +5,7 @@ import type { ICard } from "@mhsalves/yugioh-fb-catalog";
 
 // Per-card pages for search engines (spec 09 C-7). Each catalogued card gets dist/cards/<id>/index.html:
 // the SPA shell with the card's own title, description, canonical and Open Graph tags, and a readable summary
-// inside #root. The app then opens the catalog with that card (src/main.tsx), so people land on the same view.
+// inside #root (for crawlers, and until the app starts). The app then renders its card page (src/pages/CardPage.tsx).
 
 const SITE_NAME = "Yu-Gi-Oh! FM Catalog";
 
@@ -36,7 +36,7 @@ function cardSummary(card: ICard): string {
         `<h1>#${card.id} ${escapeHtml(card.name)}</h1>`,
         `<dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join("")}</dl>`,
         `<p>${escapeHtml(card.description)}</p>`,
-        `<p><a href="../../?card=${card.id}">Open in the catalog</a></p>`,
+        `<p><a href="../../">Back to the catalog</a></p>`,
         `</main>`,
     ].join("");
 }

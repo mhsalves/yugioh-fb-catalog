@@ -4,8 +4,7 @@ import { useSyncExternalStore, type AnchorHTMLAttributes, type MouseEvent } from
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const NAVIGATE_EVENT = "app:navigate";
 
-/** The app-relative path ("/" or "/cards/425"), without the base path or a trailing slash. */
-export function currentPath(): string {
+function currentPath(): string {
     const { pathname } = window.location;
     const path = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname;
     return path.replace(/\/+$/, "") || "/";
@@ -31,6 +30,11 @@ export function usePath(): string {
 /** The query string, including the leading "?" (or "" when empty). */
 export function useSearch(): string {
     return useSyncExternalStore(subscribe, currentSearch);
+}
+
+/** A card's own page, the address the Share button hands out (spec 09 C-7). */
+export function cardPath(id: number): string {
+    return `/cards/${id}/`;
 }
 
 export function href(path: string): string {

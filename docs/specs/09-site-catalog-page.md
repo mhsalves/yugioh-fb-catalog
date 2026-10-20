@@ -13,10 +13,10 @@ Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `m
 | C-1 | One page, header without menu | Agreed | ✅ Built | Header: logo (back to the full catalog), copyable catalog version, npm link; no menu. `App.tsx` renders the catalog at `/` and the 404 view elsewhere |
 | C-2 | Filter bound to the library (`searchCards`) | Agreed | ✅ Built | `searchCards` (catalog 0.3.0); "By type" row with "All types" above the grid; filter panel (desktop column, phone sheet) for the other fields |
 | C-3 | Results grid | Agreed | ✅ Built | `CardTile` grid, 2 columns on phones; zero results show a placeholder with "Clear filters" |
-| C-4 | Card details card | Agreed | ✅ Built | `CardDetails` on `<dialog>`: stats, stars, copyable password, ritual recipe, previous/next |
+| C-4 | Card details card | Agreed | ✅ Built | `CardDetails` on `<dialog>`: stats, stars, copyable password, ritual recipe, **Share**, previous/next |
 | C-5 | Footer with owner links | Agreed | ✅ Built | `Footer`: "Made by Matheus Alves", Home page and GitHub links |
 | C-6 | Filter and open card kept in the URL | Agreed | ✅ Built | `catalogUrl.ts` maps the query string to `CardQuery` and back; opening a card pushes history |
-| C-7 | Per-card pages for search engines | Agreed | ✅ Built | `build/cardPages.ts` writes `cards/<id>/index.html` per catalogued card and `sitemap.xml` (TBD-C1 resolved 2026-10-20) |
+| C-7 | Shared card pages | Agreed | ✅ Built | `/cards/<id>/`: the link the Share button hands out; a standalone card page with "Back to the catalog" (`CardPage`). The build writes one per catalogued card plus `sitemap.xml` (TBD-C1 resolved 2026-10-20) |
 
 ## 1. Why this spec exists
 
@@ -129,6 +129,7 @@ Opens when a grid item is clicked. A modal **details card** built on the native 
 | Ritual | For a ritual card: the monster it summons and its materials. For a monster made by a ritual: the ritual card and materials. Each entry opens that card's details | `getRitual(id)` |
 | Image | Styled frame now; the linked image when 08 is built | 08 I-3 |
 
+- **Share** (next to Close) hands out the card's own page, `/cards/<id>/` (C-7): the system share sheet where there is one (phones), otherwise it copies the link and shows "Link copied". The catalog stays as it is.
 - **Previous / next** buttons (and ←/→ keys) move through the **current results**, in the current sort.
 - Closing returns focus to the grid item that opened it.
 - Fusions, equips, fields and drops are added to this card when their data and library functions exist (04 Q-5). The card shows nothing for relations that have no data, with no empty sections.
@@ -154,10 +155,17 @@ Shareable views, with no extra pages. The query string holds the filter and the 
 - Empty fields are left out, so the plain catalog URL stays clean.
 - Changing filters **replaces** the history entry (no history spam). Opening a card **pushes** one, so the browser Back button closes it.
 - An unknown or uncatalogued `card` id shows a short "Card #N is not in the catalog yet." message in the details card.
-- `?card=` is the in-app address. Search engines get their own per-card pages (C-7), which open this same view.
+- `?card=` is the in-app address while browsing. The address to **share** a card is its own page (C-7).
 
-### C-7 Per-card pages for search engines · ✅ Built
-One page with `?card=` is not indexed per card, so the build also writes a static page per catalogued card (06 U-5, S-2):
+### C-7 Shared card pages · ✅ Built
+A card's own page, `/cards/<id>/`, is **only reached through a shared link**: the Share button in the catalog's details card (C-4) hands it out, and nothing in the catalog links to it otherwise (owner request, 2026-10-20). Whoever opens it sees:
+
+- a **"Back to the catalog"** link above the card and a **"Browse the full catalog"** button below it, both to the home catalog;
+- the same card content as the details card (`CardInfo`): stats, guardian stars, copyable password, cost, description, ritual recipe (catalogued cards in the recipe link to their own pages);
+- a Share button, to pass the link on;
+- for an uncatalogued id (through `404.html`): "Card #N is not in the catalog yet." with the same way back.
+
+The same address also serves search engines, since one page with `?card=` is not indexed per card. The build writes a static page per catalogued card (06 U-5, S-2):
 
 | Output | Content |
 |---|---|
@@ -165,7 +173,7 @@ One page with `?card=` is not indexed per card, so the build also writes a stati
 | `sitemap.xml` | The catalog and every card page |
 
 - Generated in `mkt_site/build/cardPages.ts`, from the catalog's public API (`getCardList`), by the Vite build plugin. Only catalogued cards get a page; other `/cards/<id>` addresses go through `404.html`.
-- When the app starts on `/cards/<id>`, it replaces the address with `/?card=<id>` and shows the catalog with that card open. The canonical link stays on the per-card page.
+- When the app starts on `/cards/<id>/`, it renders the card page (`src/pages/CardPage.tsx`) in place of the static summary; the address stays `/cards/<id>/`.
 - Absolute URLs come from `SITE_URL` (set by `pages.yml` from `actions/configure-pages`, upgraded to `https`), falling back to the github.io address.
 
 ## 5. Acceptance criteria
@@ -175,7 +183,7 @@ One page with `?card=` is not indexed per card, so the build also writes a stati
 - [x] Clicking or pressing `Enter` on a grid item opens its details card; `Esc`, the close button and Back all close it, and focus returns to the item.
 - [x] Reloading a URL with filters and `card=` restores the same view.
 - [x] The header has no menu; the footer links to https://matheusalves.dev and https://github.com/mhsalves and shows the fan-project notice.
-- [x] `/cards/<id>/` exists for every catalogued card with its own title, description and canonical link, opens the catalog with that card, and is listed in `sitemap.xml`.
+- [x] The details card's Share button hands out `/cards/<id>/`; that page shows the card on its own with "Back to the catalog", has its own title, description and canonical link, and is listed in `sitemap.xml`.
 - [x] Works at 375px width with no horizontal scroll; all controls are native buttons and inputs, reachable by keyboard. (A formal WCAG AA contrast audit waits for the style guide, TBD-C5.)
 - [x] `yarn typecheck`, `yarn lint`, `yarn test` and the Pages deploy pass.
 

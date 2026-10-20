@@ -12,7 +12,8 @@ Uma única página, o catálogo ([spec 09](../docs/specs/09-site-catalog-page.md
 - Clique numa carta para abrir os detalhes (atributos, guardian stars, senha com botão de copiar, custo, descrição, ritual)
 - Filtros e carta aberta ficam na URL (`?type=Monster&card=425`), então dá para compartilhar
 - Rodapé com links para https://matheusalves.dev e https://github.com/mhsalves e o aviso "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami."
-- Uma página por carta catalogada (`/cards/<id>/`) para buscadores, com título, descrição e link canônico próprios, e um `sitemap.xml`; ao abrir, mostra o catálogo com a carta aberta
+- Botão **Share** nos detalhes da carta: compartilha (celular) ou copia o link da página da carta, `/cards/<id>/`
+- A página da carta só é usada por esse link compartilhado: mostra a carta sozinha, com "Back to the catalog" para voltar ao catálogo. O build gera uma por carta catalogada (com título, descrição e link canônico próprios) e um `sitemap.xml`
 - Página 404 para outros endereços
 
 ## Tecnologias
@@ -81,8 +82,8 @@ mkt_site/
     ├── useCopy.ts       # Copiar para a área de transferência
     ├── styles.css       # Tokens e estilos globais
     ├── assets/logo.svg
-    ├── components/      # Header, Footer, CatalogVersion, Filters, CardTile, CardDetails, ícones
-    └── pages/           # CatalogPage, NotFoundPage
+    ├── components/      # Header, Footer, CatalogVersion, Filters, CardTile, CardDetails, CardInfo, ShareButton, ícones
+    └── pages/           # CatalogPage, CardPage (link compartilhado), NotFoundPage
 ```
 
 ## Licença
