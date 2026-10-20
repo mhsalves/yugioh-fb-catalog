@@ -1,6 +1,6 @@
-import type { ISupportCard } from "../../card-types";
+import type { IMagicCard } from "../card-types";
 
-const magics: ISupportCard[] = [
+const magic: IMagicCard[] = [
     {
         id: 332,
         name: "Mountain",
@@ -13,4 +13,4 @@ const magics: ISupportCard[] = [
     },
 ];
 
-export default magics;
+export default magic;

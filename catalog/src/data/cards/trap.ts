@@ -1,6 +1,6 @@
-import type { ISupportCard } from "../../card-types";
+import type { ITrapCard } from "../card-types";
 
-const traps: ISupportCard[] = [
+const trap: ITrapCard[] = [
     {
         id: 690,
         name: "Fake Trap",
@@ -13,4 +13,4 @@ const traps: ISupportCard[] = [
     },
 ];
 
-export default traps;
+export default trap;
