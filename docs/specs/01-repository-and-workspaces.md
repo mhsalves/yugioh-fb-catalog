@@ -4,6 +4,7 @@
 
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -15,7 +16,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./READM
 | R-1 | Root workspace | Proposed | ❌ Not built | Two separate packages, no root `package.json` |
 | R-2 | Tests with Vitest | Proposed | ❌ Not built | No tests |
 | R-3 | Lint and format | Proposed | ❌ Not built | No linter (`tslint` removed) |
-| R-4 | CI workflow | Proposed | ❌ Not built | Only Dependabot, no workflow checks PRs |
+| R-4 | CI workflow on GitHub Actions | Agreed | ❌ Not built | Only Dependabot, no workflow checks PRs |
 | R-5 | Site in TypeScript `strict: true` | Proposed | 🟡 Partial | `catalog/` is strict, `server/` is `strict: false` |
 | R-6 | Rename `server/` to `site/` | TBD | ❌ Not built | Folder still named `server/` (TBD-R1) |
 
@@ -78,14 +79,25 @@ Add a root `package.json` (private, never published):
 ESLint (flat config, `typescript-eslint`) plus Prettier at the root, with one shared config.
 
 ### R-4 CI workflow (`.github/workflows/ci.yml`) · ❌ Not built
-Runs on every PR and every push to `main`:
+
+**CI platform: GitHub Actions (Agreed, 2026-10-20).** All automation runs on GitHub Actions: CI (`ci.yml`), the npm release ([05](./05-catalog-npm-distribution.md) N-2, `release.yml`) and the Pages deploy ([07](./07-site-github-pages-delivery.md) P-1, `pages.yml`). No other CI service is used. Reasons:
+- **Built in:** the repository already lives on GitHub. Checks appear on PRs and can be made required with branch protection, with no extra service to connect.
+- **Free** for public repositories on standard runners.
+- **Official GitHub Pages deploy** (`actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`). Other CI services would have to push a `gh-pages` branch instead.
+- **npm trusted publishing (OIDC) and provenance** are supported from GitHub Actions, so no long-lived npm token is needed (TBD-N6).
+- **Dependabot** already keeps the Actions versions up to date (`.github/dependabot.yml`).
+
+Workflow conventions: every workflow lives in `.github/workflows/`, pins actions to a major version (or a SHA, TBD-R4), and sets the minimum `permissions` it needs.
+
+`ci.yml` runs on every PR and every push to `main`:
 
 1. install (cached)
 2. type-check both packages
 3. run lint
 4. run tests, including data validation
 5. build the catalog, `npm pack`, and install the tarball into a temporary project to smoke-test the published shape
-6. build the site (`next build`), but do not deploy it
+6. build the site (with today's stack, `next build`), but do not deploy it
+7. on PRs that change the catalog's code or data: the version-bump and changelog check ([05](./05-catalog-npm-distribution.md) N-2)
 
 Deploy and publish workflows are specified in [07](./07-site-github-pages-delivery.md) and [05](./05-catalog-npm-distribution.md).
 
@@ -107,3 +119,4 @@ The folder is a static site, not a server (see `ARCHITECTURE.md` §5). Renaming 
 - **TBD-R1:** Rename `server/` to `site/` (or `web/`)? This affects the Pages workflow and the docs.
 - **TBD-R2:** Which package manager? Yarn 1 (current), Yarn Berry, pnpm or npm. pnpm has the strictest workspace linking, and Yarn 1 needs the least churn.
 - **TBD-R3:** Minimum supported Node version, both for development and for consumers of the package (affects [05](./05-catalog-npm-distribution.md)).
+- **TBD-R4:** Pin GitHub Actions by major version (`actions/checkout@v4`, simpler) or by commit SHA (safer against a compromised tag; Dependabot can still update SHAs)?

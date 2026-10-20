@@ -99,12 +99,15 @@ flowchart LR
 
 Both workflows can also be started by hand (`workflow_dispatch`) to retry a failed run.
 
+**Platform:** all of this, CI (`ci.yml`), release (`release.yml`) and deploy (`pages.yml`), runs on **GitHub Actions**. See [01](./01-repository-and-workspaces.md) R-4 for the reasons.
+
 ## Decision log
 
 | Date | Decision | Status | Where |
 |---|---|---|---|
 | 2026-10-20 | **After a merge to `main`, catalog changes (new features or data) publish to npm automatically**. Mechanism: version bump required in the PR, publish on merge | **Agreed** (rule); mechanism Proposed | [05](./05-catalog-npm-distribution.md) N-2 |
 | 2026-10-20 | **After a merge to `main`, site changes deploy to GitHub Pages automatically** (catalog data changes also redeploy while the site uses the workspace catalog) | **Agreed** | [07](./07-site-github-pages-delivery.md) P-1 |
+| 2026-10-20 | **GitHub Actions is the CI platform** for CI, the npm release and the Pages deploy. No other CI service is used | **Agreed** | [01](./01-repository-and-workspaces.md) R-4 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
 | 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
 
