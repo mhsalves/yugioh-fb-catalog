@@ -56,6 +56,8 @@ jobs:
         env:
           # "/yugioh-fb-catalog" for this repo; follows forks and custom domains (spec 07 P-3).
           SITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Absolute URL for the per-card pages' canonical links and sitemap.xml (spec 09 C-7).
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

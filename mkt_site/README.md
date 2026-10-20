@@ -11,7 +11,8 @@ Uma única página, o catálogo ([spec 09](../docs/specs/09-site-catalog-page.md
 - Resultados em grade, vindos de `searchCards` do catálogo; sem resultados aparece um placeholder com "Clear filters"
 - Clique numa carta para abrir os detalhes (atributos, guardian stars, senha com botão de copiar, custo, descrição, ritual)
 - Filtros e carta aberta ficam na URL (`?type=Monster&card=425`), então dá para compartilhar
-- Rodapé com links para https://matheusalves.dev e https://github.com/mhsalves
+- Rodapé com links para https://matheusalves.dev e https://github.com/mhsalves e o aviso "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami."
+- Uma página por carta catalogada (`/cards/<id>/`) para buscadores, com título, descrição e link canônico próprios, e um `sitemap.xml`; ao abrir, mostra o catálogo com a carta aberta
 - Página 404 para outros endereços
 
 ## Tecnologias
@@ -70,7 +71,8 @@ O site fica em `https://mhsalves.github.io/yugioh-fb-catalog`.
 ```
 mkt_site/
 ├── index.html           # Shell da SPA
-├── vite.config.ts       # Base path, 404.html, versão do catálogo
+├── vite.config.ts       # Base path, 404.html, páginas por carta, versão do catálogo
+├── build/cardPages.ts   # Gera cards/<id>/index.html e sitemap.xml no build
 └── src/
     ├── main.tsx         # Entrada
     ├── App.tsx          # Cabeçalho, catálogo (ou 404) e rodapé

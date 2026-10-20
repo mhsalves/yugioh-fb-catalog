@@ -18,8 +18,8 @@ Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./READM
 | U-1 | Visual language inspired by FM | Proposed | ❌ Not built | Placeholder dark-blue/gold tokens in `src/styles.css`; style guide pending |
 | U-2 | Information architecture (pages) | Superseded by [09](./09-site-catalog-page.md) | ➖ N/A | One catalog page replaces the page list (2026-10-20) |
 | U-3 | Interaction details | Proposed | ❌ Not built | No search, keyboard or virtualization yet |
-| U-4 | Site technology stack | Agreed | 🟡 Partial | Vite + React + plain CSS (2026-10-20); per-card pre-rendering (S-2) not built yet |
-| U-5 | Static generation and SEO | Proposed | 🟡 Partial | Static SPA build with a meta description; no per-card pages, per-page meta or sitemap |
+| U-4 | Site technology stack | Agreed | 🟡 Partial | Vite + React + plain CSS (2026-10-20); per-card pages built (09 C-7); Lighthouse (S-8) not measured |
+| U-5 | Static generation and SEO | Proposed | 🟡 Partial | Per-card pages with title, description, canonical and Open Graph tags, plus `sitemap.xml` ([09](./09-site-catalog-page.md) C-7); no pages for uncatalogued IDs or duelists yet |
 | U-6 | Migration of the current page | Superseded by [09](./09-site-catalog-page.md) | ➖ N/A | No `/progress` page; the catalog page shows "N of 722 catalogued" (09 C-2) |
 
 ## 1. Why this spec exists
@@ -120,7 +120,7 @@ Pages whose data does not exist yet (fusions, duelists) are hidden from navigati
 | # | Check | Status |
 |---|---|---|
 | S-1 | Fully static build | ✅ `vite build` → `dist/` |
-| S-2 | One pre-rendered page per card | ❌ Not built: needs a pre-render step (for example, a build script that renders each route to HTML) when `/cards/[id]` lands. Until then, deep links work through the `404.html` SPA fallback |
+| S-2 | One pre-rendered page per card | ✅ For every catalogued card: `mkt_site/build/cardPages.ts` writes `cards/<id>/index.html` ([09](./09-site-catalog-page.md) C-7). Uncatalogued IDs use the `404.html` fallback; duelist pages wait for data |
 | S-3 | Configurable base path | ✅ `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` |
 | S-4 | Public catalog API only | ✅ |
 | S-5 | Full custom theming | ✅ No UI library to fight; tokens in `src/styles.css` |

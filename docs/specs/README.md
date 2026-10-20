@@ -73,8 +73,8 @@ Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 2 | 2 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 4 | 0 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
-| [09 – Site: single catalog page](./09-site-catalog-page.md) | 6 | 0 | 0 | 0 |
-| **Total** | **25** | **11** | **20** | **2** |
+| [09 – Site: single catalog page](./09-site-catalog-page.md) | 7 | 0 | 0 | 0 |
+| **Total** | **26** | **11** | **20** | **2** |
 
 ## Automation rules
 

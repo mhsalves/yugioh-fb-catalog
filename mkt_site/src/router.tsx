@@ -4,7 +4,8 @@ import { useSyncExternalStore, type AnchorHTMLAttributes, type MouseEvent } from
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const NAVIGATE_EVENT = "app:navigate";
 
-function currentPath(): string {
+/** The app-relative path ("/" or "/cards/425"), without the base path or a trailing slash. */
+export function currentPath(): string {
     const { pathname } = window.location;
     const path = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname;
     return path.replace(/\/+$/, "") || "/";

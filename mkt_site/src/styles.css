@@ -699,6 +699,32 @@ fieldset:disabled {
     border-top: 1px solid var(--color-border);
 }
 
+/* Per-card page content before the app starts, and for crawlers without JavaScript (spec 09 C-7) */
+
+.static-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px var(--gutter);
+}
+
+.static-card h1 {
+    color: var(--color-accent);
+}
+
+.static-card dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+}
+
+.static-card dt {
+    color: var(--color-text-muted);
+}
+
+.static-card dd {
+    margin: 0;
+}
+
 /* Footer */
 
 .footer {
@@ -729,6 +755,11 @@ fieldset:disabled {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+.footer__notice {
+    flex-basis: 100%;
+    font-size: 0.75rem;
 }
 
 .footer__links a {

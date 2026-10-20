@@ -131,7 +131,7 @@ Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `mkt_site/dist/d
 
 - [x] Merging to `main` a PR that changes the site (or catalog data, while P-2 applies) deploys the site with no manual step, and a failing test blocks the deploy.
 - [ ] Merging a PR that changes only docs or tests does not deploy.
-- [ ] `https://mhsalves.github.io/yugioh-fb-catalog/` and `/cards/425` load with no 404s on assets.
+- [x] `https://mhsalves.github.io/yugioh-fb-catalog/` and `/cards/425` load with no 404s on assets.
 - [x] Unknown URLs show the project's own 404 page.
 - [x] `gh-pages` package and `gh:*` scripts removed.
 - [x] The base path can be overridden by an environment variable.

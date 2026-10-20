@@ -6,7 +6,7 @@
 
 Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `main` @ `d72f97e`). Legend in the [index](./README.md#status-system).
 
-**6 built · 0 partial · 0 not built**
+**7 built · 0 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -16,6 +16,7 @@ Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `m
 | C-4 | Card details card | Agreed | ✅ Built | `CardDetails` on `<dialog>`: stats, stars, copyable password, ritual recipe, previous/next |
 | C-5 | Footer with owner links | Agreed | ✅ Built | `Footer`: "Made by Matheus Alves", Home page and GitHub links |
 | C-6 | Filter and open card kept in the URL | Agreed | ✅ Built | `catalogUrl.ts` maps the query string to `CardQuery` and back; opening a card pushes history |
+| C-7 | Per-card pages for search engines | Agreed | ✅ Built | `build/cardPages.ts` writes `cards/<id>/index.html` per catalogued card and `sitemap.xml` (TBD-C1 resolved 2026-10-20) |
 
 ## 1. Why this spec exists
 
@@ -141,7 +142,7 @@ At the bottom of the page, on every view (including 404):
 | GitHub profile | https://github.com/mhsalves |
 
 - Plain text links with an external-link icon, opening in a new tab (`rel="noopener"`), and visible on phones.
-- Text: "Made by Matheus Alves", then the two links. A fan-project notice is optional (TBD-C4).
+- Text: "Made by Matheus Alves", then the two links, then the notice "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami." (TBD-C4, resolved 2026-10-20).
 
 ### C-6 Filter and open card kept in the URL · ✅ Built
 Shareable views, with no extra pages. The query string holds the filter and the open card:
@@ -153,7 +154,19 @@ Shareable views, with no extra pages. The query string holds the filter and the 
 - Empty fields are left out, so the plain catalog URL stays clean.
 - Changing filters **replaces** the history entry (no history spam). Opening a card **pushes** one, so the browser Back button closes it.
 - An unknown or uncatalogued `card` id shows a short "Card #N is not in the catalog yet." message in the details card.
-- This replaces the `/cards/[id]` pages of 06 U-2 for now (see TBD-C1 for SEO).
+- `?card=` is the in-app address. Search engines get their own per-card pages (C-7), which open this same view.
+
+### C-7 Per-card pages for search engines · ✅ Built
+One page with `?card=` is not indexed per card, so the build also writes a static page per catalogued card (06 U-5, S-2):
+
+| Output | Content |
+|---|---|
+| `cards/<id>/index.html` | The app shell with the card's own `<title>` and meta description ("Thunder Dragon – Lv5 Thunder – 1600/1500 – Yu-Gi-Oh! FM Catalog"), canonical link, Open Graph tags, and a readable summary (stats, password, description, "Open in the catalog") inside `#root` |
+| `sitemap.xml` | The catalog and every card page |
+
+- Generated in `mkt_site/build/cardPages.ts`, from the catalog's public API (`getCardList`), by the Vite build plugin. Only catalogued cards get a page; other `/cards/<id>` addresses go through `404.html`.
+- When the app starts on `/cards/<id>`, it replaces the address with `/?card=<id>` and shows the catalog with that card open. The canonical link stays on the per-card page.
+- Absolute URLs come from `SITE_URL` (set by `pages.yml` from `actions/configure-pages`, upgraded to `https`), falling back to the github.io address.
 
 ## 5. Acceptance criteria
 
@@ -161,18 +174,19 @@ Shareable views, with no extra pages. The query string holds the filter and the 
 - [x] Every filter control in C-2 changes the results, and its options come from the library enums.
 - [x] Clicking or pressing `Enter` on a grid item opens its details card; `Esc`, the close button and Back all close it, and focus returns to the item.
 - [x] Reloading a URL with filters and `card=` restores the same view.
-- [x] The header has no menu; the footer links to https://matheusalves.dev and https://github.com/mhsalves.
+- [x] The header has no menu; the footer links to https://matheusalves.dev and https://github.com/mhsalves and shows the fan-project notice.
+- [x] `/cards/<id>/` exists for every catalogued card with its own title, description and canonical link, opens the catalog with that card, and is listed in `sitemap.xml`.
 - [x] Works at 375px width with no horizontal scroll; all controls are native buttons and inputs, reachable by keyboard. (A formal WCAG AA contrast audit waits for the style guide, TBD-C5.)
 - [x] `yarn typecheck`, `yarn lint`, `yarn test` and the Pages deploy pass.
 
 ## 6. TBD / open questions
 
-- **TBD-C1:** Per-card pages for search engines. One page with `?card=` is not indexed per card. Keep it like this, or later pre-render a small `/cards/<id>` HTML page per card that redirects into the catalog with `?card=<id>` (06 S-2)?
+- ~~**TBD-C1:** Per-card pages for search engines.~~ **Resolved 2026-10-20:** a static page per catalogued card plus `sitemap.xml` (C-7).
 - **TBD-C2:** Filter placement: left column on desktop and a sheet on phones (default), or a horizontal bar above the grid?
 - **TBD-C3:** Show only catalogued cards (default), or also show placeholders for the 717 missing IDs (useful for contributors, noisy for players)?
-- **TBD-C4:** Add a footer notice such as "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami." (pairs with 08 I-5 attribution)?
+- ~~**TBD-C4:** Footer fan-project notice.~~ **Resolved 2026-10-20:** "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami." in the footer (C-5).
 - **TBD-C5:** Colors, fonts, card-type colors and the placeholder frame come from the style guide (06 U-1, TBD-U3, TBD-U4).
 
 ## Delivery
 
-Built in one PR (#38) with the §6 defaults: `searchCards` in catalog 0.3.0 (spec 04 Q-4, 16 tests), then C-1 to C-6 in `mkt_site/`. No catalog data was added. Next: apply the style guide (TBD-C5).
+Built in one PR (#38) with the §6 defaults, then C-7 and the footer notice (TBD-C1, TBD-C4): `searchCards` in catalog 0.3.0 (spec 04 Q-4, 16 tests), then C-1 to C-6 in `mkt_site/`. No catalog data was added. Next: apply the style guide (TBD-C5).

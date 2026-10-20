@@ -21,6 +21,8 @@ export default function Footer() {
                         </li>
                     ))}
                 </ul>
+                {/* Fan-project notice (spec 09 TBD-C4). */}
+                <p className="footer__notice">Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami.</p>
             </div>
         </footer>
     );

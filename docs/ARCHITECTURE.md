@@ -232,7 +232,8 @@ The site is **one page** (spec 09): the catalog at `/`.
 - **Results:** the page calls `searchCards(query)` from the catalog and renders the items as a grid, with "N cards · 5 of 722 catalogued" and a sort control. Zero results show a placeholder with "Clear filters". The site never filters or sorts by itself.
 - **Card details:** clicking a grid item opens a `<dialog>` with the card's stats, guardian stars, copyable password, cost, description and ritual recipe (`getRitual`), plus previous/next through the results.
 - **URL:** the whole state lives in the query string (`catalogUrl.ts`), for example `?type=Monster&atk=1000-&card=425`. Filter changes replace the history entry; opening a card adds one, so Back closes it.
-- **Footer:** "Made by Matheus Alves" with links to https://matheusalves.dev and https://github.com/mhsalves.
+- **Footer:** "Made by Matheus Alves" with links to https://matheusalves.dev and https://github.com/mhsalves, and the notice "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami."
+- **Per-card pages:** the build writes `cards/<id>/index.html` for every catalogued card (own title, description, canonical and Open Graph tags, readable summary) and `sitemap.xml` (`build/cardPages.ts`). The app opens them as `/?card=<id>`.
 - A **404** view for any other path.
 
 ### 5.2 Stack and reasons
