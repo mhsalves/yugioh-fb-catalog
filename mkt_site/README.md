@@ -46,7 +46,6 @@ O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/li
 - `yarn build`: gera o site estático em `dist/`
 - `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fb-catalog/`
 - `yarn typecheck`: verifica os tipos (TypeScript strict)
-- `yarn gh:deploy`: deploy manual de `dist/` no GitHub Pages (o normal é o workflow `pages.yml`)
 
 ## Adicionar uma página
 
@@ -59,12 +58,6 @@ O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/li
 O deploy é automático: depois de um merge na `main` que muda o site (`mkt_site/**`), os dados ou o código do catálogo, ou as dependências, o workflow `.github/workflows/pages.yml` valida, testa, gera o build e publica no GitHub Pages. Para publicar de novo sem mudanças, rode o workflow pela aba **Actions** (`workflow_dispatch`).
 
 O site fica em `https://mhsalves.github.io/yugioh-fb-catalog`.
-
-Alternativa manual (até o primeiro deploy pelo Actions dar certo):
-
-```bash
-yarn gh:deploy
-```
 
 - O base path vem de `SITE_BASE_PATH` (padrão `/yugioh-fb-catalog` no build e no preview, `/` no dev). Para um domínio próprio, use `SITE_BASE_PATH=/ yarn build`.
 - O build copia `index.html` para `404.html`, assim links diretos (por exemplo `/yugioh-fb-catalog/qualquer-pagina`) carregam a SPA no GitHub Pages.

@@ -23,7 +23,7 @@ updates:
       # they fall through to `security-other`.
       security-mkt-site:
         applies-to: security-updates
-        patterns: ["react", "react-dom", "@types/react", "@types/react-dom", "@vitejs/*", "gh-pages"]
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom", "@vitejs/*"]
       security-catalog:
         applies-to: security-updates
         patterns: ["vite", "vitest", "@vitest/*", "@types/node", "typescript"]

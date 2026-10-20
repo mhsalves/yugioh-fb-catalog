@@ -13,8 +13,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "gh:deploy": "yarn build && gh-pages -d dist"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mhsalves/yugioh-fb-catalog": "*",
@@ -36,7 +35,6 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^6.1.2",
-    "gh-pages": "^6.3.0",
     "typescript": "^5.7.3",
     "vite": "^8"
   }

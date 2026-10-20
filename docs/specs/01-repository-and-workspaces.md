@@ -144,7 +144,7 @@ What the rename touched (all in one PR):
 | Root workspaces (R-1) | `"workspaces": ["catalog", "mkt_site"]` ✅ |
 | `.github/dependabot.yml` | One `npm` entry at `directory: "/"` for the whole workspace (one root lockfile), instead of `/catalog` + `/server`. Groups: `framework`, `tooling`, `minor-and-patch` ✅ |
 | Workflow path filters | `mkt_site/**` in `pages.yml` ([07](./07-site-github-pages-delivery.md) P-1) and the "does not release" list in `release.yml` ([05](./05-catalog-npm-distribution.md) N-2). Those workflows do not exist yet, so they use the new name from the start |
-| Pages artifact path | `mkt_site/dist` (Vite build; was `mkt_site/out` with the Next.js export). The manual `yarn gh:deploy` runs from `mkt_site/` ✅ |
+| Pages artifact path | `mkt_site/dist` (Vite build; was `mkt_site/out` with the Next.js export). Deployed by `pages.yml` ([07](./07-site-github-pages-delivery.md) P-1) ✅ |
 | Docs | Root `README.md`, `mkt_site/README.md`, `docs/ARCHITECTURE.md`, specs ✅ |
 | `.gitignore` | No `server/`-specific entries ✅ |
 
