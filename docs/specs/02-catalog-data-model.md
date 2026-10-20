@@ -1,25 +1,20 @@
 # 02 – Catalog data model and organization
 
-> **Status: Proposed.** Many items are **TBD** because they are game facts that must be checked against a trusted source (see TBD-X1 in the [index](./README.md)) before they are coded.
-
-
-
-
-
+> **Status: Mostly built** (catalog `0.2.0`). Game facts were verified against game-data sources before they were coded (§6). Items still waiting on a TBD are deferred, not guessed.
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, after the spec 02 build PR (based on `main` @ `d06bf94`). Legend in the [index](./README.md#status-system).
 
-**0 built · 4 partial · 1 not built**
+**3 built · 2 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| D-1 | Separate entities from relations | Proposed | 🟡 Partial | Ritual recipe uses ID references, but lives inside the card |
-| D-2 | Card entity (target shape) | Proposed | 🟡 Partial | Base, monster, ritual, support shapes exist; no Magic/Trap/Equip split, no attribute |
-| D-3 | Relation collections | Proposed | 🟡 Partial | Only ritual recipes (embedded); no fusions, equips, fields, duelists |
-| D-4 | Game rules as data | Proposed | 🟡 Partial | Types and stars exist as TS unions only; 2 of ~20 monster types; card total hard-coded in site |
-| D-5 | One organization rule for files | Proposed | ❌ Not built | Three different rules (type + page, page only, type only) |
+| D-1 | Separate entities from relations | Agreed | ✅ Built | Cards describe what a card is; ritual recipes live in `data/rituals.ts`, keyed by card ID |
+| D-2 | Card entity (target shape) | Agreed | ✅ Built | `IMagicCard`/`ITrapCard`/`IEquipCard` split, flat `attack`/`defense`, `guardianStars` tuple, recipe out of `IRitualCard`. TBD-gated fields (attribute D3, magic/trap kinds D5, rarity D6) deferred |
+| D-3 | Relation collections | Agreed | 🟡 Partial | Typed `fusions`, `rituals`, `equips`, `fields` (only `rituals` has data). Duelists, decks and drops wait for TBD-D9 |
+| D-4 | Game rules as data | Agreed | 🟡 Partial | `MONSTER_TYPES` (all 20), `CARD_TYPES`, `GUARDIAN_STARS` as `as const` lists with derived TS types; `TOTAL_CARDS`, guardian-star advantage and bonus in `data/rules.ts`. Schema enums and `rules.json` come with [03](./03-catalog-data-authoring.md) A-1 |
+| D-5 | One organization rule for files | Agreed | ✅ Built | `cards/monsters/<type>.ts` and `cards/{magic,trap,equip,ritual}.ts`; no `pageN` split. Files are `.ts` until [03](./03-catalog-data-authoring.md) A-1 converts them to `.json` at the same paths |
 
 ## 1. Why this spec exists
 
@@ -33,7 +28,45 @@ Designing the full shape now (even if most of it stays empty) lets the data grow
 
 ## 2. What exists today
 
-`catalog/src/data/card-types.ts` (details in `ARCHITECTURE.md` §4.1):
+> **Updated by the spec 02 build (catalog `0.2.0`).** The model below is the one shipped in `0.2.0`. The snapshot that follows it, and §3 Gaps, describe the model **before** this spec was built and are kept for history.
+
+```ts
+// data/enums.ts: runtime lists in the game's own order; the TS types derive from them
+MONSTER_TYPES = ["Dragon", "Spellcaster", …, "Plant"] as const   // all 20
+CARD_TYPES    = ["Monster", "Magic", "Trap", "Ritual", "Equip"] as const
+GUARDIAN_STARS = ["Mars", "Jupiter", "Saturn", "Uranus", "Pluto", "Neptune", "Mercury", "Sun", "Moon", "Venus"] as const
+
+// data/card-types.ts
+ICardBase    { id: CardId, name, password: { code, cost }, description }
+IMonsterCard { cardType: "Monster", monsterType, level, attack, defense, guardianStars: [TGuardianStar, TGuardianStar] }
+IMagicCard   { cardType: "Magic" }    ITrapCard { cardType: "Trap" }    IEquipCard { cardType: "Equip" }
+IRitualCard  { cardType: "Ritual" }   // recipe in data/rituals.ts
+ICard = IMonsterCard | IMagicCard | ITrapCard | IEquipCard | IRitualCard
+
+// data/relation-types.ts
+IFusion      { materials: [CardId, CardId] /* sorted, a <= b */, result }
+IRitual      { ritual, result, materials: CardId[] }
+IEquipCompat { equip, targets: CardId[], boost }
+IFieldEffect { field, boosts: TMonsterType[], weakens: TMonsterType[], amount }
+
+// data/rules.ts
+TOTAL_CARDS = 722; GUARDIAN_STAR_ADVANTAGE = { Mars: "Jupiter", …, Mercury: "Sun" }; GUARDIAN_STAR_BONUS = 500
+```
+
+```
+catalog/src/data/
+├── cards/
+│   ├── monsters/<monster-type>.ts   # thunder.ts today; a card in the wrong type file is a type error
+│   ├── magic.ts  trap.ts  equip.ts  ritual.ts
+│   └── index.ts                     # merges every file, sorts by id
+├── fusions/index.ts   equips.ts   fields.ts   rituals.ts
+├── duelists/                        # still empty (TBD-D9)
+├── enums.ts   rules.ts   card-types.ts   relation-types.ts
+```
+
+Public API additions: `getRitual(ritualOrResultId)`, `TOTAL_CARDS`, `MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS`, `GUARDIAN_STAR_ADVANTAGE`, `GUARDIAN_STAR_BONUS`. The migration notes are in `catalog/CHANGELOG.md`.
+
+**Before the spec 02 build:** `catalog/src/data/card-types.ts` (details in `ARCHITECTURE.md` §4.1):
 
 ```ts
 type TSupportCardType = "Equip" | "Magic" | "Trap";
@@ -59,7 +92,7 @@ cards/
 duelists/                            # empty placeholder
 ```
 
-**Data entered: 5 cards** (IDs 315 Dragon Treasure, 332 Mountain, 425 Thunder Dragon, 674 Beastry Mirror Ritual, 690 Fake Trap). `ARCHITECTURE.md` §7.1 says 6; this should be corrected to 5.
+**Data entered: 5 cards** (IDs 315 Dragon Treasure, 332 Mountain, 425 Thunder Dragon, 674 Beastry Mirror Ritual, 690 Fake Trap). (`ARCHITECTURE.md` §7.1 said 6; corrected to 5.)
 
 **What is already good and should be kept:**
 - The discriminated union on `cardType`, which gives type narrowing for free.
@@ -84,7 +117,7 @@ duelists/                            # empty placeholder
 
 ## 4. Proposed improvements
 
-### D-1 Separate *entities* from *relations* · 🟡 Partial
+### D-1 Separate *entities* from *relations* · ✅ Built
 Card records describe **what a card is**. Game mechanics that link cards (fusions, equips, rituals, drops) live in their **own collections**, keyed by ID. The reasons:
 
 - one fusion involves 2–3 cards, so storing it inside a card would duplicate it;
@@ -103,7 +136,7 @@ erDiagram
     FIELD_EFFECT }o--|| CARD : "field magic card"
 ```
 
-### D-2 Card entity (target shape) · 🟡 Partial
+### D-2 Card entity (target shape) · ✅ Built
 
 ```ts
 interface ICardBase {
@@ -138,10 +171,26 @@ Splitting `ISupportCard` into `IMagicCard`, `ITrapCard` and `IEquipCard` lets ea
 
 **Compatibility:** renaming or flattening fields (`monsterPoints` → `attack`/`defense`, the `guardianStars` object → tuple, `summon` moving out) is **breaking**. Either do it in a `0.x` minor (allowed under semver for 0.x) with a migration note, or keep the old fields as deprecated getters for one release (**TBD-D7**).
 
+**Built:** as proposed, in catalog `0.2.0` with a migration note in `catalog/CHANGELOG.md` (TBD-D7) and no deprecated getters. `ISupportCard` remains as the union `IMagicCard | ITrapCard | IEquipCard`. `attribute`, `magicKind`/`trapKind` and rarity are **not** added until TBD-D3, TBD-D5 and TBD-D6 are resolved.
+
 ### D-3 Relation collections · 🟡 Partial
 
+**Built:** `IFusion`, `IRitual`, `IEquipCompat` and `IFieldEffect` (`data/relation-types.ts`), with collections `fusions/index.ts`, `rituals.ts` (holding the one known recipe), `equips.ts` and `fields.ts`. `getRitual()` reads `rituals`. **Not built:** `IDuelist`, `IDeckEntry` and `IDrop` wait for TBD-D9.
+
+`IFusion` follows the resolved TBD-D2: the game stores **only specific card pairs**, so there is no `MaterialRef`.
+
 ```ts
-// fusions/*.json
+// fusions/  (as built)
+interface IFusion {
+  materials: [CardId, CardId];   // order-insensitive: stored sorted (a <= b), one entry per pair; a card may fuse with itself
+  result: CardId;
+}
+```
+
+The original proposal, kept for reference:
+
+```ts
+// fusions/*.json  (proposal before TBD-D2 was resolved)
 interface IFusion {
   result: CardId;
   materials: [MaterialRef, MaterialRef];       // order-insensitive
@@ -187,7 +236,9 @@ The rules split across two places:
 
 (`totalCards`: confirm 722 vs 721, TBD-D10. The advantage map is partial and unverified, TBD-D11.)
 
-### D-5 One organization rule for files · ❌ Not built
+**Built (partial):** both TBDs are resolved (§6). Until the schema exists ([03](./03-catalog-data-authoring.md) A-1, tool TBD-A6), the enums are `as const` lists in `data/enums.ts` (`MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS`, in the game's own order), and the TS types derive from them. A schema can reuse the same lists (`z.enum(MONSTER_TYPES)`). The rule values are in `data/rules.ts`: `TOTAL_CARDS = 722`, the full `GUARDIAN_STAR_ADVANTAGE` map (each star → the star it beats) and `GUARDIAN_STAR_BONUS = 500` (+500 for the advantaged card, −500 for the other). Moving them to `rules.json` with a schema is the remaining part, delivered by spec 03.
+
+### D-5 One organization rule for files · ✅ Built
 Today there are three different rules (see D-gap-2). Proposal: **one folder per `cardType`, one file per sub-type**:
 
 ```
@@ -210,28 +261,38 @@ Drop the `pageN.ts` ID-range split. ID order is restored by a single sort in the
 
 *Alternative (if TBD-D4 shows that pages map to something real, such as the in-game library pages):* keep `pageN` but apply it to **every** category consistently.
 
+**Built:** the main proposal, with `.ts` files at the target paths under `catalog/src/data/` (`cards/monsters/<type>.ts`, `cards/{magic,trap,equip,ritual}.ts`, `fusions/`, `rituals.ts`, `equips.ts`, `fields.ts`). [03](./03-catalog-data-authoring.md) A-1 converts each file to `.json` without changing the layout. The `pageN` split is gone (TBD-D4 is moot). A monster file only accepts its own type: `MonsterCardsOf<"Thunder">` makes a Dragon in `thunder.ts` a type error. Only `thunder.ts` exists today; a type's file is created, and added to `cards/monsters/index.ts`, with its first card.
+
 ## 5. Acceptance criteria
 
-- [ ] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`.
-- [ ] Every FM concept listed in D-3 has a typed collection, even if it is still empty.
-- [ ] A contributor can find where any card belongs from **one** rule (D-5).
-- [ ] `TOTAL_CARDS` comes from the library. The site no longer hard-codes 721.
-- [ ] Every TBD in §6 is resolved, or explicitly deferred, before its part of the model is coded.
+- [ ] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`. *(Partial: derived from `as const` lists in `data/enums.ts`, with rule values in `data/rules.ts`. The schema and JSON come with spec 03.)*
+- [ ] Every FM concept listed in D-3 has a typed collection, even if it is still empty. *(Fusions, rituals, equips and fields: yes. Duelists, decks and drops: deferred, TBD-D9.)*
+- [x] A contributor can find where any card belongs from **one** rule (D-5).
+- [x] `TOTAL_CARDS` comes from the library. The site no longer hard-codes 721.
+- [x] Every TBD in §6 is resolved, or explicitly deferred, before its part of the model is coded.
 
 ## 6. TBD / open questions
 
 > To fill in: when a TBD is resolved, record the **answer and its source** here.
 
-| ID | Question | Current belief (unverified) |
+Sources for the resolved items, checked 2026-10-20. They were preferred when derived from the game data (US release, SLUS_014.11):
+- **[Decomp]** [Yu-Gi-Oh-Forbidden-Memories-Recompiled](https://github.com/Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled), a decompilation of the US executable (`notes/card-catalog.md`, `src/game/duel_calc_guardian_star_matchup.c`, `notes/research/fusion-and-drop-tables/`).
+- **[FusionCalc]** [Solumin/YGO-FM-FusionCalc](https://github.com/Solumin/YGO-FM-FusionCalc), with `data/types_and_stars.js` and `data/Cards.json` (a game-data dump).
+- **[DataCrystal]** [Data Crystal ROM map](https://datacrystal.tcrf.net/wiki/Yu-Gi-Oh!_Forbidden_Memories/ROM_map).
+- **[fmlib]** [forbidden-memories-coding/fmlib-cpp](https://github.com/forbidden-memories-coding/fmlib-cpp), a randomizer library that reads the fusion table.
+
+| ID | Question | Answer / current belief |
 |---|---|---|
-| **TBD-D1** | Full list of FM monster types | About 20: Dragon, Spellcaster, Zombie, Warrior, Beast-Warrior, Beast, Winged Beast, Fiend, Fairy, Insect, Dinosaur, Reptile, Fish, Sea Serpent, Machine, Thunder, Aqua, Pyro, Rock, Plant |
-| **TBD-D2** | How to model "generic" fusions (type-based, or group-based like "Female"), and how fusion priority works when several results match | FM fusions combine specific and type/group-based rules; the exact semantics need a source |
-| **TBD-D3** | Does FM have card attributes that matter (or are at least shown)? | Unclear. Listed in some databases, possibly unused in gameplay |
-| **TBD-D4** | What do the `pageN.ts` ID ranges mean, and are they correct? | Possibly how the author planned to split work. Not verified against the game |
-| **TBD-D5** | Sub-classification of Magic and Trap cards (field, damage, heal, destroy, power-up, ...) | Needed for filters. The categories are not settled |
-| **TBD-D6** | Extra card fields: rarity, Japanese/PAL names | Artwork reference resolved: a separate relation file, `data/images.json` ([08](./08-card-images.md) I-2) |
-| **TBD-D7** | Breaking-change strategy for reshaping fields (D-2) | Do it in `0.2.0` with a migration note |
-| **TBD-D8** | Equip boost values (+500 typical, larger for some cards?) and field-effect amounts | — |
-| **TBD-D9** | Duelist list, campaign stages, drop rank categories, and whether we store drop weights or percentages | — |
-| **TBD-D10** | Total card count: 722 or 721? | Believed to be 722 (IDs 001–722). **Evidence (2026-10-20):** the Yu-Gi-Oh! Fandom gallery groups cards 001–722 by `FMR number` ([08](./08-card-images.md) §2). Confirm against a second source before closing |
-| **TBD-D11** | Guardian-star advantage cycle and bonus | Believed to be two cycles (Sun→Moon→Venus→Mercury→Sun; Mars→Jupiter→Saturn→Uranus→Pluto→Neptune→Mars), with +500 for the advantaged star |
+| ~~**TBD-D1**~~ | Full list of FM monster types | **Resolved: exactly 20**, spelled Dragon, Spellcaster, Zombie, Warrior, Beast-Warrior, Beast, Winged Beast, Fiend, Fairy, Insect, Dinosaur, Reptile, Fish, Sea Serpent, Machine, Thunder, Aqua, Pyro, Rock, Plant (type IDs 0–19). They are followed by the non-monster labels Magic, Trap, Ritual and Equip (20–23). Sources: [Decomp], [FusionCalc]. Built as `MONSTER_TYPES` / `CARD_TYPES` |
+| ~~**TBD-D2**~~ | How to model "generic" fusions (type-based, or group-based like "Female"), and how fusion priority works when several results match | **Resolved: the game stores only specific card pairs** (each first card has a list of (partner, result) entries, 25,131 in total). Type and group "rules" are a community summary of that table, not game data. Fusions are **order-insensitive**: the game sorts both inputs, and each pair is stored once under the lower ID. Self-pairs exist. Sources: [Decomp], [DataCrystal], [fmlib], [FusionCalc] `Cards.json`. Built as `IFusion { materials: [a, b] (a <= b), result }`. Priority with several matches does not arise for a single pair; chained fusions are a query concern ([04](./04-catalog-query-api.md) Q-5) |
+| **TBD-D3** | Does FM have card attributes that matter (or are at least shown)? | Unclear. Listed in some databases, possibly unused in gameplay. **Deferred**: no `attribute` field yet |
+| ~~**TBD-D4**~~ | What do the `pageN.ts` ID ranges mean, and are they correct? | **Moot:** the `pageN` split was dropped by D-5 |
+| **TBD-D5** | Sub-classification of Magic and Trap cards (field, damage, heal, destroy, power-up, ...) | Needed for filters. The categories are not settled. **Deferred**: no `magicKind`/`trapKind` yet |
+| **TBD-D6** | Extra card fields: rarity, Japanese/PAL names | Artwork reference resolved: a separate relation file, `data/images.json` ([08](./08-card-images.md) I-2). **Deferred**: no rarity or localized names yet |
+| ~~**TBD-D7**~~ | Breaking-change strategy for reshaping fields (D-2) | **Applied: `0.2.0` with a migration note** in `catalog/CHANGELOG.md`, no deprecated getters |
+| **TBD-D8** | Equip boost values (+500 typical, larger for some cards?) and field-effect amounts | Open. The shapes (`boost`, `amount`) are built; no values are entered |
+| **TBD-D9** | Duelist list, campaign stages, drop rank categories, and whether we store drop weights or percentages | Open. **Deferred**: no duelist, deck or drop types yet. (The game's drop table is in the [Decomp] fusion-and-drop-tables notes, which is a starting point) |
+| ~~**TBD-D10**~~ | Total card count: 722 or 721? | **Resolved: 722**, IDs 1–722. #1 is "Blue-eyes White Dragon" (the game's spelling) and #722 "Magician of Black Chaos". Sources: [Decomp] card catalog (722 rows), [FusionCalc] `Cards.json` (722 entries), [DataCrystal] (the drop routine loops over 722 cards), and the Fandom gallery (001–722, [08](./08-card-images.md) §2). Built as `TOTAL_CARDS = 722` |
+| ~~**TBD-D11**~~ | Guardian-star advantage cycle and bonus | **Resolved:** two cycles that never interact: Mars→Jupiter→Saturn→Uranus→Pluto→Neptune→Mars and Sun→Moon→Venus→Mercury→Sun ("A→B": A beats B). In battle the advantaged card gets **+500** and the disadvantaged card **−500**, applied to both the ATK and the DEF calculation. Sources: [Decomp] `duel_calc_guardian_star_matchup.c` (constant 500, two cycles, ±500), plus a community forum thread for the cycles. Only the decompilation shows the −500 side. Built as `GUARDIAN_STAR_ADVANTAGE` and `GUARDIAN_STAR_BONUS = 500` |
+
+Data note from the same sources: monster levels run 1–12 (no card has level 10), and non-monster cards have no guardian star or level, which matches the model.

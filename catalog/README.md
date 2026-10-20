@@ -2,98 +2,95 @@
 
 Base de dados estruturada das cartas do Yu-Gi-Oh! Forbidden Memories, contendo informações detalhadas sobre todas as cartas do jogo.
 
+## Uso
+
+```ts
+import { getCard, getCardsByMonsterType, getRitual, TOTAL_CARDS, MONSTER_TYPES } from "@mhsalves/yugioh-fb-catalog";
+
+getCard(425); // Thunder Dragon
+getCardsByMonsterType("Thunder"); // IMonsterCard[]
+getRitual(674); // { ritual: 674, result: 365, materials: [186, 261, 595] }
+TOTAL_CARDS; // 722
+MONSTER_TYPES; // os 20 tipos de monstro do jogo
+```
+
+Mudanças entre versões (incluindo a migração para a `0.2.0`) estão no [CHANGELOG](./CHANGELOG.md).
+
 ## Estrutura dos Dados
 
+Uma regra só: cada carta vai no arquivo do seu `cardType`, e cada monstro no arquivo do seu tipo de monstro.
+
 ```
-catalog/
-├── src/
-│   ├── data/
-│   │   ├── card-types.ts       # Definição dos tipos de carta
-│   │   └── cards/             # Dados das cartas
-│   │       ├── monsters/      # Cartas de monstro
-│   │       │   └── thunders/  # Monstros do tipo Thunder
-│   │       ├── rituals/       # Cartas de ritual
-│   │       └── support/       # Cartas de suporte
-│   │           ├── equip.ts   # Cartas de equipamento
-│   │           ├── magic.ts   # Cartas mágicas
-│   │           └── trap.ts    # Cartas armadilha
-│   └── index.ts               # Ponto de entrada
+catalog/src/data/
+├── enums.ts                  # MONSTER_TYPES, CARD_TYPES, GUARDIAN_STARS
+├── rules.ts                  # TOTAL_CARDS, vantagem e bônus das guardian stars
+├── card-types.ts             # Tipos das cartas
+├── relation-types.ts         # Tipos das relações (fusões, rituais, equips, campos)
+├── cards/
+│   ├── monsters/<tipo>.ts    # Um arquivo por tipo de monstro (ex.: thunder.ts)
+│   ├── magic.ts
+│   ├── trap.ts
+│   ├── equip.ts
+│   └── ritual.ts
+├── rituals.ts                # Receitas de ritual
+├── fusions/                  # Fusões (pares de cartas)
+├── equips.ts                 # Compatibilidade de equips
+└── fields.ts                 # Efeitos de campo
 ```
 
 ## Formato dos Dados
 
+`id` é o número da carta no jogo (1 a 722). Referências entre cartas usam esse número.
+
 ### Carta de Monstro
 
 ```typescript
-interface MonsterCard {
-  id: string;
+interface IMonsterCard {
+  id: number;
   name: string;
-  type: 'monster';
-  subtype: 'thunder' | 'dragon' | /* outros tipos */;
+  description: string;
+  password: { code: string; cost: number }; // code: 8 dígitos; cost: starchips
+  cardType: "Monster";
+  monsterType: TMonsterType; // "Dragon", "Thunder", ... (MONSTER_TYPES)
+  level: number; // 1 a 12
   attack: number;
   defense: number;
-  attribute: 'light' | 'dark' | /* outros atributos */;
-  level: number;
-  description?: string;
+  guardianStars: [TGuardianStar, TGuardianStar];
 }
 ```
 
-### Carta de Ritual
+### Cartas Mágica, Armadilha, Equip e Ritual
 
 ```typescript
-interface RitualCard {
-  id: string;
-  name: string;
-  type: 'ritual';
-  requirements: string[];
-  result: string;
-  description: string;
-}
+interface IMagicCard { id; name; description; password; cardType: "Magic" }
+interface ITrapCard { id; name; description; password; cardType: "Trap" }
+interface IEquipCard { id; name; description; password; cardType: "Equip" }
+interface IRitualCard { id; name; description; password; cardType: "Ritual" }
 ```
 
-### Carta de Suporte
+### Relações
 
 ```typescript
-interface SupportCard {
-  id: string;
-  name: string;
-  type: 'equip' | 'magic' | 'trap';
-  effect: string;
-  description: string;
-}
+interface IRitual { ritual: number; result: number; materials: number[] } // em rituals.ts
+interface IFusion { materials: [number, number]; result: number } // par ordenado (a <= b)
 ```
 
 ## Contribuindo com Dados
 
 ### Adicionando Novas Cartas
 
-1. Identifique o tipo correto da carta
-2. Adicione os dados no arquivo apropriado seguindo o formato existente
-3. Atualize os índices se necessário
-4. Verifique a validação de tipos
+1. Encontre o arquivo pelo `cardType` (monstros: `cards/monsters/<tipo>.ts`; crie o arquivo e adicione-o em `cards/monsters/index.ts` se for o primeiro monstro do tipo).
+2. Adicione o objeto seguindo o formato das cartas existentes.
+3. Para uma carta de ritual, adicione também a receita em `rituals.ts`.
+4. Rode as verificações na raiz do repositório.
 
 ### Validação
 
 ```bash
-# Instalar dependências
 yarn install
-
-# Verificar tipos
-yarn tsc --noEmit
+yarn typecheck   # tipos (um monstro no arquivo de outro tipo é erro de tipo)
+yarn test        # integridade dos dados: IDs únicos, faixas de valores, referências
 ```
-
-### Diretrizes
-
-- Mantenha a consistência com o formato existente
-- Inclua todas as informações disponíveis
-- Use IDs únicos e descritivos
-- Mantenha os dados organizados por categoria
-
-## Referências
-
-- [Guia Oficial Yu-Gi-Oh! Forbidden Memories](URL)
-- [Wiki Yu-Gi-Oh! Forbidden Memories](URL)
-- [Base de Dados Original](URL)
 
 ## Licença
 

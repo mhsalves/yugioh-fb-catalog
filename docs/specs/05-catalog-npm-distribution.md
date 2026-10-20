@@ -9,9 +9,9 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee` (N-5 rechecked after the spec 01 build PR). Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, `main` @ `9a353ee` (N-5 rechecked after the spec 01 build PR, N-3 after the spec 02 build PR). Legend in the [index](./README.md#status-system).
 
-**0 built · 3 partial · 5 not built**
+**0 built · 4 partial · 4 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -19,7 +19,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee` (N-5 rechecked after the spec 
 | N-2 | Automated release after `main` merge | Agreed | ❌ Not built | Manual `yarn npm:publish` works (v0.1.1 on npm); no release workflow |
 | N-2b | npm authentication: trusted publishing | Agreed | ❌ Not built | Publishing uses a local npm login; no trusted publisher configured |
 | N-2a | Release order with the site | Proposed | ❌ Not built | Releases and deploys are both manual and unrelated |
-| N-3 | Versioning policy | Proposed | ❌ Not built | No written policy or changelog |
+| N-3 | Versioning policy | Proposed | 🟡 Partial | `catalog/CHANGELOG.md` exists (from `0.2.0`, with a BREAKING section); no written policy yet |
 | N-4 | Package README | Proposed | 🟡 Partial | `catalog/README.md` exists but documents the wrong API |
 | N-5 | Pack check in CI | Proposed | 🟡 Partial | `ci.yml` installs the packed tarball and checks `require` and `import` with `getCard(425)`; no type check, `publint` or attw yet |
 | N-6 | Size budget | Proposed | ❌ Not built | Not tracked |
@@ -169,7 +169,7 @@ One-time setup (needs npm package owner + repository admin):
 ### N-2a Release order with the site · ❌ Not built
 The site is built from the workspace catalog ([07](./07-site-github-pages-delivery.md) P-2). The two workflows therefore do not depend on each other: a merge that changes catalog data starts **both** the npm release and the Pages deploy, in parallel. If TBD-P2 decides the site must show only released data, the Pages workflow instead starts with `workflow_run` **after** `release.yml` succeeds (see 07 P-1).
 
-### N-3 Versioning policy · ❌ Not built
+### N-3 Versioning policy · 🟡 Partial
 While the package is `0.x`:
 
 | Change | Bump |
