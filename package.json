@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "build": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site build",
-    "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site dev",
+    "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && (yarn workspace @mhsalves/yugioh-fb-catalog dev & yarn workspace yugioh-fb-catalog-mkt-site dev)",
     "typecheck": "yarn workspaces run typecheck",
     "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
     "lint": "eslint .",
