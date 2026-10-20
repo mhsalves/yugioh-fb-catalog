@@ -184,7 +184,7 @@ Each `pageN.ts` file holds **one contiguous ID range**, recorded in its header c
 ### 4.5 Build and publish
 
 - `yarn build` runs `tsc -p tsconfig.build.json` with `module: commonjs`, `target: es2016`, `declaration: true`, output in `lib/`.
-- `.npmignore` removes `src/`, `test/` and the TS/Vitest configs, so the package contains only `lib/` (JS + `.d.ts`).
+- `"files": ["lib"]` in `catalog/package.json` allowlists the build output, so the package contains only `lib/` (JS + `.d.ts`) plus `README.md` and `package.json`. The allowlist is required inside the workspace: npm also applies the root `.gitignore`, which ignores `lib`, so without it the tarball would be empty. `.npmignore` is kept as a second guard.
 - `yarn npm:publish` builds and publishes. This is still a manual step. CI (`ci.yml`) checks every PR, including a smoke test that installs the packed tarball, but it does not publish.
 
 **Why CommonJS/ES2016** *(inferred)*: it is the format with the widest compatibility. It loads in old and new Node versions and in bundlers such as Next.js/webpack with no extra setup.

@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
