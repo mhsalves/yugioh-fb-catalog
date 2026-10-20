@@ -52,7 +52,7 @@ Source: [Gallery of Yu-Gi-Oh! Forbidden Memories cards](https://yugioh.fandom.co
 | Resizing | Append `/scale-to-width-down/<px>`. For example, at 160 px Thumblr returns **WebP, about 12 KB** |
 | Format negotiation | Serves `image/webp` (`vary: Accept`) |
 | Caching | `cache-control: public, max-age=31536000` (1 year), behind Cloudflare |
-| Hotlinking | Works with a `Referer` from `mhsalves.github.io` (HTTP 200), with `access-control-allow-origin: *` |
+| Hotlinking | Works when the request has a `Referer`: full path, origin-only (`https://mhsalves.github.io/`) and `http://localhost:3000/` all return HTTP 200, with `access-control-allow-origin: *`. **Requests with no `Referer` get HTTP 403** (an HTML error page), whatever the user agent. Browsers send the origin as `Referer` by default for cross-site images, so normal site visitors are fine |
 | Side effect | The CDN sets a Cloudflare `__cf_bm` cookie on `nocookie.net` in the viewer's browser |
 
 **Why this is a good interim choice:** it costs nothing, Fandom's CDN already does the optimization (WebP, resizing, long cache), the images stay off our repository and npm package, and the wiki already lists all the cards by number.
@@ -141,15 +141,17 @@ function getCardImageSrcSet(id: CardId): string | undefined;   // "…/scale-to-
 - Images are **not** optimized at build time. Fandom's CDN already serves resized WebP with a 1-year cache. For a static export this also fits [07](./07-site-github-pages-delivery.md) P-4 (no image server).
 - **Fallback:** if a card has no image, or the image fails to load (`onerror`), show the styled card frame from [06](./06-site-ux-forbidden-memories.md) U-1. That frame stays the default visual, so the site is complete without any external image.
 - Use `<link rel="preconnect" href="https://static.wikia.nocookie.net">` on pages with images.
+- **Never strip the referrer for these images.** The CDN returns 403 without a `Referer` (§2). So the site must **not** set `referrerpolicy="no-referrer"` on card images, nor a `<meta name="referrer" content="no-referrer">` or `Referrer-Policy: no-referrer` for the whole site. The browser default (`strict-origin-when-cross-origin`) sends only the origin, which is enough and leaks no page path. Visitors whose browser or extensions strip referrers get the styled-frame fallback through `onerror`.
 
 ### I-5 Attribution and notice · ❌ Not built
 - A footer notice on every page: *"Card images are hosted by and linked from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com) (Fandom). Yu-Gi-Oh! and its card artwork are © Kazuki Takahashi / Konami. This is an unofficial fan project."*
 - The card detail page links to the image's file page (`filePageUrl + file`).
-- The npm README states that the package ships **only URLs**, no images, and repeats the notice.
+- The npm README states that the package ships **only URLs**, no images, and repeats the notice. It also warns that the image host rejects requests without a `Referer` (403). Web pages embedding the URLs work by default; servers, CLIs and apps that download images must send a `Referer` themselves, or show their own fallback.
 - The site's privacy note mentions that images load from a third-party CDN, which may set cookies.
 
 ### I-6 Import and health check · ❌ Not built
 - **Import script** (`catalog/tools/import-images`, part of [03](./03-catalog-data-authoring.md) A-5): queries the Semantic MediaWiki `ask` API (`[[FMR number::+]]|?FMR number|?Card image`, paged by `offset`), then `action=query&prop=imageinfo&iiprop=url|size` for each file. `imageinfo` returns the same `…/revision/latest?cb=…` URL you copy by hand. The script writes `images.json`. By default it **only adds missing entries and updates changed `cb` values**, so hand-pasted entries stay as they are unless the wiki's file changed. Verified on 2026-10-20: the API returns the correct file for each of our 5 cards. It is run by hand, and its output is committed and reviewed like any data PR. It sends an identifying `User-Agent` and throttles requests to be polite to the wiki.
+- **Scripts and workflows that request images** (import size checks, the health check) send `Referer: https://mhsalves.github.io/` so they see what visitors see. Without it, every image would look broken (403).
 - **Scheduled health check** (GitHub Actions, weekly, `schedule:`): sends a `HEAD` request for each `full` URL and opens or updates one issue listing any broken images. It is never a PR blocker, because an external outage must not block merges. Actions pinned by SHA ([01](./01-repository-and-workspaces.md) R-4).
 
 ### I-7 Exit plan: self-hosting (later, Proposed) · ❌ Not built
@@ -162,7 +164,8 @@ If hotlinking is blocked, the terms forbid it, or more control is needed, switch
 
 - [ ] `catalog/data/images.json` exists, passes schema and MD5-path validation, and covers every card the wiki has an image for.
 - [ ] Adding an image by hand needs only `card`, `source` and the pasted `url`. A mistyped URL fails validation with the card number in the error.
-- [ ] `getCardImage(425, "thumb")` returns a working URL (HTTP 200, WebP) with width and height.
+- [ ] `getCardImage(425, "thumb")` returns a URL that loads (HTTP 200, WebP) when requested with the site's `Referer`, plus width and height.
+- [ ] The site sends no `no-referrer` policy for card images, and images load on the live GitHub Pages site and on `localhost`.
 - [ ] No image binaries in the repository or in the npm tarball (`npm pack --dry-run`).
 - [ ] The site grid loads thumbnails lazily with reserved dimensions (no layout shift), and the detail page shows the full image.
 - [ ] Turning off the network to `static.wikia.nocookie.net` still leaves a complete-looking site (styled-frame fallback).
@@ -174,7 +177,7 @@ If hotlinking is blocked, the terms forbid it, or more control is needed, switch
 | ID | Question | Notes |
 |---|---|---|
 | ~~**TBD-X3**~~ | Card artwork source | **Resolved (interim, 2026-10-20):** link to Yu-Gi-Oh! Fandom wiki images (I-1) |
-| **TBD-I1** | Is hotlinking allowed under Fandom's Terms of Use for a public site, long-term? | It works technically today. The terms need reading. If they forbid it, use I-7 |
+| **TBD-I1** | Is hotlinking allowed under Fandom's Terms of Use for a public site, long-term? | It works technically today, but the CDN already enforces a `Referer` rule (403 without one), so Fandom controls this and could tighten it. The terms need reading. If they forbid it, or embedding from other sites starts failing, use I-7 |
 | **TBD-I2** | Use the wiki's `Card image` data as a source for other fields too (names, numbers), which relates to TBD-X1? | The wiki's text is usually CC BY-SA, which requires attribution and share-alike. Images are usually non-free (fair use) |
 | **TBD-I3** | Real image coverage: the gallery references 619 files for 722 cards. Which cards have no image? | Measure with the import script. Missing cards use the fallback frame |
 | **TBD-I4** | Legal position on displaying Konami artwork, even linked: is the notice in I-5 enough for a non-commercial fan project? | Not legal advice. If in doubt, ship with the styled frame only |
