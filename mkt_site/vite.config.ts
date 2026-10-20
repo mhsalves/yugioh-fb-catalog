@@ -57,4 +57,7 @@ export default defineConfig(({ command, isPreview }) => ({
         __CATALOG_NAME__: JSON.stringify(catalog.name),
         __CATALOG_VERSION__: JSON.stringify(catalog.version),
     },
+    // The workspace catalog is linked, not installed, so the dev server would serve its CommonJS build as-is and
+    // named imports would fail. Pre-bundling converts it; the build handles CommonJS on its own.
+    optimizeDeps: { include: ["@mhsalves/yugioh-fb-catalog"] },
 }));
