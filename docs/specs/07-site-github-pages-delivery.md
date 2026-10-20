@@ -3,6 +3,7 @@
 > **Status: Proposed.**
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
@@ -11,7 +12,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./READM
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| P-1 | Deploy with GitHub Actions | Proposed | ❌ Not built | Manual `yarn gh:deploy` pushes the `gh-pages` branch |
+| P-1 | Deploy with GitHub Actions after site changes | Agreed | ❌ Not built | Manual `yarn gh:deploy` pushes the `gh-pages` branch |
 | P-2 | Site builds from the workspace catalog | Proposed | ❌ Not built | Site uses the published npm version |
 | P-3 | Configurable base path | Proposed | 🟡 Partial | Base path works but is hard-coded in `next.config.js` |
 | P-4 | Static hosting constraints | Proposed | 🟡 Partial | Static export, unoptimized images, `.nojekyll` in place; no custom 404 |
@@ -51,13 +52,33 @@ The table describes **today's** Next.js setup. The future stack is open ([06](./
 
 ## 4. Proposed improvements
 
-### P-1 Deploy with GitHub Actions (`.github/workflows/pages.yml`) · ❌ Not built
+### P-1 Deploy with GitHub Actions after site changes (`.github/workflows/pages.yml`) · ❌ Not built
+**Rule (Agreed, 2026-10-20):** after a merge to `main`, if the merge **updates the site**, the GitHub Pages deploy runs automatically. Merges that do not affect what the site shows deploy nothing. The npm release has its own rule ([05](./05-catalog-npm-distribution.md) N-2), and the [index](./README.md#automation-rules) summarizes both.
+
+**What counts as "a site update"** (path filter):
+
+| Triggers a deploy | Why |
+|---|---|
+| `server/**` (or the future site folder, TBD-R1), except `*.md` | The site itself changed |
+| `catalog/data/**`, `catalog/src/**`, `catalog/schema/**` | The site is built from the workspace catalog (P-2), so new data must appear on the site too. Removed if TBD-P2 picks "released data only" (see below) |
+| `.github/workflows/pages.yml` | The deploy process changed |
+
+Docs-only, test-only and other CI changes do not deploy.
+
 Use the official Pages flow instead of pushing a `gh-pages` branch:
 
 ```yaml
 on:
-  push: { branches: [main] }
-  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "!server/**/*.md"
+      - "catalog/data/**"
+      - "catalog/src/**"
+      - "catalog/schema/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:            # manual redeploy
 permissions: { contents: read, pages: write, id-token: write }
 concurrency: { group: pages, cancel-in-progress: true }
 jobs:
@@ -74,6 +95,8 @@ jobs:
     uses: actions/deploy-pages
 ```
 
+- `cancel-in-progress: true` is safe here. A newer merge replaces an older deploy in progress, so the site always ends on the latest `main`.
+- **If TBD-P2 picks "released data only":** remove the `catalog/**` paths and add `workflow_run: { workflows: [release], types: [completed] }` (deploy only if the release succeeded). The site then redeploys after each npm publish, and builds against the published package instead of the workspace.
 - Repository setting: Pages source = **GitHub Actions** (a one-time manual change, **TBD-P1**).
 - Remove `gh-pages` from devDependencies and the `gh:*` scripts once this works. Keep the old branch until the first successful Actions deploy, then delete it.
 
@@ -102,7 +125,8 @@ Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `<output dir>/do
 
 ## 5. Acceptance criteria
 
-- [ ] Merging to `main` deploys the site with no manual step, and a failing test blocks the deploy.
+- [ ] Merging to `main` a PR that changes the site (or catalog data, while P-2 applies) deploys the site with no manual step, and a failing test blocks the deploy.
+- [ ] Merging a PR that changes only docs or tests does not deploy.
 - [ ] `https://mhsalves.github.io/yugioh-fb-catalog/` and `/cards/425` load with no 404s on assets.
 - [ ] Unknown URLs show the project's own 404 page.
 - [ ] `gh-pages` package and `gh:*` scripts removed.

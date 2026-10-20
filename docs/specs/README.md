@@ -68,15 +68,43 @@ Checked as of 2026-10-20, `main` @ `9a353ee`.
 | [02 – Catalog data model and organization](./02-catalog-data-model.md) | 0 | 4 | 1 | 0 |
 | [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 0 | 2 | 4 | 0 |
 | [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 2 | 6 | 0 |
-| [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 2 | 4 | 0 |
+| [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 2 | 5 | 0 |
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 3 | 1 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 0 | 2 | 4 | 0 |
-| **Total** | **0** | **15** | **27** | **1** |
+| **Total** | **0** | **15** | **28** | **1** |
+
+## Automation rules
+
+What runs automatically **after a PR is merged into `main`**:
+
+| The merge changes… | npm release ([05](./05-catalog-npm-distribution.md) N-2) | GitHub Pages deploy ([07](./07-site-github-pages-delivery.md) P-1) |
+|---|---|---|
+| Catalog **data** (`catalog/data/**`) | ✅ publishes a **patch** | ✅ redeploys (site shows the new data) |
+| Catalog **feature** (`catalog/src/**`, `catalog/schema/**`) | ✅ publishes a **minor** (or a patch for a fix) | ✅ redeploys |
+| The **site** (`server/**`, or the future site folder) | — | ✅ redeploys |
+| Only docs, tests or CI config | — | — |
+
+Every PR also runs CI ([01](./01-repository-and-workspaces.md) R-4) **before** merge. If a PR changes catalog data or code, CI requires a version bump and a changelog entry. That way the release after the merge always has a new version to publish.
+
+```mermaid
+flowchart LR
+    PR["PR merged into main"] --> F{"Which paths changed?"}
+    F -- "catalog/data, src, schema, package.json" --> REL["release.yml<br/>validate → test → build →<br/>npm publish (if version is new) →<br/>tag + GitHub Release"]
+    F -- "server/** (site)" --> PAG["pages.yml<br/>test → build site →<br/>deploy to GitHub Pages"]
+    F -- "catalog/data, src, schema" --> PAG
+    F -- "docs / tests / CI only" --> NOP["nothing published"]
+    REL --> NPM[("npm registry")]
+    PAG --> GHP[("GitHub Pages")]
+```
+
+Both workflows can also be started by hand (`workflow_dispatch`) to retry a failed run.
 
 ## Decision log
 
 | Date | Decision | Status | Where |
 |---|---|---|---|
+| 2026-10-20 | **After a merge to `main`, catalog changes (new features or data) publish to npm automatically**. Mechanism: version bump required in the PR, publish on merge | **Agreed** (rule); mechanism Proposed | [05](./05-catalog-npm-distribution.md) N-2 |
+| 2026-10-20 | **After a merge to `main`, site changes deploy to GitHub Pages automatically** (catalog data changes also redeploy while the site uses the workspace catalog) | **Agreed** | [07](./07-site-github-pages-delivery.md) P-1 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
 | 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | **TBD** (decide later) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
 

@@ -3,6 +3,7 @@
 > **Status: Proposed.** Many items are **TBD** because they are game facts that must be checked against a trusted source (see TBD-X1 in the [index](./README.md)) before they are coded.
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).

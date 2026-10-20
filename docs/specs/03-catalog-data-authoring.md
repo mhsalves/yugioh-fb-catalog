@@ -3,6 +3,7 @@
 > **Status: Proposed.** Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).

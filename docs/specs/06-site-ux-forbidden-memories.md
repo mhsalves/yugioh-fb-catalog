@@ -3,6 +3,7 @@
 > **Status: Proposed.** Visual direction and page list. Final visuals need a design pass (mock-ups) before they are built.
 
 
+
 ## 0. Status
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
