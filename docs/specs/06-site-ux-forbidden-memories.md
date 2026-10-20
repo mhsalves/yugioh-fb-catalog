@@ -11,16 +11,16 @@
 
 Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
 
-**0 built · 3 partial · 3 not built**
+**0 built · 2 partial · 2 not built** · 2 n/a
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | U-1 | Visual language inspired by FM | Proposed | ❌ Not built | Placeholder dark-blue/gold tokens in `src/styles.css`; style guide pending |
-| U-2 | Information architecture (pages) | Proposed | 🟡 Partial | Shared header (logo, page menu, copyable catalog version, npm link), a placeholder Home and a 404 page |
+| U-2 | Information architecture (pages) | Superseded by [09](./09-site-catalog-page.md) | ➖ N/A | One catalog page replaces the page list (2026-10-20) |
 | U-3 | Interaction details | Proposed | ❌ Not built | No search, keyboard or virtualization yet |
 | U-4 | Site technology stack | Agreed | 🟡 Partial | Vite + React + plain CSS (2026-10-20); per-card pre-rendering (S-2) not built yet |
 | U-5 | Static generation and SEO | Proposed | 🟡 Partial | Static SPA build with a meta description; no per-card pages, per-page meta or sitemap |
-| U-6 | Migration of the current page | Proposed | ❌ Not built | The coverage grid was removed in the stack change; `/progress` not built yet |
+| U-6 | Migration of the current page | Superseded by [09](./09-site-catalog-page.md) | ➖ N/A | No `/progress` page; the catalog page shows "N of 722 catalogued" (09 C-2) |
 
 ## 1. Why this spec exists
 
@@ -78,7 +78,9 @@ Recreate the **mood** of FM with original CSS and assets:
 
 Accessibility: WCAG AA contrast on the dark theme, `prefers-reduced-motion` respected, all actions keyboard-reachable. Optional light theme (**TBD-U5**).
 
-### U-2 Information architecture (pages) · 🟡 Partial
+### U-2 Information architecture (pages) · ➖ Superseded
+
+> **Superseded (2026-10-20) by [09 – Site: single catalog page](./09-site-catalog-page.md).** The site is one page: a filter over the library, a results grid and a card details card. The page list below is kept for reference; pages such as fusions or duelists come back only through a new decision.
 
 ```mermaid
 flowchart TD
@@ -159,8 +161,8 @@ The requirements below stay as the checklist for future changes.
 - A `<title>` and meta description per card ("Thunder Dragon – Lv5 Thunder – 1600/1500 – Yu-Gi-Oh! FM Catalog"), plus Open Graph tags.
 - `sitemap.xml` generated at build time.
 
-### U-6 Migration of the current page · ❌ Not built
-The current "Cards registered" page becomes **/progress** (U-2), so the coverage use case is kept.
+### U-6 Migration of the current page · ➖ Superseded
+~~The current "Cards registered" page becomes **/progress** (U-2), so the coverage use case is kept.~~ Superseded by [09](./09-site-catalog-page.md): the coverage count is shown on the catalog page (C-2).
 
 ## 5. Acceptance criteria
 

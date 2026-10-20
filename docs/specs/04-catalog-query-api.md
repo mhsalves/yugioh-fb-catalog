@@ -18,7 +18,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee` (Q-5 and Q-6 rechecked after t
 | Q-1 | Keep the existing functions | Proposed | 🟡 Partial | All 4 functions work; regression tests missing |
 | Q-2 | Indexes built once at module load | Proposed | ❌ Not built | `getCard` is a linear `find` |
 | Q-3 | Typed overloads and readonly results | Proposed | ❌ Not built | Returns `ICard[]` and the mutable internal array |
-| Q-4 | `searchCards` | Proposed | 🟡 Partial | Only single-field filters by card type and monster type |
+| Q-4 | `searchCards` | Agreed | 🟡 Partial | Only single-field filters by card type and monster type |
 | Q-5 | Relation queries | Proposed | 🟡 Partial | `getRitual(ritualOrResultId)` only (added with the 02 data model); the others wait for their data |
 | Q-6 | Metadata | Proposed | 🟡 Partial | `TOTAL_CARDS`, `MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` (+ guardian-star rules) exported; no coverage helper yet |
 | Q-7 | Optional namespaced entry | TBD | ❌ Not built | Flat exports only (TBD-Q2) |
@@ -92,7 +92,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 ```
 - Text matching is case- and accent-insensitive substring matching. Fuzzy matching is **TBD-Q1**.
 - Pure and synchronous, with no dependencies, so it works in the browser (the site) and in Node.
-- The site's filters ([06](./06-site-ux-forbidden-memories.md)) are a thin UI over this function, so the site and npm users get the same behaviour.
+- The site's filters ([09](./09-site-catalog-page.md) C-2) are a thin UI over this function, so the site and npm users get the same behaviour. 09 needs Q-4 built first.
 
 ### Q-5 Relation queries (added as the data from 02 lands) · 🟡 Partial
 | Function | Answers |

@@ -10,7 +10,7 @@ The project keeps **one repository with two deliverables**:
 
 | # | Goal | Build status today | Spec |
 |---|---|---|---|
-| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: a basic MUI coverage grid exists; no FM look, search or detail pages | [06 – Site UX](./06-site-ux-forbidden-memories.md) |
+| G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: Vite site with header and a placeholder page; the catalog page (filter, grid, details) is specified, not built | [06 – Site UX](./06-site-ux-forbidden-memories.md), [09 – Catalog page](./09-site-catalog-page.md) |
 | G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (`pages.yml` deploys on every merge that changes the site) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
 | G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | ✅ Built: JSON files in `catalog/data/` with schemas, `yarn validate` in CI, contributor guide | [03 – Data authoring](./03-catalog-data-authoring.md) |
 | G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
@@ -70,10 +70,11 @@ Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which
 | [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 5 | 0 | 1 | 0 |
 | [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 0 | 4 | 4 | 0 |
 | [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 4 | 4 | 0 |
-| [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 3 | 3 | 0 |
+| [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 2 | 2 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 4 | 0 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
-| **Total** | **18** | **13** | **21** | **0** |
+| [09 – Site: single catalog page](./09-site-catalog-page.md) | 0 | 1 | 5 | 0 |
+| **Total** | **18** | **13** | **25** | **2** |
 
 ## Automation rules
 
@@ -119,6 +120,7 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 | 2026-10-20 | **Card images are linked from the Yu-Gi-Oh! Fandom wiki** (interim). The wiki URL is stored as copied, including `?cb=`, in `data/images.json`, filled by hand per card or by an import script. No images in the repo or npm package | **Agreed** (interim) | [08](./08-card-images.md) I-1, I-2 |
 | 2026-10-20 | Catalog data is stored as **JSON** files validated by a schema (cards and all relation tables) | **Agreed** | [03](./03-catalog-data-authoring.md) A-1 |
 | 2026-10-20 | Site technology stack (framework, UI library, styling) is **left open**. Next.js + MUI is today's stack and one candidate. Specs list stack-neutral requirements (S-1 to S-8) instead | Superseded (next row) | [06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1 |
+| 2026-10-20 | **The site is one catalog page**: a filter bound to the library's `searchCards`, a results grid and a card details card; no header menu; footer links to the owner's home page and GitHub. Replaces the multi-page plan | **Agreed** (requested by the owner; details open in 09 §6) | [09](./09-site-catalog-page.md), supersedes [06](./06-site-ux-forbidden-memories.md) U-2, U-6 |
 | 2026-10-20 | **Site stack: Vite + React + plain CSS** (drops Next.js, MUI, Emotion, Toolpad, MUI icons). Pages are rebuilt from a hello-world Home and a shared header; per-card pre-rendering (S-2) is added when card pages land | **Agreed** | [06](./06-site-ux-forbidden-memories.md) U-4 |
 
 ## Suggested delivery order
@@ -131,7 +133,8 @@ flowchart LR
     M --> A["03 Authoring:<br/>JSON + validation"]
     A --> Q["04 Query API:<br/>search + indexes"]
     Q --> N["05 npm:<br/>ESM/CJS, automated release"]
-    Q --> U["06 Site UX:<br/>FM-inspired UI<br/>(stack TBD)"]
+    Q --> C["09 Catalog page:<br/>filter + grid + details"]
+    C --> U["06 Site UX:<br/>FM look (style guide)"]
     U --> P["07 Pages:<br/>automated deploy"]
     R --> P
     A --> I["08 Images:<br/>Fandom links + fallback"]
