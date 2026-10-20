@@ -1,0 +1,47 @@
+# Dependabot version updates.
+# Security updates for vulnerable dependencies are separate and are turned on
+# in Settings → Code security → Dependabot security updates.
+version: 2
+updates:
+  # npm library
+  - package-ecosystem: "npm"
+    directory: "/catalog"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      # One PR per week for every non-major bump.
+      catalog-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # Static website (Next.js)
+  - package-ecosystem: "npm"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      # React, Next and MUI move together; keep their bumps in one PR.
+      framework:
+        patterns: ["next", "react", "react-dom", "@types/react", "@mui/*", "@emotion/*", "@toolpad/*"]
+        update-types: ["minor", "patch"]
+      server-minor-and-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      # @types/node tracks the Node runtime major; bump it on purpose.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
+  # Keeps any future GitHub Actions workflows up to date.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci(deps)"
