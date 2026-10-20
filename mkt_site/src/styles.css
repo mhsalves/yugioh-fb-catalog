@@ -22,6 +22,10 @@
     --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
     --radius: 8px;
+    /* Details panel: docked to the window's right edge, at most 1.5rem from it. */
+    --panel-width: 380px;
+    --panel-edge: 1.5rem;
+    --panel-gap: 24px;
     --header-height: 64px;
     --page-width: 1280px;
     --gutter: 16px;
@@ -222,6 +226,22 @@ select {
     max-width: var(--page-width);
     margin: 0 auto;
     padding: 24px var(--gutter) 48px;
+    transition: padding-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* With a card open, the page and the footer keep their left edge and stop before the docked panel. Both are
+   centered, so the space they already leave on the right (half of what the window has beyond --page-width)
+   counts. */
+body:has(.catalog[data-panel="true"]) {
+    --panel-reserve: max(
+        var(--gutter),
+        calc(var(--panel-width) + var(--panel-edge) + var(--panel-gap) - max(0px, (100vw - var(--page-width)) / 2))
+    );
+}
+
+body:has(.catalog[data-panel="true"]) .page,
+body:has(.catalog[data-panel="true"]) .footer__bar {
+    padding-right: var(--panel-reserve);
 }
 
 .hero h1 {
@@ -580,14 +600,17 @@ fieldset:disabled {
     color: var(--color-text-muted);
 }
 
-/* Card details: a side panel (spec 09 C-4). A third column on wide screens, a drawer over the grid on medium
-   screens (see the media queries at the end), full screen on phones. */
+/* Card details: a side panel (spec 09 C-4), docked to the window's right edge below the header, full height.
+   Full screen on phones (see the media queries at the end). */
 
 .card-panel {
-    --panel-top: calc(var(--header-height) + 16px);
-    position: sticky;
-    top: var(--panel-top);
-    max-height: calc(100vh - var(--panel-top) - 16px);
+    --panel-offset: 32px;
+    position: fixed;
+    top: calc(var(--header-height) + 16px);
+    right: var(--panel-edge);
+    bottom: 16px;
+    z-index: 15;
+    width: var(--panel-width);
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
@@ -599,14 +622,56 @@ fieldset:disabled {
     border: 2px solid var(--color-accent);
     border-radius: var(--radius);
     background: var(--color-surface);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 40%);
+    animation: panel-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-panel[data-state="closing"] {
+    animation: panel-out 180ms ease-in forwards;
+    pointer-events: none;
+}
+
+.card-panel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: panel-content-in 180ms ease-out;
+}
+
+/* Previous / next stay at the bottom of the panel. */
+.card-panel .details__nav {
+    margin-top: auto;
 }
 
 .card-panel h2:focus {
     outline: none;
 }
 
-.catalog[data-panel="true"] {
-    grid-template-columns: 300px minmax(0, 1fr) 380px;
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateX(var(--panel-offset));
+    }
+}
+
+@keyframes panel-out {
+    to {
+        opacity: 0;
+        transform: translateX(var(--panel-offset));
+    }
+}
+
+@keyframes panel-content-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.card-tile {
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
 }
 
 .card-tile[aria-current="true"] {
@@ -803,6 +868,7 @@ fieldset:disabled {
     max-width: var(--page-width);
     margin: 0 auto;
     padding: 16px var(--gutter);
+    transition: padding-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .footer p {
@@ -831,11 +897,15 @@ fieldset:disabled {
 }
 
 /* Medium screens: with a card open, the filter column folds into the "Filters" button (the phone sheet) so the
-   grid and the panel sit side by side and nothing is covered. */
+   grid keeps room next to the docked panel. */
 
 @media (min-width: 721px) and (max-width: 1199px) {
+    :root {
+        --panel-width: 360px;
+    }
+
     .catalog[data-panel="true"] {
-        grid-template-columns: minmax(0, 1fr) 360px;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .catalog[data-panel="true"] .filters {
@@ -905,18 +975,38 @@ fieldset:disabled {
     }
 
     .card-panel {
-        position: fixed;
+        --panel-offset: 100%;
         inset: 0;
         width: auto;
-        max-height: none;
         z-index: 30;
         border: 0;
         border-radius: 0;
+        box-shadow: none;
+    }
+
+    body:has(.catalog[data-panel="true"]) {
+        --panel-reserve: var(--gutter);
     }
 }
 
 @media (max-width: 400px) {
     .header__brand-text {
         display: none;
+    }
+}
+
+/* Motion is decoration: turn it off for people who ask for less. */
+
+@media (prefers-reduced-motion: reduce) {
+    .page,
+    .footer__bar,
+    .card-tile {
+        transition: none;
+    }
+
+    .card-panel,
+    .card-panel[data-state="closing"],
+    .card-panel__body {
+        animation: none;
     }
 }

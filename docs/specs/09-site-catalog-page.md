@@ -121,9 +121,11 @@ Opens when a grid item is clicked, as a **side panel** next to the grid, like a 
 
 | Screen width | Layout |
 |---|---|
-| ≥ 1200px | Three columns: filters, grid, panel (380px, sticky, scrolls inside if taller than the screen) |
-| 721–1199px | The filter column folds into the "Filters" button (the phone sheet) while a card is open; grid and panel (360px) side by side |
+| ≥ 1200px | Docked to the window's right edge, **1.5rem** from it, from below the header to the bottom (380px wide). The page and footer keep their left edge and stop before it |
+| 721–1199px | Same, 360px wide; while a card is open the filter column folds into the "Filters" button (the phone sheet) |
 | ≤ 720px | Full screen |
+
+**Motion:** the panel slides in from the right and fades in (220ms), slides out on close (180ms), and its content fades when switching cards; the grid narrows smoothly. All of it is off with `prefers-reduced-motion`.
 
 Focus moves to the panel's title when it opens and back to the card's tile when it closes. `Esc` and the close button close it; ←/→ move through the results, except while typing in a field.
 
