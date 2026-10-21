@@ -37,11 +37,12 @@ jobs:
         with:
           persist-credentials: false
 
+      # No `registry-url`: it writes an npmrc with `${NODE_AUTH_TOKEN}`, which breaks the yarn cache step
+      # when no token is set. Trusted publishing needs no npmrc, and npm defaults to registry.npmjs.org.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: yarn
-          registry-url: https://registry.npmjs.org
 
       # Node 22 bundles npm 10; trusted publishing needs npm >= 11.5.1 (TBD-N8 default: pin it here).
       - name: Install npm with trusted publishing
