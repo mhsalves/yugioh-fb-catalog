@@ -26,9 +26,7 @@
     "validate": "tsx scripts/validate.ts",
     "schema:build": "tsx scripts/build-schemas.ts",
     "schema:check": "tsx scripts/build-schemas.ts --check",
-    "coverage:data": "tsx scripts/coverage.ts",
-    "npm:build": "yarn build",
-    "npm:publish": "yarn build && npm publish"
+    "coverage:data": "tsx scripts/coverage.ts"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",

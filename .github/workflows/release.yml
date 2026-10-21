@@ -1,0 +1,112 @@
+# Publishes the catalog to npm and GitHub Packages after a merge to main that changes its code or
+# data (spec 05 N-2, N-7).
+# The version is bumped in the PR (ci.yml `release-check`); this workflow publishes it, tags it and
+# creates the GitHub Release. A version that is already on npm is a no-op, so re-runs are safe.
+# Authenticates with npm trusted publishing (OIDC, N-2b): no npm token anywhere.
+# Every action is pinned by full commit SHA; Dependabot bumps the SHA and the version comment.
+name: Release catalog to npm
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "catalog/data/**"
+      - "catalog/src/**"
+      - "catalog/schema/**"
+      - "catalog/package.json"
+  workflow_dispatch: # manual re-run if a publish failed
+
+permissions:
+  contents: read
+
+# Never cancel a publish halfway.
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest # trusted publishing needs a GitHub-hosted runner
+    environment: npm # TBD-N9 default: deployment record, no required approval
+    permissions:
+      contents: write # tag + GitHub Release
+      id-token: write # OIDC token for npm trusted publishing
+      packages: write # GitHub Packages (N-7)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          registry-url: https://registry.npmjs.org
+
+      # Node 22 bundles npm 10; trusted publishing needs npm >= 11.5.1 (TBD-N8 default: pin it here).
+      - name: Install npm with trusted publishing
+        run: npm install -g npm@11.21.0
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Validate data
+        run: yarn validate
+
+      - name: Test
+        run: yarn test
+
+      - name: Build catalog
+        run: yarn workspace @mhsalves/yugioh-fb-catalog build
+
+      - name: Read version
+        id: version
+        run: |
+          name=$(node -p 'require("./catalog/package.json").name')
+          version=$(node -p 'require("./catalog/package.json").version')
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ -n "$(npm view "$name@$version" version 2>/dev/null)" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "$name@$version is already on npm: nothing to publish."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.version.outputs.published == 'false'
+        working-directory: catalog
+        run: npm publish --access public
+
+      # The same build, also listed under the repository's Packages (N-7). Uses its own npmrc so the
+      # npmjs.org config above stays untouched. Checked separately, so a re-run fills in a missed publish.
+      - name: Publish to GitHub Packages
+        working-directory: catalog
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NAME: ${{ steps.version.outputs.name }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          npmrc="$RUNNER_TEMP/github-packages.npmrc"
+          printf '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n' > "$npmrc"
+          registry="--registry=https://npm.pkg.github.com"
+          if [ -n "$(npm view "$NAME@$VERSION" version "$registry" --userconfig "$npmrc" 2>/dev/null)" ]; then
+            echo "$NAME@$VERSION is already on GitHub Packages."
+          else
+            npm publish "$registry" --userconfig "$npmrc"
+          fi
+
+      # Checked separately from npm, so a re-run finishes a release whose publish succeeded but whose
+      # GitHub Release did not.
+      - name: Tag and create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tag="catalog-v$VERSION"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "Release $tag already exists."
+            exit 0
+          fi
+          node scripts/check-catalog-release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
+          gh release create "$tag" --target "$GITHUB_SHA" --title "catalog v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"

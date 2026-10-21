@@ -1,19 +1,19 @@
 # 01 – Repository, workspaces, tests and CI
 
-> **Status: Built** (R-4 partial). Foundation for every other spec.
+> **Status: Built.** Foundation for every other spec.
 
 ## 0. Status
 
-Build status as of 2026-10-20, after the spec 01 build PR (based on `main` @ `750004a`). Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-20, after the spec 01 build PR (based on `main` @ `750004a`); R-4 rechecked after the release automation PR (based on `main` @ `c6a2ce9`). Legend in the [index](./README.md#status-system).
 
-**5 built · 1 partial · 0 not built**
+**6 built · 0 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | R-1 | Root workspace | Agreed | ✅ Built | Root `package.json` (Yarn 1 workspaces), one `yarn.lock`; the site uses the workspace catalog |
 | R-2 | Tests with Vitest | Agreed | ✅ Built | `catalog/test/`: query API tests and data integrity checks. The optional site render test is not built |
 | R-3 | Lint and format | Agreed | ✅ Built | ESLint flat config + Prettier at the root (`yarn lint`, `yarn format:check`) |
-| R-4 | CI workflow on GitHub Actions, actions pinned by SHA | Agreed | 🟡 Partial | `ci.yml` runs steps 1–6 and the SHA-pin check. Step 7 (version-bump and changelog check) waits for [05](./05-catalog-npm-distribution.md) N-2 |
+| R-4 | CI workflow on GitHub Actions, actions pinned by SHA | Agreed | ✅ Built | `ci.yml` runs steps 1–7 and the SHA-pin check (step 7 is the `release-check` job, [05](./05-catalog-npm-distribution.md) N-2) |
 | R-5 | Site in TypeScript `strict: true` | Agreed | ✅ Built | Both packages are `strict: true` |
 | R-6 | Rename `server/` to `mkt_site/` | Agreed | ✅ Built | Site lives in `mkt_site/` (package `yugioh-fb-catalog-mkt-site`) |
 
@@ -89,9 +89,9 @@ ESLint (flat config, `typescript-eslint`, `react-hooks` for the site, `eslint-co
 - Markdown is in `.prettierignore`, so the hand-aligned spec tables are not rewritten.
 - The one-time reformat is its own commit, listed in `.git-blame-ignore-revs`.
 
-### R-4 CI workflow (`.github/workflows/ci.yml`) · 🟡 Partial
+### R-4 CI workflow (`.github/workflows/ci.yml`) · ✅ Built
 
-Built: `ci.yml` with steps 1–6 below, the SHA-pin enforcement, and Dependabot for the Actions. **Not built:** step 7 (version-bump and changelog check), which comes with [05](./05-catalog-npm-distribution.md) N-2. Making the check required on `main` is a branch-protection setting in the repository, not code.
+Built: `ci.yml` with steps 1–7 below, the SHA-pin enforcement, and Dependabot for the Actions. Step 7 is the `release-check` job ([05](./05-catalog-npm-distribution.md) N-2). Making the checks required on `main` is a branch-protection setting in the repository, not code.
 
 **CI platform: GitHub Actions (Agreed, 2026-10-20).** All automation runs on GitHub Actions: CI (`ci.yml`), the npm release ([05](./05-catalog-npm-distribution.md) N-2, `release.yml`) and the Pages deploy ([07](./07-site-github-pages-delivery.md) P-1, `pages.yml`). No other CI service is used. Reasons:
 - **Built in:** the repository already lives on GitHub. Checks appear on PRs and can be made required with branch protection, with no extra service to connect.
@@ -121,7 +121,7 @@ Workflow conventions:
 4. run tests, including data validation ✅
 5. build the catalog, `npm pack`, and install the tarball into a temporary project to smoke-test the published shape ✅
 6. build the site (`vite build`, see [06](./06-site-ux-forbidden-memories.md) U-4), but do not deploy it ✅
-7. on PRs that change the catalog's code or data: the version-bump and changelog check ([05](./05-catalog-npm-distribution.md) N-2) ❌ not built
+7. on PRs that change the catalog's code or data: the version-bump and changelog check ([05](./05-catalog-npm-distribution.md) N-2, N-3), job `release-check` ✅
 
 Node comes from `.nvmrc` (22, TBD-R3). The workflow has `permissions: contents: read`, checks out without persisted credentials, and cancels superseded runs on the same ref.
 
