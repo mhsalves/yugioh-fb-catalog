@@ -1,6 +1,6 @@
 # 05 – Catalog distribution on the npm registry
 
-> **Status: In progress.** Release automation (N-2, N-3, N-7) is built; it publishes once the N-2b one-time setup is done.
+> **Status: In progress.** Release automation (N-2, N-3, N-7) is live: CI published `0.3.0` to npm and GitHub Packages on 2026-10-21. Branch protection and the npm token lockdown (N-2b) are still open.
 
 
 
@@ -9,21 +9,21 @@
 
 ## 0. Status
 
-Build status as of 2026-10-20, after the release automation PR (based on `main` @ `c6a2ce9`). Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-21, after the first CI release, `0.3.0` (`main` @ `86c2725`). Legend in the [index](./README.md#status-system).
 
-**2 built · 6 partial · 1 not built**
+**3 built · 5 partial · 1 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | N-1 | Dual ESM + CJS build with `exports` map | Proposed | 🟡 Partial | CJS + `.d.ts` only; no ESM, `exports` or `files` allowlist |
-| N-2 | Automated release after `main` merge | Agreed | 🟡 Partial | `release.yml` and the `release-check` job in `ci.yml` are built; the first automated publish waits for the N-2b setup |
-| N-2b | npm authentication: trusted publishing | Agreed | 🟡 Partial | `release.yml` publishes with OIDC and no token (npm 11.21.0 pinned, environment `npm`). The npmjs.com and GitHub settings are not done yet |
+| N-2 | Automated release after `main` merge | Agreed | 🟡 Partial | `release.yml` published `0.3.0` (run started by hand after the fix in #42). Open: `release-check` is not a required check, and no merge has published end to end yet |
+| N-2b | npm authentication: trusted publishing | Agreed | 🟡 Partial | Trusted publisher configured on npm (environment `npm`) and validated by the `0.3.0` publish, with provenance; no `NPM_TOKEN` secret. Open: "disallow tokens" on npm, token revocation, branch protection |
 | N-2a | Release order with the site | Proposed | ✅ Built | `release.yml` and `pages.yml` both start on the merge and run in parallel |
 | N-3 | Versioning policy and changelog format | Proposed | ✅ Built | Policy and changelog format written below; `release-check` enforces the bump, the entry and the BREAKING rule |
 | N-4 | Package README | Proposed | 🟡 Partial | `catalog/README.md` exists but documents the wrong API |
 | N-5 | Pack check in CI | Proposed | 🟡 Partial | `ci.yml` installs the packed tarball and checks `require` and `import` with `getCard(425)`; no type check, `publint` or attw yet |
 | N-6 | Size budget | Proposed | ❌ Not built | Not tracked |
-| N-7 | Also publish to GitHub Packages | Agreed | 🟡 Partial | `release.yml` publishes the same build to `npm.pkg.github.com`; not run yet |
+| N-7 | Also publish to GitHub Packages | Agreed | ✅ Built | `0.3.0` published to `npm.pkg.github.com` by the same run as npm |
 
 ## 1. Why this spec exists
 
@@ -37,7 +37,7 @@ Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalv
 
 | Item | Current state | Reference |
 |---|---|---|
-| Name and version | `@mhsalves/yugioh-fb-catalog@0.1.1` (published: `0.0.1-alpha6`, `0.1.0`, `0.1.1`) | `catalog/package.json`, `npm view` |
+| Name and version | `@mhsalves/yugioh-fb-catalog@0.3.0` (published: `0.0.1-alpha6`, `0.1.0`, `0.1.1`, `0.3.0`; `0.2.0` was never published) | `catalog/package.json`, `npm view` |
 | Build | `tsc` → `lib/`, CommonJS, ES2016, `.d.ts` | `catalog/tsconfig.json` |
 | Entry | `"main": "./lib/index.js"`. No `exports` map, no `types` field (resolved implicitly next to `main`) | `catalog/package.json` |
 | Contents | Controlled by `catalog/.npmignore`, a copy of `.gitignore` that also excludes `src/` and `tsconfig.json` | `catalog/.npmignore` |
@@ -137,7 +137,8 @@ Why this mechanism:
 **As built:**
 - The PR check is the `release-check` job in `ci.yml`, running `node scripts/check-catalog-release.mjs check <base sha>`. It compares the PR with its base. `catalog/package.json` counts as a catalog change only when a field consumers see changes. `devDependencies` and `scripts` are ignored, except the install hooks (`preinstall`, `install`, `postinstall`), so Dependabot dev-dependency bumps need no release. The version must be higher than **both** the base branch's version and the latest on npm.
 - `release.yml` follows the sketch above. The tag and GitHub Release are created with `gh release create catalog-v<version> --target <merge sha>`, with the CHANGELOG entry as the body (`check-catalog-release.mjs notes <version>`). Each publish target and the GitHub Release are checked separately, so a re-run completes a release that stopped halfway.
-- **Still open:** making `release-check` a required status check (branch protection, N-2b step 4), and the first real run.
+- **First run (2026-10-21):** the merge of #41 started `release.yml` on `push`, but it failed in `setup-node`: `registry-url` wrote an npmrc with `${NODE_AUTH_TOKEN}`, which broke the yarn cache step. #42 removed it. The next run started by hand failed at "Publish to npm" with `ENEEDAUTH`, because the npm trusted publisher had the wrong environment name. Once that was set to `npm`, a run started by hand published `0.3.0` to npm and GitHub Packages and created the `catalog-v0.3.0` Release. The merge of #42 (only `.github/workflows/release.yml`) started no release, as intended.
+- **Still open:** making `release-check` a required status check (branch protection, N-2b step 4; the `Main` ruleset only blocks deletion and force-pushes today), and a release started by a merge that runs end to end.
 
 Alternatives considered:
 
@@ -173,7 +174,19 @@ One-time setup (needs npm package owner + repository admin):
 | 4 | GitHub → Settings → Branches | Protect `main`: require PRs and require the `ci.yml` check (including the version-bump check) to pass |
 | 5 | GitHub → Settings → Environments (if TBD-N9 = yes) | Create environment `npm`, limited to the `main` branch |
 
-**As built:** `release.yml` has the workflow side: a GitHub-hosted runner, `id-token: write` on the release job only, no npm token, `npm install -g npm@11.21.0` (TBD-N8), and `environment: npm` (TBD-N9). Steps 1–5 above are settings on npmjs.com and GitHub and are **not done yet**. Until step 1 is done, the release job fails at "Publish to npm"; after it, re-run the workflow (`workflow_dispatch`).
+**As built:** `release.yml` has the workflow side: a GitHub-hosted runner, `id-token: write` on the release job only, no npm token, `npm install -g npm@11.21.0` (TBD-N8), and `environment: npm` (TBD-N9).
+
+Setup progress (checked 2026-10-21):
+
+| # | Step | State |
+|---|---|---|
+| 1 | Trusted publisher on npmjs.com | ✅ Done: `mhsalves/yugioh-fb-catalog`, `release.yml`, environment `npm`. Allowed actions: `npm publish` (needed for direct publishing; `npm stage publish` is always allowed). Validated by the `0.3.0` publish |
+| 2 | "Require two-factor authentication and disallow tokens" | ❌ Not done |
+| 3 | Revoke old publish tokens | ❌ Not done |
+| 4 | Protect `main`, require `check` and `release-check` | ❌ Not done: the `Main` ruleset blocks deletion and force-pushes only |
+| 5 | Environment `npm` | ✅ Exists (no protection rules) |
+
+The environment name must match **exactly** on both sides: a mismatch makes npm silently skip trusted publishing, and the publish fails with `ENEEDAUTH`.
 
 ### N-2a Release order with the site · ✅ Built
 The site is built from the workspace catalog ([07](./07-site-github-pages-delivery.md) P-2). The two workflows therefore do not depend on each other: a merge that changes catalog data starts **both** the npm release and the Pages deploy, in parallel. If TBD-P2 decides the site must show only released data, the Pages workflow instead starts with `workflow_run` **after** `release.yml` succeeds (see 07 P-1).
@@ -215,7 +228,7 @@ Covered by [01](./01-repository-and-workspaces.md) R-4 step 5: `npm pack`, insta
 ### N-6 Size budget · ❌ Not built
 Track the packed size in CI. At about 722 cards plus relations, a few hundred KB is the expected ceiling (**TBD-N4**). If relations grow large, offer subpath entries (`@mhsalves/yugioh-fb-catalog/fusions`) so consumers load only what they use.
 
-### N-7 Also publish to GitHub Packages · 🟡 Partial
+### N-7 Also publish to GitHub Packages · ✅ Built
 **Agreed (2026-10-20, requested by the owner):** every release is also published to the **GitHub Packages npm registry** (`npm.pkg.github.com`), so the package shows under the repository's **Packages** sidebar next to the code.
 
 - **Same build, same version.** The `release.yml` job publishes the `lib/` it just built to npmjs.com first, then to GitHub Packages. npmjs.com stays the primary registry: README install instructions and the site point there.
@@ -228,17 +241,17 @@ Track the packed size in CI. At about 722 cards plus relations, a few hundred KB
 ## 5. Acceptance criteria
 
 - [x] Releases come only from CI. `npm:publish` is removed from local scripts.
-- [ ] Merging a PR that changes `catalog/data/**` or `catalog/src/**` publishes the new version to npm with no manual step.
-- [ ] Merging a PR that changes only docs, the site or CI publishes nothing.
+- [ ] Merging a PR that changes `catalog/data/**` or `catalog/src/**` publishes the new version to npm with no manual step. (The merge does start `release.yml`; the first such run failed on a setup bug fixed in #42, and `0.3.0` went out from a run started by hand.)
+- [x] Merging a PR that changes only docs, the site or CI publishes nothing. (Merge of #42 started no release.)
 - [x] A PR that changes catalog code or data without a version bump fails CI (`release-check`; still to be made a required check).
 - [x] A PR whose CHANGELOG entry has `### BREAKING` with only a patch bump fails CI (N-3).
 - [ ] Re-running the release workflow for a version that is already published succeeds as a no-op.
 - [ ] `import { getCard } from "@mhsalves/yugioh-fb-catalog"` and `require(...)` both work, with types.
 - [ ] `npm pack --dry-run` lists only `dist/`, `data/`, `schema/`, `README.md`, `LICENSE`, `package.json`.
-- [ ] Every published version has a `CHANGELOG.md` entry.
-- [ ] Each published version shows npm provenance.
+- [x] Every published version has a `CHANGELOG.md` entry, from `0.1.1` on (enforced by `release-check`; `0.0.1-alpha6` and `0.1.0` predate the changelog).
+- [x] Each version published by CI shows npm provenance, from `0.3.0` on (earlier versions were published by hand).
 - [ ] Publishing uses trusted publishing: the repository has no `NPM_TOKEN` secret, and the package is set to disallow token publishing.
-- [ ] Each published version also appears under the repository's Packages (GitHub Packages, N-7), with the same version as npm.
+- [x] Each published version also appears under the repository's Packages (GitHub Packages, N-7), with the same version as npm, from `0.3.0` on.
 
 ## 6. TBD / open questions
 
