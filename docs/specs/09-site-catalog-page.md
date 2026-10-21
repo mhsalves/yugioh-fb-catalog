@@ -10,7 +10,7 @@ Build status as of 2026-10-20, branch `spec-09-catalog-filter-page` (based on `m
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| C-1 | One page, header without menu | Agreed | ✅ Built | Header: logo (back to the full catalog), copyable catalog version, npm link; no menu. `App.tsx` renders the catalog at `/` and the 404 view elsewhere |
+| C-1 | One page, header without menu | Agreed | ✅ Built | Header: logo (back to the full catalog), copyable catalog package `name@version`, npm and GitHub links; no menu. `App.tsx` renders the catalog at `/` and the 404 view elsewhere |
 | C-2 | Filter bound to the library (`searchCards`) | Agreed | ✅ Built | `searchCards` (catalog 0.3.0); "By type" row with "All types" above the grid; filter panel (desktop column, phone sheet) for the other fields |
 | C-3 | Results grid | Agreed | ✅ Built | `CardTile` grid, 2 columns on phones; zero results show a placeholder with "Clear filters" |
 | C-4 | Card details card | Agreed | ✅ Built | `CardDetails` as a side panel (like Google Drive's details pane): stats, stars, copyable password, ritual recipe, **Share**, previous/next |
@@ -82,9 +82,9 @@ Clicking a grid item opens the **details card** over the page (C-4).
 
 ### C-1 One page, header without menu · ✅ Built
 - The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
-- The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog version** button (copy) and the **npm** link. The **menu is removed**, with its mobile toggle and `routes.ts`.
+- The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fb-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).
-- On phones the version and npm link stay visible; below 400px the "FM Catalog" text next to the logo is hidden so they fit.
+- On phones the package button and the npm and GitHub links stay visible (they wrap when needed); below 400px the "FM Catalog" text next to the logo is hidden so they fit.
 
 ### C-2 Filter bound to the library · ✅ Built
 **Rule:** the page calls **one library function**, `searchCards(query)` from [04](./04-catalog-query-api.md) Q-4, and renders what it returns. Every filter control maps to one `CardQuery` field. Option lists come from the library's exported enums, so a new monster type in the data appears in the filter with no site change.
