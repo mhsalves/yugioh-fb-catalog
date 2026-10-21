@@ -214,7 +214,7 @@ data/rituals.json  equips.json  fields.json  fusions/<result-type>.json  rules.j
 
 - `yarn build` runs `tsc -p tsconfig.build.json` with `module: commonjs`, `target: es2016`, `declaration: true`, output in `lib/`.
 - `"files": ["lib"]` in `catalog/package.json` allowlists the build output, so the package contains only `lib/` (JS + `.d.ts`) plus `README.md` and `package.json`. The allowlist is required inside the workspace: npm also applies the root `.gitignore`, which ignores `lib`, so without it the tarball would be empty. `.npmignore` is kept as a second guard.
-- `yarn npm:publish` builds and publishes. This is still a manual step. CI (`ci.yml`) checks every PR, including a smoke test that installs the packed tarball, but it does not publish.
+- Publishing is done only by CI. A PR that changes the catalog's code or data must bump `catalog/package.json` and add a `catalog/CHANGELOG.md` entry (`release-check` job in `ci.yml`). After the merge, `release.yml` publishes to npm (trusted publishing) and GitHub Packages, then tags `catalog-v<version>` and creates the GitHub Release (spec 05 N-2, N-7).
 
 **Why CommonJS/ES2016** *(inferred)*: it is the format with the widest compatibility. It loads in old and new Node versions and in bundlers such as Next.js/webpack with no extra setup.
 
@@ -270,12 +270,13 @@ sequenceDiagram
     Cat-->>Site: yarn dev: tsc --watch, site shows it live
     Dev->>CI: open PR
     CI->>CI: type-check, lint, format, test, build, pack smoke test
-    Dev->>Cat: after merge: bump version, yarn npm:publish
-    Cat->>NPM: lib/ (JS + .d.ts)
+    Dev->>Cat: in the PR: bump version + CHANGELOG entry
+    CI->>CI: release-check: bump and changelog present
+    CI->>NPM: after merge: release.yml publishes lib/ (JS + .d.ts)
     CI->>GH: after merge: pages.yml builds and deploys dist/
 ```
 
-The site deploy is automated ([07](./specs/07-site-github-pages-delivery.md) P-1). Publishing to npm is still manual; it is automated in spec [05](./specs/05-catalog-npm-distribution.md) N-2.
+The site deploy is automated ([07](./specs/07-site-github-pages-delivery.md) P-1). Publishing to npm (and GitHub Packages) is automated too ([05](./specs/05-catalog-npm-distribution.md) N-2, N-7).
 
 ---
 

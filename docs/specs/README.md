@@ -13,10 +13,10 @@ The project keeps **one repository with two deliverables**:
 | G1 | A **site** that displays the catalog data, with a good UI/UX inspired by *Yu-Gi-Oh! Forbidden Memories* | 🟡 Partial: one catalog page (filter over `searchCards`, grid, card details, footer) is built; the FM look waits for the style guide | [06 – Site UX](./06-site-ux-forbidden-memories.md), [09 – Catalog page](./09-site-catalog-page.md) |
 | G2 | The site stays **served from GitHub Pages** | ✅ Built: live at `mhsalves.github.io/yugioh-fb-catalog` (`pages.yml` deploys on every merge that changes the site) | [07 – Site delivery](./07-site-github-pages-delivery.md) |
 | G3 | The catalog data is stored in a **simple format that is easy to extend** with more information later (**JSON**, agreed) | ✅ Built: JSON files in `catalog/data/` with schemas, `yarn validate` in CI, contributor guide | [03 – Data authoring](./03-catalog-data-authoring.md) |
-| G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` (publish is manual) | [05 – npm distribution](./05-catalog-npm-distribution.md) |
+| G4 | The catalog stays **published on the npm registry** | ✅ Built: `@mhsalves/yugioh-fb-catalog@0.1.1` on npm; `release.yml` publishes to npm and GitHub Packages after each catalog merge, once the trusted-publishing setup (05 N-2b) is done | [05 – npm distribution](./05-catalog-npm-distribution.md) |
 | G5 | The catalog offers **methods to search and read** the data | 🟡 Partial: read functions plus `searchCards` (catalog 0.3.0); relation queries wait for their data | [04 – Query API](./04-catalog-query-api.md) |
 | G6 | The catalog **organizes the data correctly** by card type and other game concepts | 🟡 Partial: all 5 card types and 20 monster types modeled, fusion/ritual/equip/field relations typed; duelists wait for TBD-D9 | [02 – Data model](./02-catalog-data-model.md) |
-| — | Shared foundation: repo layout, workspaces, tests, CI | ✅ Built: Yarn workspaces, Vitest, ESLint/Prettier, `ci.yml` (version-bump check waits for 05 N-2) | [01 – Repository](./01-repository-and-workspaces.md) |
+| — | Shared foundation: repo layout, workspaces, tests, CI | ✅ Built: Yarn workspaces, Vitest, ESLint/Prettier, `ci.yml` (including the version-bump and changelog check) | [01 – Repository](./01-repository-and-workspaces.md) |
 | — | Card images: free and optimized, without hosting copyrighted art ourselves | ❌ Not built: no images anywhere | [08 – Card images](./08-card-images.md) |
 
 A goal's status says whether the **goal is met today**. Item statuses in the specs say whether each **proposed improvement** is built, so a goal can be ✅ while its spec's improvements are still ❌. For example, G2 works today, but automated deploys (07 P-1) are not built.
@@ -61,42 +61,43 @@ Every improvement item has **two independent statuses**, shown in each spec's **
 
 ## Status board
 
-Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which it also moved) rechecked after the spec 01 build PR (based on `main` @ `750004a`); spec 02 (and 04 Q-5/Q-6, 05 N-3) rechecked after the spec 02 build PR (based on `main` @ `d06bf94`); spec 03 (and 02 D-4/D-5) rechecked after the spec 03 build PR (based on `main` @ `ce9dfcf`).
+Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which it also moved) rechecked after the spec 01 build PR (based on `main` @ `750004a`); spec 02 (and 04 Q-5/Q-6, 05 N-3) rechecked after the spec 02 build PR (based on `main` @ `d06bf94`); spec 03 (and 02 D-4/D-5) rechecked after the spec 03 build PR (based on `main` @ `ce9dfcf`); spec 05 (and 01 R-4) rechecked after the release automation PR (based on `main` @ `c6a2ce9`).
 
 | Spec | ✅ Built | 🟡 Partial | ❌ Not built | ➖ N/A |
 |---|---|---|---|---|
-| [01 – Repository, workspaces, tests and CI](./01-repository-and-workspaces.md) | 5 | 1 | 0 | 0 |
+| [01 – Repository, workspaces, tests and CI](./01-repository-and-workspaces.md) | 6 | 0 | 0 | 0 |
 | [02 – Catalog data model and organization](./02-catalog-data-model.md) | 4 | 1 | 0 | 0 |
 | [03 – Catalog data authoring (storage format and validation)](./03-catalog-data-authoring.md) | 5 | 0 | 1 | 0 |
 | [04 – Catalog query API (read and search)](./04-catalog-query-api.md) | 1 | 3 | 4 | 0 |
-| [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 0 | 4 | 4 | 0 |
+| [05 – Catalog distribution on the npm registry](./05-catalog-npm-distribution.md) | 2 | 6 | 1 | 0 |
 | [06 – Site UI/UX inspired by Yu-Gi-Oh! Forbidden Memories](./06-site-ux-forbidden-memories.md) | 0 | 2 | 2 | 2 |
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 4 | 0 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
 | [09 – Site: single catalog page](./09-site-catalog-page.md) | 7 | 0 | 0 | 0 |
-| **Total** | **26** | **11** | **20** | **2** |
+| **Total** | **29** | **12** | **17** | **2** |
 
 ## Automation rules
 
 What runs automatically **after a PR is merged into `main`**:
 
-| The merge changes… | npm release ([05](./05-catalog-npm-distribution.md) N-2) | GitHub Pages deploy ([07](./07-site-github-pages-delivery.md) P-1) |
+| The merge changes… | npm + GitHub Packages release ([05](./05-catalog-npm-distribution.md) N-2, N-7) | GitHub Pages deploy ([07](./07-site-github-pages-delivery.md) P-1) |
 |---|---|---|
 | Catalog **data** (`catalog/data/**`) | ✅ publishes a **patch** | ✅ redeploys (site shows the new data) |
 | Catalog **feature** (`catalog/src/**`, `catalog/schema/**`) | ✅ publishes a **minor** (or a patch for a fix) | ✅ redeploys |
 | The **site** (`mkt_site/**`) | — | ✅ redeploys |
 | Only docs, tests or CI config | — | — |
 
-Every PR also runs CI ([01](./01-repository-and-workspaces.md) R-4) **before** merge. If a PR changes catalog data or code, CI requires a version bump and a changelog entry. That way the release after the merge always has a new version to publish.
+Every PR also runs CI ([01](./01-repository-and-workspaces.md) R-4) **before** merge. If a PR changes catalog data or code, CI requires a version bump and a changelog entry, and a `### BREAKING` entry needs at least a minor bump ([05](./05-catalog-npm-distribution.md) N-3). That way the release after the merge always has a new version to publish.
 
 ```mermaid
 flowchart LR
     PR["PR merged into main"] --> F{"Which paths changed?"}
-    F -- "catalog/data, src, schema, package.json" --> REL["release.yml<br/>validate → test → build →<br/>npm publish (if version is new) →<br/>tag + GitHub Release"]
+    F -- "catalog/data, src, schema, package.json" --> REL["release.yml<br/>validate → test → build →<br/>npm publish (if version is new) →<br/>GitHub Packages publish →<br/>tag + GitHub Release"]
     F -- "mkt_site/** (site)" --> PAG["pages.yml<br/>test → build site →<br/>deploy to GitHub Pages"]
     F -- "catalog/data, src, schema" --> PAG
     F -- "docs / tests / CI only" --> NOP["nothing published"]
     REL --> NPM[("npm registry")]
+    REL --> GPR[("GitHub Packages")]
     PAG --> GHP[("GitHub Pages")]
 ```
 
@@ -108,6 +109,8 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 
 | Date | Decision | Status | Where |
 |---|---|---|---|
+| 2026-10-20 | **Release automation built** (05 N-2, N-2a, N-3, N-7 + 01 R-4 step 7): `release.yml` and the `release-check` CI job. **A release is breaking if and only if its CHANGELOG entry has `### BREAKING`**, which needs at least a minor bump in `0.x`. Defaults: npm pinned to 11.21.0 in the job (TBD-N8), environment `npm` without approval (TBD-N9). Trusted-publisher and branch-protection setup still pending | Built (defaults; open to change) | [05](./05-catalog-npm-distribution.md) N-2, N-3 |
+| 2026-10-20 | **Each release is also published to GitHub Packages** (`npm.pkg.github.com`), so the package appears in the repository's Packages; npmjs.com stays primary | **Agreed** (requested by the owner) | [05](./05-catalog-npm-distribution.md) N-7 |
 | 2026-10-20 | **After a merge to `main`, catalog changes (new features or data) publish to npm automatically**. Mechanism: version bump required in the PR, publish on merge | **Agreed** (rule); mechanism Proposed | [05](./05-catalog-npm-distribution.md) N-2 |
 | 2026-10-20 | **After a merge to `main`, site changes deploy to GitHub Pages automatically** (catalog data changes also redeploy while the site uses the workspace catalog) | **Agreed** | [07](./07-site-github-pages-delivery.md) P-1 |
 | 2026-10-20 | **GitHub Actions is the CI platform** for CI, the npm release and the Pages deploy. No other CI service is used | **Agreed** | [01](./01-repository-and-workspaces.md) R-4 |
