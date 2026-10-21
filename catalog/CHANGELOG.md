@@ -2,6 +2,19 @@
 
 All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.3.0
+
+### Added
+
+- `searchCards(query)`: one query function for the whole catalog (spec 04 Q-4). Every field of `CardQuery` is optional and fields combine with AND: `text` (case- and accent-insensitive name match, plus the description with `includeDescription`), `cardType`, `monsterType`, `guardianStar` (one value or a list), `level`, `attack`, `defense`, `cost` ranges (`{ min?, max? }`), `ids`, `sort` (`id`, `name`, `attack`, `defense`, `level`, `cost`; `asc` or `desc`), `limit` and `offset`. Returns `{ total, items }`.
+- Types `CardQuery`, `NumberRange`, `CardSortKey` and `CardSearchResult`.
+
+```ts
+searchCards({ cardType: "Monster", guardianStar: ["Sun", "Moon"], attack: { min: 1500 }, sort: { by: "attack", dir: "desc" } });
+```
+
+Monster-only filters (`monsterType`, `guardianStar`, `level`, `attack`, `defense`) leave the other card types out while they are set. When sorting by a monster stat, cards without it come last.
+
 ## 0.2.0
 
 Data model update (spec 02, `docs/specs/02-catalog-data-model.md`). The data is now authored as JSON validated by schemas (spec 03); the data itself and the public API are the same either way.

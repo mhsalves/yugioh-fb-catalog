@@ -31,7 +31,7 @@ flowchart LR
             types --> data --> tools --> entry
         end
         subgraph site["mkt_site/ (Vite + React SPA)"]
-            app["App.tsx + routes.ts"]
+            app["App.tsx → CatalogPage"]
             header["components/Header.tsx"]
             app --> header
         end
@@ -88,8 +88,8 @@ The important detail: **the website imports the library from the repository**, t
 │   ├── vite.config.ts       # base path for GH Pages, 404.html fallback, catalog version
 │   ├── index.html
 │   └── src/
-│       ├── App.tsx, routes.ts, router.tsx, styles.css
-│       ├── pages/{HomePage,NotFoundPage}.tsx
+│       ├── App.tsx, router.tsx, catalogUrl.ts, useCopy.ts, styles.css
+│       ├── pages/{CatalogPage,CardPage,NotFoundPage}.tsx
 │       └── components/{Header,CatalogVersion,icons}.tsx
 └── README.md                # Project overview (Portuguese)
 ```
@@ -226,12 +226,15 @@ This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). 
 
 ### 5.1 Behaviour
 
-The site is being rebuilt page by page (spec 06 U-2). Today it has:
-- a **header** on every page: logo (home link), the page menu built from `routes.ts` (a toggle on phones), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fb-catalog@<version>`) and a link to that version on npm;
-- a placeholder **Home** page at `/`;
-- a **404** page for unknown paths.
-
-The old "Cards registered" coverage grid was removed; it comes back as `/progress` (spec 06 U-6).
+The site is **one page** (spec 09): the catalog at `/`.
+- **Header:** logo (back to the full catalog), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fb-catalog@<version>`) and a link to that version on npm. No menu.
+- **Filters:** a search box and a "By type" row ("All types" + the 5 card types) above the grid; a panel with the other `CardQuery` fields (monster type, guardian star, level, ATK, DEF, cost, description search). A left column on desktop, a full-screen sheet on phones.
+- **Results:** the page calls `searchCards(query)` from the catalog and renders the items as a grid, with "N cards · 5 of 722 catalogued" and a sort control. Zero results show a placeholder with "Clear filters". The site never filters or sorts by itself.
+- **Card details:** clicking a grid item opens a side panel docked to the window's right edge (1.5rem from it, sliding in and out; full screen on phones) with the card's stats, guardian stars, copyable password, cost, description and ritual recipe (`getRitual`), plus previous/next through the results.
+- **URL:** the whole state lives in the query string (`catalogUrl.ts`), for example `?type=Monster&atk=1000-&card=425`. Filter changes replace the history entry; opening a card adds one, so Back closes it.
+- **Footer:** "Made by Matheus Alves" with links to https://matheusalves.dev and https://github.com/mhsalves, and the notice "Unofficial fan project. Yu-Gi-Oh! is a trademark of Konami."
+- **Shared card pages:** the details card's **Share** button hands out `/cards/<id>/` (share sheet on phones, copied link elsewhere). That page shows the card on its own with "Back to the catalog" (`pages/CardPage.tsx`, sharing `components/CardInfo.tsx` with the panel). The build writes `cards/<id>/index.html` for every catalogued card (own title, description, canonical and Open Graph tags, readable summary) and `sitemap.xml` (`build/cardPages.ts`).
+- A **404** view for any other path.
 
 ### 5.2 Stack and reasons
 
@@ -239,7 +242,7 @@ The old "Cards registered" coverage grid was removed; it comes back as `/progres
 |---|---|
 | Vite + React, no framework | The data is static and bundled, so no server or SSR is needed. Vite builds in under a second and outputs plain HTML/JS/CSS for GitHub Pages. |
 | Plain CSS with tokens in `src/styles.css` | No UI or CSS-in-JS library to update. Colors and fonts live in `:root` variables, ready for the style guide (spec 06 U-1). |
-| Own router (`src/router.tsx`, ~50 lines) | History API + `useSyncExternalStore`; avoids a router dependency for a handful of routes. |
+| Own router (`src/router.tsx`, ~70 lines) | History API + `useSyncExternalStore` for the path and the query string; avoids a router dependency for one page. |
 | Inline SVG icons (`components/icons.tsx`) | No icon library. |
 | `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview | GitHub Pages serves project sites under `/<repo>/` (spec 07 P-3). |
 | `dist/404.html` = copy of `index.html` | Pages serves `404.html` for unknown paths, so deep links boot the SPA and its router shows the page or the 404 view. |

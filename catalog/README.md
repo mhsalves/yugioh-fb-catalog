@@ -5,9 +5,11 @@ Base de dados estruturada das cartas do Yu-Gi-Oh! Forbidden Memories, contendo i
 ## Uso
 
 ```ts
-import { getCard, getCardsByMonsterType, getRitual, TOTAL_CARDS, MONSTER_TYPES } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, getCardsByMonsterType, getRitual, searchCards, TOTAL_CARDS, MONSTER_TYPES } from "@mhsalves/yugioh-fb-catalog";
 
 getCard(425); // Thunder Dragon
+searchCards({ text: "dragon", cardType: "Monster", attack: { min: 1000 }, sort: { by: "attack", dir: "desc" } });
+// { total, items } — todos os campos são opcionais e combinam com E (veja `CardQuery`)
 getCardsByMonsterType("Thunder"); // IMonsterCard[]
 getRitual(674); // { ritual: 674, result: 365, materials: [186, 261, 595] }
 TOTAL_CARDS; // 722
