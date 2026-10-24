@@ -35,7 +35,7 @@ import {
 const API = "https://yugioh.fandom.com/api.php";
 /** Images only: the cards the Fandom wiki has no picture of. */
 const YUGIPEDIA_API = "https://yugipedia.com/api.php";
-const USER_AGENT = "yugioh-fb-catalog data sync (https://github.com/mhsalves/yugioh-fb-catalog)";
+const USER_AGENT = "yugioh-fm-catalog data sync (https://github.com/mhsalves/yugioh-fm-catalog)";
 const dryRun = process.argv.includes("--dry-run");
 const overwrite = process.argv.includes("--overwrite");
 

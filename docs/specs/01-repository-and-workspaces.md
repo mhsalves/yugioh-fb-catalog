@@ -15,7 +15,7 @@ Build status as of 2026-10-20, after the spec 01 build PR (based on `main` @ `75
 | R-3 | Lint and format | Agreed | ✅ Built | ESLint flat config + Prettier at the root (`yarn lint`, `yarn format:check`) |
 | R-4 | CI workflow on GitHub Actions, actions pinned by SHA | Agreed | ✅ Built | `ci.yml` runs steps 1–7 and the SHA-pin check (step 7 is the `release-check` job, [05](./05-catalog-npm-distribution.md) N-2) |
 | R-5 | Site in TypeScript `strict: true` | Agreed | ✅ Built | Both packages are `strict: true` |
-| R-6 | Rename `server/` to `mkt_site/` | Agreed | ✅ Built | Site lives in `mkt_site/` (package `yugioh-fb-catalog-mkt-site`) |
+| R-6 | Rename `server/` to `mkt_site/` | Agreed | ✅ Built | Site lives in `mkt_site/` (package `yugioh-fm-catalog-mkt-site`) |
 
 ## 1. Why this spec exists
 
@@ -32,7 +32,7 @@ Without this foundation, each data change costs a publish, a version bump and a 
 |---|---|---|
 | Layout | Yarn 1 workspace: private root `package.json` with workspaces `catalog` and `mkt_site`, **one** root `yarn.lock`. Node 22 (`.nvmrc`) | `package.json` |
 | Single source of truth | Done. The stale root copy of the library was removed in `6e0f63f`. | `ARCHITECTURE.md` S1/S2 |
-| Linking | `mkt_site/` depends on `"@mhsalves/yugioh-fb-catalog": "*"`, which Yarn links to `catalog/`. `yarn dev` builds the catalog and runs `tsc --watch` next to `next dev`, so catalog edits show up live | `mkt_site/package.json` |
+| Linking | `mkt_site/` depends on `"@mhsalves/yugioh-fm-catalog": "*"`, which Yarn links to `catalog/`. `yarn dev` builds the catalog and runs `tsc --watch` next to `next dev`, so catalog edits show up live | `mkt_site/package.json` |
 | Tests | Vitest in `catalog/`: query API tests and data integrity checks (unique and sorted IDs, ID range 1–722, password format, cost, level, ritual references) | `catalog/test/` |
 | Lint/format | ESLint flat config (`typescript-eslint`, `react-hooks`) and Prettier (4 spaces, 120 columns; 2 spaces for JSON/YAML; Markdown not formatted) | `eslint.config.mjs`, `.prettierrc.json` |
 | CI | `ci.yml` on every PR and push to `main`. Dependabot watches the root workspace and the Actions | `.github/workflows/ci.yml`, `.github/dependabot.yml` |
@@ -59,12 +59,12 @@ A root `package.json` (private, never published), as built with Yarn 1 (TBD-R2):
   "private": true,
   "workspaces": ["catalog", "mkt_site"],
   "scripts": {
-    "build": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site build",
+    "build": "yarn workspace @mhsalves/yugioh-fm-catalog build && yarn workspace yugioh-fm-catalog-mkt-site build",
     // builds the catalog once, then runs `tsc --watch` for it next to `next dev`
-    "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && (yarn workspace @mhsalves/yugioh-fb-catalog dev & yarn workspace yugioh-fb-catalog-mkt-site dev)",
+    "dev": "yarn workspace @mhsalves/yugioh-fm-catalog build && (yarn workspace @mhsalves/yugioh-fm-catalog dev & yarn workspace yugioh-fm-catalog-mkt-site dev)",
     // the site type-checks against the catalog's built lib/*.d.ts, so build it first
-    "typecheck": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspaces run typecheck",
-    "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
+    "typecheck": "yarn workspace @mhsalves/yugioh-fm-catalog build && yarn workspaces run typecheck",
+    "test": "yarn workspace @mhsalves/yugioh-fm-catalog test",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -74,7 +74,7 @@ A root `package.json` (private, never published), as built with Yarn 1 (TBD-R2):
 }
 ```
 
-- `mkt_site/` depends on `"@mhsalves/yugioh-fb-catalog": "*"` (Yarn 1), which Yarn links to `catalog/`, so local changes appear immediately.
+- `mkt_site/` depends on `"@mhsalves/yugioh-fm-catalog": "*"` (Yarn 1), which Yarn links to `catalog/`, so local changes appear immediately.
 - One lockfile at the root. It was seeded from the two old lockfiles, so the resolved versions did not change.
 - The catalog builds with `catalog/tsconfig.build.json` (`src/` only). `catalog/tsconfig.json` type-checks `src/` and `test/`.
 - **Trade-off:** we lose the "site tests the published package" property. That check moved to CI (R-4, a smoke test that installs the packed tarball).
@@ -140,7 +140,7 @@ What the rename touched (all in one PR):
 | Place | Change |
 |---|---|
 | Folder | `git mv server mkt_site` (keeps history) ✅ |
-| `mkt_site/package.json` | `name`: `yugioh-fb-catalog-server` → `yugioh-fb-catalog-mkt-site` (TBD-R5), now `private: true` ✅ |
+| `mkt_site/package.json` | `name`: `yugioh-fm-catalog-server` → `yugioh-fm-catalog-mkt-site` (TBD-R5), now `private: true` ✅ |
 | Root workspaces (R-1) | `"workspaces": ["catalog", "mkt_site"]` ✅ |
 | `.github/dependabot.yml` | One `npm` entry at `directory: "/"` for the whole workspace (one root lockfile), instead of `/catalog` + `/server`. Groups: `framework`, `tooling`, `minor-and-patch` ✅ |
 | Workflow path filters | `mkt_site/**` in `pages.yml` ([07](./07-site-github-pages-delivery.md) P-1) and the "does not release" list in `release.yml` ([05](./05-catalog-npm-distribution.md) N-2). Those workflows do not exist yet, so they use the new name from the start |
@@ -148,7 +148,7 @@ What the rename touched (all in one PR):
 | Docs | Root `README.md`, `mkt_site/README.md`, `docs/ARCHITECTURE.md`, specs ✅ |
 | `.gitignore` | No `server/`-specific entries ✅ |
 
-The published site URL does not change: it comes from the repository name (`/yugioh-fb-catalog/`), not the folder name.
+The published site URL does not change: it comes from the repository name (`/yugioh-fm-catalog/`), not the folder name.
 
 ## 5. Acceptance criteria
 
@@ -163,5 +163,5 @@ The published site URL does not change: it comes from the repository name (`/yug
 - **TBD-R2:** Which package manager? Yarn 1 (current), Yarn Berry, pnpm or npm. pnpm has the strictest workspace linking, and Yarn 1 needs the least churn. **Built with Yarn 1 (2026-10-20)** as the least-churn default. Switching later only touches the root `package.json`, the lockfile and CI.
 - **TBD-R3:** Minimum supported Node version, both for development and for consumers of the package (affects [05](./05-catalog-npm-distribution.md)). **Development and CI use Node 22** (`.nvmrc`, 2026-10-20). Node 20 is end-of-life and Vitest 5 needs ≥ 22.12. The minimum for **package consumers** (`engines`) is still open and belongs to [05](./05-catalog-npm-distribution.md).
 - ~~**TBD-R4:** Pin GitHub Actions by major version or by commit SHA?~~ **Resolved (2026-10-20): pin by full commit SHA**, with the version in a comment (R-4 conventions).
-- **TBD-R5:** Package name for the site workspace: `yugioh-fb-catalog-mkt-site` (proposed), or another name? The package is private and never published, so this only affects workspace commands. **Built with `yugioh-fb-catalog-mkt-site` (2026-10-20).**
+- **TBD-R5:** Package name for the site workspace: `yugioh-fm-catalog-mkt-site` (proposed), or another name? The package is private and never published, so this only affects workspace commands. **Built with `yugioh-fm-catalog-mkt-site` (2026-10-20).**
 - **TBD-R6:** Tool for checking the SHA pins: a plain grep step (simplest), `actionlint`, or `zizmor` (also audits workflow security)? **Built with a plain grep** (`scripts/check-action-pins.sh`, 2026-10-20). `zizmor` stays an option when the publish and deploy workflows arrive.

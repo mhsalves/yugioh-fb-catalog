@@ -1,4 +1,4 @@
-import { getCard, type CardId, type ICard } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, type CardId, type ICard } from "@mhsalves/yugioh-fm-catalog";
 import { SAMPLE_DROP_RANKS, sampleDuelists, type SampleDuelist } from "./sample";
 
 // MOCK (spec 10 F-6, listed in ./pending.ts): the catalog has no duelists, decks or drops yet (spec 02 TBD-D9). These

@@ -1,4 +1,4 @@
-import { getCard, type CardId, type ICard, type IFusion } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, type CardId, type ICard, type IFusion } from "@mhsalves/yugioh-fm-catalog";
 import { sampleFusions } from "./sample";
 
 // MOCK (spec 10 F-6, listed in ./pending.ts): the catalog has no fusion data or look-ups yet (spec 04 Q-5). These

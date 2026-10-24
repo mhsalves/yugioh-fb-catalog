@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCard, type CardId, type CardQuery } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, type CardId, type CardQuery } from "@mhsalves/yugioh-fm-catalog";
 import CardImage from "../components/CardImage";
 import CardPicker from "../components/CardPicker";
 import CardRow from "../components/CardRow";

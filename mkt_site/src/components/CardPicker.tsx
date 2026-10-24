@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { searchCards, type CardId, type CardQuery } from "@mhsalves/yugioh-fb-catalog";
+import { searchCards, type CardId, type CardQuery } from "@mhsalves/yugioh-fm-catalog";
 import CardRow from "./CardRow";
 import Sheet from "./Sheet";
 

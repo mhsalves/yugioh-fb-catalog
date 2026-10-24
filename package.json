@@ -1,17 +1,17 @@
 {
-  "name": "yugioh-fb-catalog-root",
+  "name": "yugioh-fm-catalog-root",
   "private": true,
   "workspaces": [
     "catalog",
     "mkt_site"
   ],
   "scripts": {
-    "build": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspace yugioh-fb-catalog-mkt-site build",
-    "dev": "yarn workspace @mhsalves/yugioh-fb-catalog build && (yarn workspace @mhsalves/yugioh-fb-catalog dev & yarn workspace yugioh-fb-catalog-mkt-site dev)",
-    "typecheck": "yarn workspace @mhsalves/yugioh-fb-catalog build && yarn workspaces run typecheck",
-    "test": "yarn workspace @mhsalves/yugioh-fb-catalog test",
-    "validate": "yarn workspace @mhsalves/yugioh-fb-catalog validate",
-    "coverage:data": "yarn workspace @mhsalves/yugioh-fb-catalog coverage:data",
+    "build": "yarn workspace @mhsalves/yugioh-fm-catalog build && yarn workspace yugioh-fm-catalog-mkt-site build",
+    "dev": "yarn workspace @mhsalves/yugioh-fm-catalog build && (yarn workspace @mhsalves/yugioh-fm-catalog dev & yarn workspace yugioh-fm-catalog-mkt-site dev)",
+    "typecheck": "yarn workspace @mhsalves/yugioh-fm-catalog build && yarn workspaces run typecheck",
+    "test": "yarn workspace @mhsalves/yugioh-fm-catalog test",
+    "validate": "yarn workspace @mhsalves/yugioh-fm-catalog validate",
+    "coverage:data": "yarn workspace @mhsalves/yugioh-fm-catalog coverage:data",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

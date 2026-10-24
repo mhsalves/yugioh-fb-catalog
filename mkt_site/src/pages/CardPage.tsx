@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getCard, type CardId } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, type CardId } from "@mhsalves/yugioh-fm-catalog";
 import CardInfo from "../components/CardInfo";
 import { ChevronLeftIcon } from "../components/icons";
 import ShareButton from "../components/ShareButton";

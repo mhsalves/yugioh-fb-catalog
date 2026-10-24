@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { getCardList, TOTAL_CARDS } from "@mhsalves/yugioh-fb-catalog";
+import { getCardList, TOTAL_CARDS } from "@mhsalves/yugioh-fm-catalog";
 import { Link } from "../router";
 import { useCopy } from "../useCopy";
 import Sheet from "./Sheet";
@@ -7,7 +7,7 @@ import { CheckIcon, ChevronRightIcon, CopyIcon, ExternalIcon, GitHubIcon, InfoIc
 
 const PACKAGE_SPEC = `${__CATALOG_NAME__}@${__CATALOG_VERSION__}`;
 const NPM_URL = `https://www.npmjs.com/package/${__CATALOG_NAME__}/v/${__CATALOG_VERSION__}`;
-const REPOSITORY_URL = "https://github.com/mhsalves/yugioh-fb-catalog";
+const REPOSITORY_URL = "https://github.com/mhsalves/yugioh-fm-catalog";
 
 function CopyPackage({ className }: { className: string }) {
     const [state, copy] = useCopy();

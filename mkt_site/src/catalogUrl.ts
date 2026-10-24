@@ -6,7 +6,7 @@ import {
     type CardQuery,
     type CardSortKey,
     type NumberRange,
-} from "@mhsalves/yugioh-fb-catalog";
+} from "@mhsalves/yugioh-fm-catalog";
 
 // The catalog page keeps its whole state in the query string (spec 09 C-6), for example
 // ?q=dragon&type=Monster&mtype=Dragon,Thunder&star=Sun&atk=1000-&sort=attack-desc&page=2&card=425

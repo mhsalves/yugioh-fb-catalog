@@ -30,7 +30,7 @@ The page is also the **reference consumer of the npm API** ([04](./04-catalog-qu
 
 | Part | Today | File |
 |---|---|---|
-| Header | Logo (home link), menu built from `routes.ts` (one entry: Home), catalog version button (copies `@mhsalves/yugioh-fb-catalog@<version>`), npm link | `src/components/Header.tsx`, `CatalogVersion.tsx` |
+| Header | Logo (home link), menu built from `routes.ts` (one entry: Home), catalog version button (copies `@mhsalves/yugioh-fm-catalog@<version>`), npm link | `src/components/Header.tsx`, `CatalogVersion.tsx` |
 | Pages | Placeholder Home at `/`, a 404 view for other paths | `src/pages/` |
 | Router | Path-only router with base-path helpers | `src/router.tsx` |
 | Footer | None | — |
@@ -85,8 +85,8 @@ Clicking a grid item opens the **details card** over the page (C-4).
 
 > **Changed 2026-10-23 (owner request):** the catalog moved to **`/cards`**, and `/` is now a **home page**: what the project is, a card search that opens `/cards?q=`, tiles to Cards, Fusion and Duelists, special thanks to the image sources, how to use the npm package, and the author. Old catalog addresses (`/?type=…&card=…`) redirect to `/cards?…`.
 
-- The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
-- The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fb-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
+- The site has **one page**, the catalog, at the site root (`/yugioh-fm-catalog/`).
+- The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fm-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).
 - On phones the package button and the npm and GitHub links stay visible (they wrap when needed); below 400px the "FM Catalog" text next to the logo is hidden so they fit.
 
@@ -168,7 +168,7 @@ At the bottom of the page, on every view (including 404):
 Shareable views, with no extra pages. The query string holds the filter and the open card:
 
 ```
-/yugioh-fb-catalog/?q=dragon&type=Monster&mtype=Dragon,Thunder&star=Sun&atk=1000-&sort=attack-desc&card=425
+/yugioh-fm-catalog/?q=dragon&type=Monster&mtype=Dragon,Thunder&star=Sun&atk=1000-&sort=attack-desc&card=425
 ```
 
 - Empty fields are left out, so the plain catalog URL stays clean.

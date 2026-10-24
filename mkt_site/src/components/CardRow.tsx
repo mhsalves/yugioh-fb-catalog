@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { CardId, ICard } from "@mhsalves/yugioh-fb-catalog";
+import type { CardId, ICard } from "@mhsalves/yugioh-fm-catalog";
 import CardImage from "./CardImage";
 
 /**

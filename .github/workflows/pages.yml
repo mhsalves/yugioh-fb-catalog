@@ -54,7 +54,7 @@ jobs:
       - name: Build catalog and site
         run: yarn build
         env:
-          # "/yugioh-fb-catalog" for this repo; follows forks and custom domains (spec 07 P-3).
+          # "/yugioh-fm-catalog" for this repo; follows forks and custom domains (spec 07 P-3).
           SITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           # Absolute URL for the per-card pages' canonical links and sitemap.xml (spec 09 C-7).
           SITE_URL: ${{ steps.pages.outputs.base_url }}

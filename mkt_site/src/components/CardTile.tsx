@@ -1,4 +1,4 @@
-import type { ICard } from "@mhsalves/yugioh-fb-catalog";
+import type { ICard } from "@mhsalves/yugioh-fm-catalog";
 import CardImage from "./CardImage";
 
 /** One grid item (spec 09 C-3). The art area shows the card's image (spec 08), or a styled frame without one. */

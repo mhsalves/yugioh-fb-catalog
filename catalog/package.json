@@ -1,6 +1,6 @@
 {
-  "name": "@mhsalves/yugioh-fb-catalog",
-  "version": "0.5.0",
+  "name": "@mhsalves/yugioh-fm-catalog",
+  "version": "0.6.0",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
   "files": [
@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
+    "url": "git+ssh://git@github.com/mhsalves/yugioh-fm-catalog.git"
   },
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
   "license": "MIT",
@@ -39,9 +39,9 @@
     "zod": "^4.6.7"
   },
   "bugs": {
-    "url": "https://github.com/mhsalves/yugioh-fb-catalog/issues"
+    "url": "https://github.com/mhsalves/yugioh-fm-catalog/issues"
   },
-  "homepage": "https://github.com/mhsalves/yugioh-fb-catalog#readme",
+  "homepage": "https://github.com/mhsalves/yugioh-fm-catalog#readme",
   "keywords": [
     "yugioh",
     "forbidden",

@@ -1,4 +1,4 @@
-# Yu-Gi-Oh! FB Catalog - Site
+# Yu-Gi-Oh! FM Catalog - Site
 
 Interface web do catálogo Yu-Gi-Oh! Forbidden Memories: uma SPA estática feita com Vite, React e CSS puro, publicada no GitHub Pages.
 
@@ -17,7 +17,7 @@ As prévias aparecem no `yarn dev` ou abrindo qualquer página com `?preview=1` 
 
 O catálogo ([spec 09](../docs/specs/09-site-catalog-page.md)):
 
-- Cabeçalho com logo (volta ao catálogo completo), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fb-catalog@<versão>`) e link para essa versão no npm
+- Cabeçalho com logo (volta ao catálogo completo), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fm-catalog@<versão>`) e link para essa versão no npm
 - Busca por nome, filtro **By type** ("All types" + os 5 tipos de carta) e um painel com os outros filtros (tipo de monstro, guardian star, level, ATK, DEF, custo); no celular o painel abre em tela cheia
 - Resultados em grade, vindos de `searchCards` do catálogo; sem resultados aparece um placeholder com "Clear filters"
 - Clique numa carta para abrir os detalhes (atributos, guardian stars, senha com botão de copiar, custo, descrição, ritual)
@@ -32,7 +32,7 @@ O catálogo ([spec 09](../docs/specs/09-site-catalog-page.md)):
 - [Vite](https://vite.dev/) + [React](https://react.dev/)
 - CSS puro com variáveis em `src/styles.css` (sem biblioteca de UI)
 - Roteador próprio em `src/router.tsx` (sem biblioteca de rotas)
-- [@mhsalves/yugioh-fb-catalog](../catalog/README.md) (cópia local do workspace)
+- [@mhsalves/yugioh-fm-catalog](../catalog/README.md) (cópia local do workspace)
 
 ## Desenvolvimento local
 
@@ -61,7 +61,7 @@ O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/li
 
 - `yarn dev`: inicia o servidor de desenvolvimento
 - `yarn build`: gera o site estático em `dist/`
-- `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fb-catalog/`
+- `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fm-catalog/`
 - `yarn typecheck`: verifica os tipos (TypeScript strict)
 
 ## Métodos simulados (mock)
@@ -83,10 +83,10 @@ Os dados de exemplo (`src/data/sample.ts`) usam as cartas reais, mas as fusões,
 
 O deploy é automático: depois de um merge na `main` que muda o site (`mkt_site/**`), os dados ou o código do catálogo, ou as dependências, o workflow `.github/workflows/pages.yml` valida, testa, gera o build e publica no GitHub Pages. Para publicar de novo sem mudanças, rode o workflow pela aba **Actions** (`workflow_dispatch`).
 
-O site fica em `https://mhsalves.github.io/yugioh-fb-catalog`.
+O site fica em `https://mhsalves.github.io/yugioh-fm-catalog`.
 
-- O base path vem de `SITE_BASE_PATH` (padrão `/yugioh-fb-catalog` no build e no preview, `/` no dev). Para um domínio próprio, use `SITE_BASE_PATH=/ yarn build`.
-- O build copia `index.html` para `404.html`, assim links diretos (por exemplo `/yugioh-fb-catalog/qualquer-pagina`) carregam a SPA no GitHub Pages.
+- O base path vem de `SITE_BASE_PATH` (padrão `/yugioh-fm-catalog` no build e no preview, `/` no dev). Para um domínio próprio, use `SITE_BASE_PATH=/ yarn build`.
+- O build copia `index.html` para `404.html`, assim links diretos (por exemplo `/yugioh-fm-catalog/qualquer-pagina`) carregam a SPA no GitHub Pages.
 
 ## Estrutura
 

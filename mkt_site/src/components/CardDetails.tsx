@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getCard, type CardId } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, type CardId } from "@mhsalves/yugioh-fm-catalog";
 import { isTyping } from "../keyboard";
 import CardInfo from "./CardInfo";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "./icons";

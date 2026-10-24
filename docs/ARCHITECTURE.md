@@ -10,8 +10,8 @@ This document describes how the Yu-Gi-Oh! Forbidden Memories catalog is put toge
 
 A typed, offline dataset of the cards in *Yu-Gi-Oh! Forbidden Memories* (PS1, 1999), published in two forms:
 
-1. **An npm library**, `@mhsalves/yugioh-fb-catalog`. It ships the card data plus a few lookup functions.
-2. **A static website** on GitHub Pages (`https://mhsalves.github.io/yugioh-fb-catalog`). It uses the library to show which card IDs are in the catalog and which are still missing.
+1. **An npm library**, `@mhsalves/yugioh-fm-catalog`. It ships the card data plus a few lookup functions.
+2. **A static website** on GitHub Pages (`https://mhsalves.github.io/yugioh-fm-catalog`). It uses the library to show which card IDs are in the catalog and which are still missing.
 
 There is no backend, database or API. All of the data is JSON files in the repository (`catalog/data/`), validated and compiled into the library at build time.
 
@@ -38,7 +38,7 @@ flowchart LR
         catalog -- "workspace link (lib/)" --> site
     end
 
-    catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fb-catalog")]
+    catalog -- "tsc → lib/ → npm publish" --> npm[("npm registry<br/>@mhsalves/yugioh-fm-catalog")]
     site -- "pages.yml: vite build → dist/ → deploy-pages" --> pages[("GitHub Pages")]
     npm --> consumers["Third-party apps"]
 ```
@@ -58,7 +58,7 @@ The important detail: **the website imports the library from the repository**, t
 ├── .prettierrc.json         # Prettier (4 spaces, 120 columns; 2 for JSON/YAML)
 ├── scripts/check-action-pins.sh  # CI check: every action pinned by commit SHA
 ├── catalog/                 # The library (current source of truth)
-│   ├── package.json         # @mhsalves/yugioh-fb-catalog@0.2.0
+│   ├── package.json         # @mhsalves/yugioh-fm-catalog@0.2.0
 │   ├── CHANGELOG.md         # Release notes, with migration notes for breaking changes
 │   ├── CONTRIBUTING-DATA.md # How to add data (PT-BR), with templates
 │   ├── tsconfig.json        # strict; type-checks src/, test/, schema/, scripts/
@@ -229,7 +229,7 @@ This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). 
 The site is **one page** (spec 09): the catalog at `/`.
 
 > **Since spec 10 (2026-10-23):** the site is mobile-first and has a route list with feature flags (`src/routes.ts`): the home page (`/`) and Cards (`/cards`, whose search box also takes `#number` and 8-digit passwords) are live; Fusion and Duelists are previews on sample data. Catalog methods those pages need but the catalog lacks are mocked in `mkt_site/src/data/` and listed in `pending.ts`. See [spec 10](./specs/10-site-feature-shell-mobile-first.md).
-- **Header:** logo (back to the full catalog), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fb-catalog@<version>`) and a link to that version on npm. No menu.
+- **Header:** logo (back to the full catalog), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fm-catalog@<version>`) and a link to that version on npm. No menu.
 - **Filters:** a search box and a "By type" row ("All types" + the 5 card types) above the grid; a panel with the other `CardQuery` fields (monster type, guardian star, level, ATK, DEF, cost, description search). A left column on desktop, a full-screen sheet on phones.
 - **Results:** the page calls `searchCards(query)` from the catalog and renders the items as a grid, with "N cards · 5 of 722 catalogued" and a sort control. Zero results show a placeholder with "Clear filters". The site never filters or sorts by itself.
 - **Card details:** clicking a grid item opens a side panel docked to the window's right edge (1.5rem from it, sliding in and out; full screen on phones) with the card's stats, guardian stars, copyable password, cost, description and ritual recipe (`getRitual`), plus previous/next through the results.
@@ -246,7 +246,7 @@ The site is **one page** (spec 09): the catalog at `/`.
 | Plain CSS with tokens in `src/styles.css` | No UI or CSS-in-JS library to update. Colors and fonts live in `:root` variables, ready for the style guide (spec 06 U-1). |
 | Own router (`src/router.tsx`, ~70 lines) | History API + `useSyncExternalStore` for the path and the query string; avoids a router dependency for one page. |
 | Inline SVG icons (`components/icons.tsx`) | No icon library. |
-| `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview | GitHub Pages serves project sites under `/<repo>/` (spec 07 P-3). |
+| `base` from `SITE_BASE_PATH`, default `/yugioh-fm-catalog/` for build and preview | GitHub Pages serves project sites under `/<repo>/` (spec 07 P-3). |
 | `dist/404.html` = copy of `index.html` | Pages serves `404.html` for unknown paths, so deep links boot the SPA and its router shows the page or the 404 view. |
 | Catalog version injected at build (`define` in `vite.config.ts`) | Shows exactly which catalog the site was built against without shipping `package.json`. |
 | Depends on the **workspace** catalog (`"*"`, linked by Yarn) | Data changes appear on the site without publishing. The packed-tarball smoke test in CI checks the npm consumer path. |

@@ -121,7 +121,7 @@ Pages whose data does not exist yet (fusions, duelists) are hidden from navigati
 |---|---|---|
 | S-1 | Fully static build | ✅ `vite build` → `dist/` |
 | S-2 | One pre-rendered page per card | ✅ For every catalogued card: `mkt_site/build/cardPages.ts` writes `cards/<id>/index.html` ([09](./09-site-catalog-page.md) C-7). Uncatalogued IDs use the `404.html` fallback; duelist pages wait for data |
-| S-3 | Configurable base path | ✅ `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` |
+| S-3 | Configurable base path | ✅ `SITE_BASE_PATH`, default `/yugioh-fm-catalog/` |
 | S-4 | Public catalog API only | ✅ |
 | S-5 | Full custom theming | ✅ No UI library to fight; tokens in `src/styles.css` |
 | S-6 | Accessible interactive components | 🟡 Built by hand as needed (native elements first). Add a headless library (for example, Radix) only if a component gets complex |
@@ -136,7 +136,7 @@ The requirements below stay as the checklist for future changes.
 |---|---|---|
 | S-1 | Produces a **fully static** build (HTML/JS/CSS files) | GitHub Pages has no server ([07](./07-site-github-pages-delivery.md)) |
 | S-2 | Pre-renders **one page per card** (`/cards/1` … `/cards/722`) and per duelist at build time | Shareable URLs and SEO (U-5) |
-| S-3 | Supports a configurable **base path** (`/yugioh-fb-catalog/`) | Pages project sites live under `/<repo>/` |
+| S-3 | Supports a configurable **base path** (`/yugioh-fm-catalog/`) | Pages project sites live under `/<repo>/` |
 | S-4 | Consumes the catalog **only through its public npm API** ([04](./04-catalog-query-api.md)), and can use the local workspace copy ([01](./01-repository-and-workspaces.md) R-1) | The site is the reference consumer |
 | S-5 | Allows full **custom theming** (design tokens for card-type colors, stars, fonts) | The FM look (U-1) must not be fought against |
 | S-6 | Accessible interactive components: dialogs, sliders, chips, menus | U-3 and the acceptance criteria |

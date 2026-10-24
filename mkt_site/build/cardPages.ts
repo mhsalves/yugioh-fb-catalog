@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
-import type { ICard } from "@mhsalves/yugioh-fb-catalog";
+import type { ICard } from "@mhsalves/yugioh-fm-catalog";
 // With its extension: Vite loads this file (through vite.config.ts) with Node's own TypeScript support.
 import { ROUTES } from "../src/routes.ts";
 
@@ -80,7 +80,7 @@ function write(outDir: string, path: string[], html: string): void {
 export function writeCardPages(outDir: string, siteUrl: string): number {
     // The catalog's built CommonJS output, through its public API (spec 06 S-4).
     const require = createRequire(import.meta.url);
-    const { getCardList } = require("@mhsalves/yugioh-fb-catalog") as typeof import("@mhsalves/yugioh-fb-catalog");
+    const { getCardList } = require("@mhsalves/yugioh-fm-catalog") as typeof import("@mhsalves/yugioh-fm-catalog");
     const shell = readFileSync(resolve(outDir, "index.html"), "utf8");
     const cards = getCardList();
 
