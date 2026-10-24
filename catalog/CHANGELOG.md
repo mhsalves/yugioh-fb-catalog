@@ -2,6 +2,12 @@
 
 All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.4.1
+
+### Changed
+
+- **New README** for the npm page: installation, every function, constant and type, with examples. No code or data changes.
+
 ## 0.4.0
 
 ### BREAKING
