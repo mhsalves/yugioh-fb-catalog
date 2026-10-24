@@ -2,6 +2,17 @@
 
 All notable changes to `@mhsalves/yugioh-fm-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.7.0
+
+### Added
+
+- **Duelists, their decks and their drops** (spec 02 TBD-D9): the 39 Free Duel opponents, each with the pool their deck is drawn from and the three drop pools (`"S/A-POW"`, `"B/C/D"`, `"S/A-TEC"`). Pools are weights out of 2048, as the game stores them. One file per duelist in `catalog/data/duelists/<id>.json`, validated by the new `duelist` schema (every pool must add up to 2048).
+- `getDuelistList(query?)`, `getDuelist(id)`, `getDropsFrom(id, options?)`, `getDeckOf(id, options?)`, `getDroppedBy(cardId, options?)`, `getDecksWith(cardId)`, `getDuelistPortrait(id)` and `toPercent(weight)`.
+- **Duelist portraits** as links to [Yugipedia](https://yugipedia.com/) (`Portal:Yu-Gi-Oh! Forbidden Memories characters`), like the card images: no images are shipped. Rematches (Jono 2nd, Teana 2nd, Seto 2nd and 3rd, Heishin 2nd) use the same portrait as the first duel.
+- Constants `DROP_RANKS` and `POOL_WEIGHT_TOTAL` (`2048`, also `poolWeightTotal` in `rules.json` and `IGameRules`), and the types `IDuelist`, `IDuelistPortraitRef`, `IPoolEntry`, `IDeckEntry`, `IDrop`, `IDuelistPools`, `TDropRank`, `PoolSort`, `DuelistListQuery` and `DuelistPortrait`.
+
+The 12,518 weights come from the game's drop tables as dumped from the disc by the [decompilation](https://github.com/Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled) (`notes/research/fusion-and-drop-tables/drops.csv`). For duelists 1 to 38 they match GenericMadScientist's FmDatabase (via [YFM-Database-and-Fusion-Guide](https://github.com/MarceloSilvarolla/YFM-Database-and-Fusion-Guide)) weight for weight; Duel Master K's drops match yugiohfm.com's rates. As the game data shows, Heishin 2nd shares Heishin's drop pools and Duel Master K shares Villager 3's, with decks of their own.
+
 ## 0.6.0
 
 ### Changed

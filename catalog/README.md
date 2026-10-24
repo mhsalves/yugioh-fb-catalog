@@ -181,6 +181,34 @@ getCardImage(580);
 - **Credit the source** with `source.name` and a link to `source.pageUrl`. Yu-Gi-Oh! and its card artwork are © Kazuki Takahashi / Konami.
 - The images are captures of a PS1 game and look dull. The [site](https://mhsalves.github.io/yugioh-fm-catalog) lifts them with CSS: `filter: contrast(1.2) saturate(1.25) brightness(1.05)`.
 
+### Duelists, decks and drops
+
+The 39 Free Duel opponents, each with the pool their deck is drawn from and their three drop pools. Pools are **weights out of 2048** (`POOL_WEIGHT_TOTAL`), as the game stores them: after a win the game rolls 1 to 2048 and walks the pool, so a card's chance is `weight / 2048` (`toPercent(weight)`). Which drop pool is used depends on the duel's rank (`DROP_RANKS`): `"S/A-POW"`, `"B/C/D"` or `"S/A-TEC"`. The deck is rolled from its pool before each duel, so it is not fixed.
+
+| Function                          | Returns                           | Description                                                                         |
+| --------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------- |
+| `getDuelistList(query?)`          | `IDuelist[]`                      | Every duelist in the game's order (`number` 1 to 39). `{ text }` filters by name.   |
+| `getDuelist(id)`                  | `IDuelist \| undefined`           | One duelist by `id`, a slug such as `"simon-muran"`.                                |
+| `getDropsFrom(id, options?)`      | `IDrop[]`                         | Their drops, most likely first. `{ rank?, sort?: "weight" \| "attack" }`.           |
+| `getDeckOf(id, options?)`         | `IDeckEntry[]`                    | The cards their deck is drawn from. `{ sort?: "weight" \| "attack" }`.              |
+| `getDroppedBy(cardId, options?)`  | `IDrop[]`                         | Every duelist and rank that drops a card, most likely first. `{ rank? }`.           |
+| `getDecksWith(cardId)`            | `IDeckEntry[]`                    | Every duelist whose deck can hold a card, most likely first.                        |
+| `getDuelistPortrait(id)`          | `DuelistPortrait \| undefined`    | The duelist's portrait, a link to [Yugipedia](https://yugipedia.com/) (no images are shipped). |
+| `toPercent(weight)`               | `number`                          | A weight as a percentage: `toPercent(2048) === 100`.                                |
+
+```ts
+import { getDroppedBy, getDropsFrom, getDuelist, toPercent } from "@mhsalves/yugioh-fm-catalog";
+
+getDuelist("simon-muran"); // { id: "simon-muran", number: 1, name: "Simon Muran", portrait: { … } }
+
+getDropsFrom("simon-muran", { rank: "S/A-POW" })[0];
+// { duelist: "simon-muran", rank: "S/A-POW", card: 9, weight: 90 }   → toPercent(90) ≈ 4.39 %
+
+getDroppedBy(1); // Blue-eyes White Dragon: [{ duelist: "seto-3rd", rank: "S/A-POW", card: 1, weight: 26 }]
+```
+
+The portrait is `{ url, width, height, source: { name, pageUrl } }`; credit it like a card image.
+
 ### Constants
 
 | Constant                  | Value                                                                                                                                                                                                                                                                                                       |
@@ -191,6 +219,8 @@ getCardImage(580);
 | `GUARDIAN_STARS`          | The 10 guardian stars: `"Mars"`, `"Jupiter"`, `"Saturn"`, `"Uranus"`, `"Pluto"`, `"Neptune"`, `"Mercury"`, `"Sun"`, `"Moon"`, `"Venus"`.                                                                                                                                                                    |
 | `GUARDIAN_STAR_ADVANTAGE` | The star each guardian star has the advantage over, such as `GUARDIAN_STAR_ADVANTAGE.Sun === "Moon"`.                                                                                                                                                                                                       |
 | `GUARDIAN_STAR_BONUS`     | `500`. In battle, the card with the advantage gets +500 ATK/DEF and the other card -500.                                                                                                                                                                                                                    |
+| `DROP_RANKS`              | `["S/A-POW", "B/C/D", "S/A-TEC"]`, the three drop pools in the game's order.                                                                                                                                                                                                                                |
+| `POOL_WEIGHT_TOTAL`       | `2048`. The weights of every deck and drop pool add up to it.                                                                                                                                                                                                                                               |
 
 The guardian star advantages form two cycles that never interact:
 
@@ -287,7 +317,33 @@ interface IGameRules {
     totalCards: number;
     guardianStarAdvantage: Record<TGuardianStar, TGuardianStar>;
     guardianStarBonus: number;
+    poolWeightTotal: number;
 }
+```
+
+### Duelists
+
+```ts
+type TDropRank = "S/A-POW" | "B/C/D" | "S/A-TEC"; // DROP_RANKS
+interface IDuelist {
+    id: string; // slug, such as "simon-muran"
+    number: number; // the game's order, 1 to 39
+    name: string;
+    portrait: IDuelistPortraitRef; // { source, url, width, height }; use getDuelistPortrait() for the credit
+}
+interface IPoolEntry {
+    card: CardId;
+    weight: number; // out of POOL_WEIGHT_TOTAL (2048)
+}
+interface IDeckEntry extends IPoolEntry {
+    duelist: string;
+}
+interface IDrop extends IPoolEntry {
+    duelist: string;
+    rank: TDropRank;
+}
+type PoolSort = "weight" | "attack";
+type DuelistPortrait = { url: string; width: number; height: number; source: { name: string; pageUrl: string } };
 ```
 
 ### Images
@@ -315,7 +371,7 @@ interface IImageCrop {
 
 ## Data accuracy
 
-The cards come from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards) and were checked against two dumps of the game data. Where the wiki is wrong, the catalog follows the game; the corrected cards are listed in the [CHANGELOG](https://github.com/mhsalves/yugioh-fm-catalog/blob/main/catalog/CHANGELOG.md). Found a wrong value? [Open an issue](https://github.com/mhsalves/yugioh-fm-catalog/issues).
+The cards come from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards) and were checked against two dumps of the game data. Where the wiki is wrong, the catalog follows the game; the corrected cards are listed in the [CHANGELOG](https://github.com/mhsalves/yugioh-fm-catalog/blob/main/catalog/CHANGELOG.md). The duelist decks and drops come from the game's own tables, dumped from the disc by the [decompilation](https://github.com/Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled) (`notes/research/fusion-and-drop-tables`), and match a second, independent dump weight for weight. Found a wrong value? [Open an issue](https://github.com/mhsalves/yugioh-fm-catalog/issues).
 
 ## Versioning
 
@@ -329,4 +385,4 @@ How the data is organized, how to add or fix a card and how to sync with the wik
 
 Code: MIT.
 
-Card data comes from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), whose text is licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Card names and texts are from the game, © Konami. Card images are not included: the package links images hosted by the Yu-Gi-Oh! Wiki (Fandom) and Yugipedia; the artwork is © Kazuki Takahashi / Konami. This project is not affiliated with Konami.
+Card data comes from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), whose text is licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Card names and texts are from the game, © Konami. Card images and duelist portraits are not included: the package links images hosted by the Yu-Gi-Oh! Wiki (Fandom) and Yugipedia; the artwork is © Kazuki Takahashi / Konami. This project is not affiliated with Konami.

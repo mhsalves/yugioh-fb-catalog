@@ -50,6 +50,7 @@ const fixture = (edit: (files: Record<string, Record<string, unknown>>) => void 
             totalCards: 722,
             guardianStarAdvantage: { ...ADVANTAGE },
             guardianStarBonus: 500,
+            poolWeightTotal: 2048,
         },
         "cards/monsters/thunder.json": {
             $schema: "../../../schema/monster-list.schema.json",
@@ -336,6 +337,94 @@ describe("validateData: images.json (spec 08 I-2)", () => {
         ]);
         expect(messages(issues, "warning")).toEqual([
             "images.json: image of card 500: card not found (card not entered yet)",
+        ]);
+    });
+});
+
+describe("validateData: duelists (spec 02 TBD-D9)", () => {
+    // A real Yugipedia URL: the md5 folder (d/d4) must match the file name.
+    const PORTRAIT = "https://ms.yugipedia.com/d/d4/FMR_Simon.png";
+    const pool = (...entries: [number, number][]) => entries.map(([card, weight]) => ({ card, weight }));
+    const duelist = (overrides: Record<string, unknown> = {}) => ({
+        $schema: "../../schema/duelist.schema.json",
+        id: "simon-muran",
+        number: 1,
+        name: "Simon Muran",
+        portrait: { source: "yugipedia", url: PORTRAIT, width: 176, height: 156 },
+        deck: pool([1, 2000], [30, 48]),
+        drops: { "S/A-POW": pool([2, 2048]), "B/C/D": pool([1, 1024], [3, 1024]), "S/A-TEC": pool([20, 2048]) },
+        ...overrides,
+    });
+    const withDuelists = (duelists: Record<string, Record<string, unknown>>) =>
+        run((files) => {
+            files["images.json"] = {
+                $schema: "../schema/images.schema.json",
+                sources: { yugipedia: { name: "Yugipedia", filePageUrl: "https://yugipedia.com/wiki/File:" } },
+                images: [],
+            };
+            for (const [file, json] of Object.entries(duelists)) files[file] = json;
+        });
+
+    it("accepts a duelist and keeps the game's order", () => {
+        const { issues, catalog } = withDuelists({
+            "duelists/teana.json": duelist({ id: "teana", number: 2, name: "Teana" }),
+            "duelists/simon-muran.json": duelist(),
+        });
+        expect(issues).toEqual([]);
+        expect(catalog?.duelists.map((item) => item.id)).toEqual(["simon-muran", "teana"]);
+        expect(catalog?.duelistPools["simon-muran"].drops["B/C/D"]).toEqual(pool([1, 1024], [3, 1024]));
+    });
+
+    it("rejects a pool whose weights do not add up to poolWeightTotal", () => {
+        const { issues } = withDuelists({ "duelists/simon-muran.json": duelist({ deck: pool([1, 2000]) }) });
+        expect(messages(issues, "error")).toEqual([
+            "duelists/simon-muran.json: deck: weights add up to 2000, expected 2048",
+        ]);
+    });
+
+    it("rejects a card listed twice in a pool and a card out of range, and warns about cards not entered yet", () => {
+        const { issues } = withDuelists({
+            "duelists/simon-muran.json": duelist({ deck: pool([1, 1000], [1, 1000], [800, 24], [500, 24]) }),
+        });
+        expect(messages(issues, "error")).toEqual([
+            "duelists/simon-muran.json: deck: card 1 is listed more than once",
+            "duelists/simon-muran.json: deck: card 800 is out of range (1..722)",
+        ]);
+        expect(messages(issues, "warning")).toEqual([
+            "duelists/simon-muran.json: deck: card 500 not found (card not entered yet)",
+        ]);
+    });
+
+    it("rejects an id that does not match the file name, and a number used twice", () => {
+        const { issues } = withDuelists({
+            "duelists/simon.json": duelist(),
+            "duelists/teana.json": duelist({ id: "teana", name: "Teana" }),
+        });
+        expect(messages(issues, "error")).toEqual([
+            'duelists/simon.json: id "simon-muran" must match the file name (duelists/simon-muran.json)',
+            "duelists/teana.json: number 1 is also used by duelists/simon.json",
+        ]);
+    });
+
+    it("rejects a missing rank, a portrait from another host or source, and a mistyped portrait URL", () => {
+        const { issues } = withDuelists({
+            "duelists/simon-muran.json": duelist({ drops: { "S/A-POW": pool([2, 2048]), "B/C/D": pool([1, 2048]) } }),
+            "duelists/teana.json": duelist({
+                id: "teana",
+                number: 2,
+                portrait: { source: "yugipedia", url: "https://example.com/teana.png", width: 1, height: 1 },
+            }),
+            "duelists/jono.json": duelist({
+                id: "jono",
+                number: 3,
+                portrait: { source: "imgur", url: PORTRAIT.replace("/d/d4/", "/d/d5/"), width: 1, height: 1 },
+            }),
+        });
+        expect(messages(issues, "error")).toEqual([
+            expect.stringContaining("duelists/simon-muran.json: drops.S/A-TEC"),
+            expect.stringContaining("duelists/teana.json: portrait.url: must be a"),
+            'duelists/jono.json: portrait: unknown source "imgur"',
+            "duelists/jono.json: portrait: folder d/d5 does not match the file name (expected d/d4)",
         ]);
     });
 });

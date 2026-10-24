@@ -59,8 +59,7 @@ export const ROUTES: readonly RouteMeta[] = [
         label: "Duelists",
         title: "Duelists",
         description: "Yu-Gi-Oh! Forbidden Memories duelists, their decks and the cards they drop.",
-        // Sample data until the catalog has duelists (spec 02 TBD-D9, src/data/pending.ts).
-        status: "preview",
+        status: "live",
     },
 ];
 

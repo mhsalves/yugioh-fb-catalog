@@ -19,7 +19,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee` (Q-5 and Q-6 rechecked after t
 | Q-2 | Indexes built once at module load | Proposed | ❌ Not built | `getCard` is a linear `find` |
 | Q-3 | Typed overloads and readonly results | Proposed | ❌ Not built | Returns `ICard[]` and the mutable internal array |
 | Q-4 | `searchCards` | Agreed | ✅ Built | `searchCards(query)` in `tools/search.ts` (catalog 0.3.0) with tests; fuzzy matching stays TBD-Q1 |
-| Q-5 | Relation queries | Proposed | 🟡 Partial | `getRitual(ritualOrResultId)` only (added with the 02 data model); the others wait for their data |
+| Q-5 | Relation queries | Proposed | 🟡 Partial | `getRitual(ritualOrResultId)`; duelists (`getDuelistList`, `getDuelist`, `getDropsFrom`, `getDeckOf`, `getDroppedBy`, `getDecksWith`, `getDuelistPortrait`, `toPercent`, 2026-10-24); fusions, equips and fields wait for their data |
 | Q-6 | Metadata | Proposed | 🟡 Partial | `TOTAL_CARDS`, `MONSTER_TYPES`, `CARD_TYPES`, `GUARDIAN_STARS` (+ guardian-star rules) exported; no coverage helper yet |
 | Q-7 | Optional namespaced entry | TBD | ❌ Not built | Flat exports only (TBD-Q2) |
 | Q-8 | API docs from code | Proposed | ❌ Not built | Hand-written README API, out of date |
@@ -121,6 +121,8 @@ Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `ge
 | `getCardByPassword(code)` | **New**: the site mocks it over `getCardList()`; could also be a `password` field in `CardQuery` (Q-4) |
 
 When one ships, re-export it from its adapter in `mkt_site/src/data/`, delete the mock and its `pending.ts` entry, and update spec 10.
+
+**Shipped (catalog 0.7.0):** the duelist functions. Rates are **weights out of 2048** (`POOL_WEIGHT_TOTAL`, TBD-D9), with `toPercent(weight)`; sorts are `"weight" | "attack"` (the site maps its `"rate"` to `"weight"`). Added: `getDecksWith(cardId)` and `getDuelistPortrait(id)`.
 
 ### Q-6 Metadata · 🟡 Partial
 ```ts

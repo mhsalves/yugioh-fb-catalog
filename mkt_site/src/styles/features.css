@@ -442,22 +442,26 @@ body:has(dialog[open]) {
     background: var(--color-surface-2);
     color: var(--color-accent);
     font-weight: 700;
+    overflow: hidden;
+}
+
+/* Yugipedia's portraits are busts of different sizes: fill the frame and keep the face, near the top. */
+.duelist-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
 }
 
 .duelist-portrait--large {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     font-size: 1.375rem;
 }
 
-.duelist-head {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.duelist-head .hint {
-    margin-top: 2px;
+.duelist-credit {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
 }
 
 .duelist-page .back-link {
@@ -465,16 +469,453 @@ body:has(dialog[open]) {
     margin-bottom: 0;
 }
 
-.duelist-panel .toolbar--secondary {
+/* Like the catalog: keep the cards clear of the docked details panel (it slides, the padding follows). */
+body:has(.duelist-page[data-panel="true"]) {
+    --panel-reserve: var(--gutter);
+}
+
+body:has(.duelist-page[data-panel="true"]) .page {
+    padding-right: var(--panel-reserve);
+}
+
+.duelist-row {
+    transition:
+        border-color 160ms ease,
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.duelist-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 30%);
+}
+
+/* The list is picked by face: big portraits. */
+.duelist-row {
+    gap: 16px;
+    min-height: 92px;
+    padding: 10px 14px 10px 10px;
+}
+
+.duelist-row .duelist-portrait {
+    width: 72px;
+    height: 72px;
+    border-width: 3px;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 35%);
+}
+
+.duelist-row__name {
+    font-size: 1.0625rem;
+}
+
+.duelist-row__number {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.duelist-row__meta {
+    white-space: nowrap;
+}
+
+.duelist-row .duelist-portrait img,
+.duelist-row .icon {
+    transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.duelist-row:hover .duelist-portrait img {
+    transform: scale(1.1);
+}
+
+.duelist-row:hover .icon {
+    transform: translateX(3px);
+}
+
+.duelist-list > li {
+    animation: rise-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(min(var(--i, 0), 30) * 18ms);
+}
+
+/* Duelist page: hero. Portrait over a blurred copy of itself, name, stats, and the duelists before and after. */
+
+.duelist-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        "portrait info"
+        "stats stats"
+        "nav nav";
+    align-items: center;
+    gap: 14px 16px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) * 1.5);
+    background: linear-gradient(135deg, var(--color-surface-2), var(--color-surface) 60%);
+}
+
+.duelist-hero__backdrop {
+    position: absolute;
+    inset: -32px;
+    z-index: -2;
+    background-position: center 20%;
+    background-size: cover;
+    filter: blur(28px) saturate(1.4);
+    opacity: 0.4;
+    animation:
+        backdrop-in 900ms ease-out both,
+        backdrop-drift 24s ease-in-out 900ms infinite alternate;
+}
+
+/* Keeps the text readable over the backdrop. */
+.duelist-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, rgb(11 21 48 / 15%), rgb(11 21 48 / 80%) 70%);
+}
+
+.duelist-hero .duelist-portrait--large {
+    grid-area: portrait;
+    width: 76px;
+    height: 76px;
+    border-width: 3px;
+    box-shadow:
+        0 0 0 6px rgb(212 169 55 / 15%),
+        0 12px 32px rgb(0 0 0 / 45%);
+    animation: portrait-in 560ms cubic-bezier(0.2, 0.8, 0.3, 1.25) both;
+}
+
+.duelist-hero__info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.duelist-hero__info > * {
+    animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.duelist-hero__info > :nth-child(2) {
+    animation-delay: 70ms;
+}
+
+.duelist-hero__info > :nth-child(3) {
+    animation-delay: 140ms;
+}
+
+.duelist-hero__eyebrow {
     margin: 0;
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.duelist-hero__name {
+    margin: 0;
+    font-size: clamp(1.625rem, 4vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+}
+
+.duelist-credit {
+    margin: 0;
+}
+
+.duelist-stats {
+    grid-area: stats;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 210ms both;
+}
+
+/* Label on top, number at the bottom: tiles line up even when a label is longer. */
+.duelist-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: rgb(20 36 74 / 70%);
+    backdrop-filter: blur(6px);
+}
+
+.duelist-stat dt {
+    overflow: hidden;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duelist-stat dd {
+    margin: 0;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.duelist-hero__nav {
+    grid-area: nav;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 280ms both;
+}
+
+.duelist-neighbor {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: rgb(11 21 48 / 45%);
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.duelist-neighbor:hover {
+    border-color: var(--color-accent);
+}
+
+/* First or last duelist: the missing side keeps its half of the row, unseen. */
+.duelist-neighbor--empty {
+    border-color: transparent;
+    background: none;
+}
+
+.duelist-neighbor--prev:hover {
+    transform: translateX(-3px);
+}
+
+.duelist-neighbor--next {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.duelist-neighbor--next:hover {
+    transform: translateX(3px);
+}
+
+.duelist-neighbor .duelist-portrait {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+.duelist-neighbor__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.duelist-neighbor__label {
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.duelist-neighbor__name {
+    overflow: hidden;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duelist-neighbor .icon {
+    flex-shrink: 0;
+    color: var(--color-accent);
+}
+
+/* Duelist page: controls and the rank columns */
+
+.duelist-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.duelist-controls .tabs {
+    flex-basis: 100%;
+}
+
+.duelist-controls .sort {
+    margin-left: auto;
+}
+
+.duelist-panel {
+    animation: rise-in 240ms ease-out both;
+}
+
+.rank-columns {
+    display: grid;
+    gap: 16px;
+}
+
+.rank-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* One rank at a time until lg, where all three sit side by side. */
+.rank-column:not([data-active]) {
+    display: none;
+}
+
+.rank-column__head {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+.rank-column__title {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.rank-column__hint {
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+}
+
+.rank-column__count {
+    margin-left: auto;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+/* Rows come in one after another, then their rate bars grow. */
+.rate-row {
+    animation: rise-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(min(var(--i, 0), 24) * 22ms);
+}
+
+/* Bigger card art than other row lists: the duelist page is about which cards they are. */
+.rate-row .card-row {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 14px;
+    min-height: 88px;
+    padding: 8px 14px 8px 8px;
+}
+
+.rate-row .card-row__art {
+    width: 56px;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 35%);
+}
+
+.rate-row .card-row__art .card-image {
+    transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rate-row .card-row:hover .card-row__art .card-image {
+    transform: scale(1.08);
+}
+
+.rate-row .card-row__name {
+    font-size: 1rem;
+}
+
+.rate-row .percent__fill {
+    transform-origin: left;
+    animation: bar-grow 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(120ms + min(var(--i, 0), 24) * 22ms);
+}
+
+.card-row {
+    transition:
+        border-color 140ms ease,
+        transform 140ms ease,
+        box-shadow 140ms ease;
+}
+
+.card-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 30%);
+}
+
+.card-row:active {
+    transform: scale(0.99);
+}
+
+.tabs__tab {
+    transition:
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+@keyframes bar-grow {
+    from {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes portrait-in {
+    from {
+        opacity: 0;
+        transform: scale(0.6) rotate(-6deg);
+    }
+}
+
+@keyframes backdrop-in {
+    from {
+        opacity: 0;
+        transform: scale(1.15);
+    }
+}
+
+@keyframes backdrop-drift {
+    to {
+        transform: scale(1.12) translate(-2%, 1%);
+    }
 }
 
 /* Wider screens */
 
 @media (min-width: 721px) {
-    .fusion-page,
-    .duelists-page,
-    .duelist-page {
+    .fusion-page {
         max-width: 760px;
     }
 
@@ -513,10 +954,135 @@ body:has(dialog[open]) {
 
     .duelist-list {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 8px;
     }
 
     .percent {
         grid-template-columns: 96px auto;
+    }
+
+    /* The page is centered at --page-width: only the part of the panel over the page needs room (as layout.css). */
+    body:has(.duelist-page[data-panel="true"]) {
+        --panel-reserve: max(
+            var(--gutter),
+            calc(var(--panel-width) + var(--panel-edge) + var(--panel-gap) - max(0px, (100vw - var(--page-width)) / 2))
+        );
+    }
+
+    .duelist-hero {
+        grid-template-areas:
+            "portrait info"
+            "portrait stats"
+            "nav nav";
+        gap: 16px 28px;
+        padding: 24px 28px;
+    }
+
+    .duelist-hero__info {
+        align-self: end;
+    }
+
+    .duelist-stats {
+        align-self: start;
+    }
+
+    .duelist-hero .duelist-portrait--large {
+        width: clamp(120px, 12vw, 176px);
+        height: clamp(120px, 12vw, 176px);
+        font-size: 2.5rem;
+    }
+
+    .duelist-stats {
+        grid-template-columns: repeat(4, minmax(0, 160px));
+    }
+
+    .duelist-stat {
+        gap: 2px;
+    }
+
+    .rate-row .card-row {
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        min-height: 112px;
+    }
+
+    .rate-row .card-row__art {
+        width: 72px;
+    }
+
+    .duelist-row {
+        min-height: 116px;
+    }
+
+    .duelist-row .duelist-portrait {
+        width: 96px;
+        height: 96px;
+    }
+
+    .duelist-controls .tabs {
+        flex-basis: auto;
+    }
+
+    /* One rank (or the deck) fills the width with as many columns of rows as fit. */
+    .rank-column .card-rows {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+        gap: 8px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .duelist-hero {
+        grid-template-columns: auto minmax(0, 1fr) minmax(220px, 280px);
+        grid-template-areas:
+            "portrait info nav"
+            "portrait stats nav";
+    }
+
+    .duelist-hero__nav {
+        grid-template-columns: minmax(0, 1fr);
+        align-content: center;
+        align-self: stretch;
+    }
+
+    .duelist-hero__nav {
+        gap: 10px;
+    }
+
+    .duelist-neighbor {
+        gap: 12px;
+        min-height: 64px;
+        padding: 8px 14px;
+    }
+
+    .duelist-neighbor .duelist-portrait {
+        width: 44px;
+        height: 44px;
+    }
+
+    .duelist-neighbor__name {
+        font-size: 1rem;
+    }
+
+    .duelist-neighbor--empty {
+        display: none;
+    }
+
+    /* All three ranks side by side, to compare them; the rank chips are not needed. */
+    .duelist-rank-chips {
+        display: none;
+    }
+
+    .rank-columns {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .rank-column:not([data-active]) {
+        display: flex;
+    }
+
+    .rank-columns .card-rows {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

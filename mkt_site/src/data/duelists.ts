@@ -1,20 +1,34 @@
-import { getCard, type CardId, type ICard } from "@mhsalves/yugioh-fm-catalog";
-import { SAMPLE_DROP_RANKS, sampleDuelists, type SampleDuelist } from "./sample";
+import {
+    DROP_RANKS,
+    getCard,
+    getDeckOf as catalogDeckOf,
+    getDropsFrom as catalogDropsFrom,
+    getDroppedBy as catalogDroppedBy,
+    getDuelist as catalogDuelist,
+    getDuelistList as catalogDuelistList,
+    getDuelistPortrait,
+    toPercent,
+    type CardId,
+    type DuelistPortrait,
+    type ICard,
+    type IDuelist,
+    type TDropRank,
+} from "@mhsalves/yugioh-fm-catalog";
 
-// MOCK (spec 10 F-6, listed in ./pending.ts): the catalog has no duelists, decks or drops yet (spec 02 TBD-D9). These
-// functions keep the signatures planned for the catalog (02 D-3's draft IDuelist, IDeckEntry, IDrop) and answer from
-// sample data. When the catalog ships them, re-export them from here and delete the mock.
+// Adapter over the catalog's duelists (spec 10 F-6): the pages get the card records and percentages they show, and
+// the catalog's weights (out of 2048) stay in the catalog.
 
-/** Drop rank categories from spec 02's draft; the final list waits for TBD-D9. */
-export const DROP_RANKS = SAMPLE_DROP_RANKS;
-export type DropRank = (typeof DROP_RANKS)[number];
+export { DROP_RANKS };
+export type DropRank = TDropRank;
 
 export type RateSort = "rate" | "attack";
 
 export interface DuelistView {
     id: string;
+    /** The game's order, 1-39 (Free Duel). */
+    number: number;
     name: string;
-    stage: string;
+    portrait?: DuelistPortrait;
 }
 
 export interface DropView {
@@ -31,55 +45,53 @@ export interface DeckEntryView {
     rate: number;
 }
 
-const toDuelist = ({ id, name, stage }: SampleDuelist): DuelistView => ({ id, name, stage });
+const toDuelist = ({ id, number, name }: IDuelist): DuelistView => ({
+    id,
+    number,
+    name,
+    portrait: getDuelistPortrait(id),
+});
 
-const attackOf = (card: ICard) => (card.cardType === "Monster" ? card.attack : -1);
+const catalogSort = (sort: RateSort = "rate") => (sort === "attack" ? "attack" : "weight");
 
-function sortRates<T extends { card: ICard; rate: number }>(rows: T[], sort: RateSort = "rate"): T[] {
-    return rows.sort((a, b) => (sort === "attack" ? attackOf(b.card) - attackOf(a.card) : b.rate - a.rate));
-}
-
-function withCards<T extends { card: CardId; rate: number }>(rows: T[]) {
+function withCards<T extends { card: CardId; weight: number }>(rows: T[]) {
     return rows.flatMap((row) => {
         const card = getCard(row.card);
-        return card ? [{ ...row, card }] : [];
+        return card ? [{ ...row, card, rate: toPercent(row.weight) }] : [];
     });
 }
 
-/** Every duelist, in campaign order; `text` matches the name (case- and accent-insensitive). */
+/** Every duelist, in the game's order; `text` matches the name (case- and accent-insensitive). */
 export function getDuelistList(query: { text?: string } = {}): DuelistView[] {
-    const normalize = (value: string) => value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-    const text = normalize(query.text?.trim() ?? "");
-    return sampleDuelists()
-        .filter((duelist) => normalize(duelist.name).includes(text))
-        .map(toDuelist);
+    return catalogDuelistList(query).map(toDuelist);
 }
 
 export function getDuelist(id: string): DuelistView | undefined {
-    const duelist = sampleDuelists().find((item) => item.id === id);
+    const duelist = catalogDuelist(id);
     return duelist && toDuelist(duelist);
 }
 
 /** The cards a duelist drops, for one rank or all of them. */
 export function getDropsFrom(duelistId: string, options: { rank?: DropRank; sort?: RateSort } = {}): DropView[] {
-    const duelist = sampleDuelists().find((item) => item.id === duelistId);
+    const duelist = getDuelist(duelistId);
     if (!duelist) return [];
-    const ranks = options.rank ? [options.rank] : DROP_RANKS;
-    const rows = ranks.flatMap((rank) =>
-        withCards(duelist.drops[rank]).map((row) => ({ ...row, rank, duelist: toDuelist(duelist) })),
+    return withCards(catalogDropsFrom(duelistId, { rank: options.rank, sort: catalogSort(options.sort) })).map(
+        ({ card, rank, rate }) => ({ duelist, card, rank, rate }),
     );
-    return sortRates(rows, options.sort);
 }
 
 /** Every duelist that drops a card, most likely first. */
 export function getDroppedBy(cardId: CardId): DropView[] {
-    return sortRates(
-        sampleDuelists().flatMap((duelist) => getDropsFrom(duelist.id).filter((drop) => drop.card.id === cardId)),
-    );
+    return withCards(catalogDroppedBy(cardId)).flatMap(({ duelist: id, card, rank, rate }) => {
+        const duelist = getDuelist(id);
+        return duelist ? [{ duelist, card, rank, rate }] : [];
+    });
 }
 
 /** The cards a duelist's deck is drawn from, with how often each appears. */
 export function getDeckOf(duelistId: string, options: { sort?: RateSort } = {}): DeckEntryView[] {
-    const duelist = sampleDuelists().find((item) => item.id === duelistId);
-    return duelist ? sortRates(withCards(duelist.deck), options.sort) : [];
+    return withCards(catalogDeckOf(duelistId, { sort: catalogSort(options.sort) })).map(({ card, rate }) => ({
+        card,
+        rate,
+    }));
 }

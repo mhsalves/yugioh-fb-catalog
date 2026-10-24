@@ -96,6 +96,24 @@ O jogo guarda fusões como **pares de cartas específicas**. Escreva o par com o
 { "field": 332, "boosts": ["Dragon", "Winged Beast", "Thunder"], "weakens": [], "amount": 500 }
 ```
 
+### Duelista (`data/duelists/<id>.json`)
+
+Um arquivo por duelista, com o nome do arquivo igual ao `id`:
+
+```json
+{
+  "$schema": "../../schema/duelist.schema.json",
+  "id": "simon-muran",
+  "number": 1,
+  "name": "Simon Muran",
+  "portrait": { "source": "yugipedia", "url": "https://ms.yugipedia.com/d/d4/FMR_Simon.png", "width": 176, "height": 156 },
+  "deck": [{ "card": 9, "weight": 72 }],
+  "drops": { "S/A-POW": [{ "card": 9, "weight": 90 }], "B/C/D": [], "S/A-TEC": [] }
+}
+```
+
+`number` é a ordem do jogo (Free Duel, 1 a 39). Os pesos são os do jogo, **de 2048**: a soma de cada lista (`deck` e cada rank de `drops`) tem que dar exatamente 2048 (`poolWeightTotal` em `rules.json`), e uma carta aparece no máximo uma vez por lista. Os dados vêm das tabelas do jogo, extraídas do disco pela [decompilação](https://github.com/Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled) (`notes/research/fusion-and-drop-tables/drops.csv`). O `portrait` é um link do Yugipedia (`Portal:Yu-Gi-Oh! Forbidden Memories characters`), conferido como as imagens das cartas.
+
 ## Validar
 
 Na raiz do repositório (Node 22, `nvm use`):

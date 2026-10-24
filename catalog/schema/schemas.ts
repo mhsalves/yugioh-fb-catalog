@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 import type { IEquipCard, IMagicCard, IMonsterCard, IPassword, IRitualCard, ITrapCard } from "../src/data/card-types";
-import { GUARDIAN_STARS, MONSTER_TYPES } from "../src/data/enums";
+import type { IDuelist, IDuelistPools, IDuelistPortraitRef, IPoolEntry } from "../src/data/duelist-types";
+import { DROP_RANKS, GUARDIAN_STARS, MONSTER_TYPES } from "../src/data/enums";
 import type {
     ICardImageRef,
     IEquipCompat,
@@ -102,6 +103,37 @@ export const GameRules = z.strictObject({
     totalCards: z.int().min(1),
     guardianStarAdvantage: z.record(GuardianStar, GuardianStar),
     guardianStarBonus: z.int().min(0),
+    poolWeightTotal: z.int().min(1),
+});
+
+/** A card and its weight in a pool. The sum per pool (rules.json poolWeightTotal) is checked by the validator. */
+export const PoolEntry = z.strictObject({ card: CardId, weight: z.int().min(1) });
+export const DuelistPortraitRef = z.strictObject({
+    source: nonBlank,
+    url: z
+        .string()
+        .refine(
+            (url) => IMAGE_URLS.some((pattern) => pattern.test(url)),
+            "must be a static.wikia.nocookie.net/yugioh or ms.yugipedia.com image URL",
+        ),
+    width: z.int().min(1),
+    height: z.int().min(1),
+});
+const duelistBase = {
+    id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "must be a lower-case slug, such as simon-muran"),
+    number: z.int().min(1),
+    name: nonBlank,
+    portrait: DuelistPortraitRef,
+};
+export const Duelist = z.strictObject(duelistBase);
+export const DuelistPools = z.strictObject({
+    deck: z.array(PoolEntry).min(1),
+    drops: z.strictObject(
+        Object.fromEntries(DROP_RANKS.map((rank) => [rank, z.array(PoolEntry).min(1)])) as Record<
+            (typeof DROP_RANKS)[number],
+            z.ZodArray<typeof PoolEntry>
+        >,
+    ),
 });
 
 /** Every data file is an object with "$schema" and one array (or, for rules.json, the rule values). */
@@ -123,6 +155,7 @@ export const FILE_SCHEMAS = {
     equips: listFile("equips", EquipCompat),
     fields: listFile("fields", FieldEffect),
     rules: GameRules.extend({ $schema: z.string() }),
+    duelist: z.strictObject({ $schema: z.string(), ...duelistBase, ...DuelistPools.shape }),
     images: z.strictObject({
         $schema: z.string(),
         sources: z.record(z.string(), ImageSource),
@@ -156,3 +189,7 @@ same<Same<z.infer<typeof GameRules>, IGameRules>>();
 same<Same<z.infer<typeof ImageSource>, IImageSource>>();
 same<Same<z.infer<typeof CardImageRef>, ICardImageRef>>();
 same<Same<z.infer<typeof ImageCrop>, IImageCrop>>();
+same<Same<z.infer<typeof PoolEntry>, IPoolEntry>>();
+same<Same<z.infer<typeof DuelistPortraitRef>, IDuelistPortraitRef>>();
+same<Same<z.infer<typeof Duelist>, IDuelist>>();
+same<Same<z.infer<typeof DuelistPools>, IDuelistPools>>();

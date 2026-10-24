@@ -144,7 +144,7 @@ function Fusions({ card, onSelect }: { card: ICard; onSelect: SelectCard }) {
     );
 }
 
-/** Duelists that drop the card (spec 10 F-5), while the duelist pages are visible. Sample data until TBD-D9. */
+/** Duelists that drop the card (spec 10 F-5), while the duelist pages are visible. */
 function DroppedBy({ card }: { card: ICard }) {
     if (!isRouteVisible("duelists")) return null;
     const drops = getDroppedBy(card.id).slice(0, RELATION_LIMIT);
@@ -152,9 +152,7 @@ function DroppedBy({ card }: { card: ICard }) {
 
     return (
         <section className="details__section">
-            <h3>
-                Dropped by <span className="sample-tag">Sample data</span>
-            </h3>
+            <h3>Dropped by</h3>
             <ul className="card-refs">
                 {drops.map((drop) => (
                     <li key={`${drop.duelist.id}-${drop.rank}`}>

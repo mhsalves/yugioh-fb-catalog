@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "number": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "name": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "portrait": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "url": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "source",
+        "url",
+        "width",
+        "height"
+      ],
+      "additionalProperties": false
+    },
+    "deck": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "card": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "card",
+          "weight"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "drops": {
+      "type": "object",
+      "properties": {
+        "S/A-POW": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "card": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "card",
+              "weight"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "B/C/D": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "card": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "card",
+              "weight"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "S/A-TEC": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "card": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "card",
+              "weight"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "S/A-POW",
+        "B/C/D",
+        "S/A-TEC"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$schema",
+    "id",
+    "number",
+    "name",
+    "portrait",
+    "deck",
+    "drops"
+  ],
+  "additionalProperties": false
+}

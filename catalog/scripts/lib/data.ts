@@ -4,7 +4,8 @@ import path from "path";
 
 import { FILE_SCHEMAS, IMAGE_URLS, type SchemaName } from "../../schema/schemas";
 import type { CardId, ICard, TMonsterType } from "../../src/data/card-types";
-import { MONSTER_TYPES } from "../../src/data/enums";
+import type { IDuelist, IDuelistPools, IPoolEntry } from "../../src/data/duelist-types";
+import { DROP_RANKS, MONSTER_TYPES } from "../../src/data/enums";
 import type {
     ICardImageRef,
     IEquipCompat,
@@ -44,6 +45,10 @@ export interface Catalog {
     fields: IFieldEffect[];
     images: ICardImageRef[];
     imageSources: Record<string, IImageSource>;
+    /** In the game's order (`number`). */
+    duelists: IDuelist[];
+    /** Each duelist's pools, by duelist id. */
+    duelistPools: Record<string, IDuelistPools>;
     rules: IGameRules;
 }
 
@@ -72,6 +77,7 @@ const FIXED_FILES: Record<string, SchemaName> = {
 /** The kind of a data file from its path, or an error message when the path is not part of the layout. */
 export const fileKind = (file: string): FileKind | string => {
     if (FIXED_FILES[file]) return { schema: FIXED_FILES[file] };
+    if (/^duelists\/[^/]+\.json$/.test(file)) return { schema: "duelist" };
     const typed = /^(cards\/monsters|fusions)\/([^/]+)\.json$/.exec(file);
     if (typed) {
         const monsterType = MONSTER_TYPE_BY_SLUG.get(typed[2]);
@@ -134,8 +140,11 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         fields: [],
         images: [],
         imageSources: {},
+        duelists: [],
+        duelistPools: {},
         rules: undefined!,
     };
+    const duelistFile = new Map<IDuelist, string>();
     const fusionFiles: { file: string; fusion: IFusion; monsterType: TMonsterType }[] = [];
     /** File each relation record came from, for error messages. */
     const relationFile = new Map<object, string>();
@@ -191,6 +200,17 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
                     relationFile.set(image, file);
                 }
                 break;
+            case "duelist": {
+                const { id, number, name, portrait, deck, drops } = data as unknown as IDuelist & IDuelistPools;
+                const duelist: IDuelist = { id, number, name, portrait };
+                if (file !== `duelists/${duelist.id}.json`) {
+                    error(file, `id "${duelist.id}" must match the file name (duelists/${duelist.id}.json)`);
+                }
+                catalog.duelists.push(duelist);
+                catalog.duelistPools[duelist.id] = { deck, drops };
+                duelistFile.set(duelist, file);
+                break;
+            }
             case "fusions":
                 for (const fusion of data.fusions as IFusion[]) {
                     catalog.fusions.push(fusion);
@@ -214,7 +234,7 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         error("rules.json", "missing: rules.json is required (totalCards, guardian star rules)");
         return { issues };
     }
-    const { totalCards } = catalog.rules;
+    const { totalCards, poolWeightTotal: totalWeight } = catalog.rules;
     const byId = new Map<CardId, ICard>();
     for (const card of catalog.cards) if (!byId.has(card.id)) byId.set(card.id, card);
 
@@ -304,14 +324,8 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         if (inRange(file, label, image.card) && !byId.has(image.card))
             warning(file, `${label}: card not found (card not entered yet)`);
         if (!catalog.imageSources[image.source]) error(file, `${label}: unknown source "${image.source}"`);
-        const [, h, hh, name] = IMAGE_URLS.map((pattern) => pattern.exec(image.url)).find(Boolean)!;
-        const md5 = createHash("md5").update(decodeURIComponent(name)).digest("hex");
-        if (`${h}/${hh}` !== `${md5[0]}/${md5.slice(0, 2)}`) {
-            error(
-                file,
-                `${label}: folder ${h}/${hh} does not match the file name (expected ${md5[0]}/${md5.slice(0, 2)})`,
-            );
-        }
+        const { name, problem } = checkImageUrl(image.url);
+        if (problem) error(file, `${label}: ${problem}`);
         // Fandom names the US game's images -FMR-EN-VG, Yugipedia -FMR-NA-VG.
         if (!/-FMR-(EN|NA)-VG\.png$/.test(name)) warning(file, `${label}: "${name}" is not a -FMR-EN/NA-VG.png file`);
         const { crop } = image;
@@ -322,9 +336,52 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
     }
     catalog.images.sort((a, b) => a.card - b.card);
 
+    const duelistNumbers = new Map<number, string>();
+    for (const duelist of catalog.duelists) {
+        const file = duelistFile.get(duelist)!;
+        const other = duelistNumbers.get(duelist.number);
+        if (other) error(file, `number ${duelist.number} is also used by ${other}`);
+        else duelistNumbers.set(duelist.number, file);
+        const { portrait } = duelist;
+        if (!catalog.imageSources[portrait.source]) error(file, `portrait: unknown source "${portrait.source}"`);
+        const { problem } = checkImageUrl(portrait.url);
+        if (problem) error(file, `portrait: ${problem}`);
+
+        const { deck, drops } = catalog.duelistPools[duelist.id];
+        const pools: [string, IPoolEntry[]][] = [
+            ["deck", deck],
+            ...DROP_RANKS.map((rank): [string, IPoolEntry[]] => [`drops.${rank}`, drops[rank]]),
+        ];
+        for (const [label, pool] of pools) {
+            const seen = new Set<CardId>();
+            for (const { card } of pool) {
+                if (seen.has(card)) error(file, `${label}: card ${card} is listed more than once`);
+                seen.add(card);
+                if (inRange(file, `${label}: card`, card) && !byId.has(card))
+                    warning(file, `${label}: card ${card} not found (card not entered yet)`);
+            }
+            const total = pool.reduce((sum, entry) => sum + entry.weight, 0);
+            if (total !== totalWeight) error(file, `${label}: weights add up to ${total}, expected ${totalWeight}`);
+        }
+    }
+    catalog.duelists.sort((a, b) => a.number - b.number);
+
     catalog.cards.sort((a, b) => a.id - b.id);
     const hasErrors = issues.some((issue) => issue.level === "error");
     return { issues, catalog: hasErrors ? undefined : catalog };
+};
+
+/**
+ * The file name in a wiki image URL, and a problem when its md5 folder (<h>/<hh>) does not match the name
+ * (spec 08). The host and shape of the URL are checked by the schema (IMAGE_URLS).
+ */
+const checkImageUrl = (url: string) => {
+    const [, h, hh, name] = IMAGE_URLS.map((pattern) => pattern.exec(url)).find(Boolean)!;
+    const md5 = createHash("md5").update(decodeURIComponent(name)).digest("hex");
+    const expected = `${md5[0]}/${md5.slice(0, 2)}`;
+    const problem =
+        `${h}/${hh}` === expected ? undefined : `folder ${h}/${hh} does not match the file name (expected ${expected})`;
+    return { name, problem };
 };
 
 export const formatIssue = (issue: Issue) => `${issue.level}: ${issue.file}: ${issue.message}`;

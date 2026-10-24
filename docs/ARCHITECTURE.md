@@ -68,7 +68,7 @@ The important detail: **the website imports the library from the repository**, t
 │   │   ├── cards/{magic,trap,equip,ritual}.json
 │   │   ├── rituals.json  equips.json  fields.json  fusions/<type>.json   # relations
 │   │   ├── rules.json               # totalCards, guardian-star advantage and bonus
-│   │   └── duelists/                # Empty placeholder (.gitkeep), waits for TBD-D9
+│   │   └── duelists/<id>.json       # one file per duelist: deck and drop pools (weights /2048), portrait link
 │   ├── schema/              # schemas.ts (Zod, dev-only) + generated <name>.schema.json
 │   ├── scripts/             # validate, data:build (+ --watch), schema:build, coverage:data
 │   ├── test/                # Vitest: query API, data integrity, validator fixtures
@@ -287,7 +287,7 @@ The site deploy is automated ([07](./specs/07-site-github-pages-delivery.md) P-1
 Checked on 2026-10-20 against `main` @ `4d80225`; tooling items (S3, Q1–Q3, Q5) rechecked after the spec 01 build. Both packages type-check cleanly in strict mode (`yarn typecheck`).
 
 ### 7.1 Data coverage
-Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674, with its recipe in `data/rituals.json`), and 1 each of equip (315), magic (332) and trap (690). (This section said 6 before; the count was wrong.) The model now covers all 20 monster types (spec 02), but only `data/cards/monsters/thunder.json` has data. `yarn coverage:data` prints these counts. The fusion, equip and field collections are typed and empty, and `data/duelists/` waits for TBD-D9.
+Only **5 of 722 cards** have been entered: 1 Thunder monster (425), 1 ritual (674, with its recipe in `data/rituals.json`), and 1 each of equip (315), magic (332) and trap (690). (This section said 6 before; the count was wrong.) The model now covers all 20 monster types (spec 02), but only `data/cards/monsters/thunder.json` has data. `yarn coverage:data` prints these counts. The fusion, equip and field collections are typed and empty, and `data/duelists/` holds the 39 duelists (TBD-D9, catalog 0.7.0).
 
 ### 7.2 Structural problems
 | # | Issue | Evidence | Impact |
@@ -323,5 +323,5 @@ Ordered so that each step makes the next one safer.
 4. **CI (Q2).** Partly done (spec 01 R-4): `ci.yml` type-checks, lints, tests and builds both packages on every PR. Still to do: automate the Pages deploy on push to `main` ([07](./specs/07-site-github-pages-delivery.md) P-1) and npm publishing ([05](./specs/05-catalog-npm-distribution.md) N-2).
 5. **Fix the docs (S5).** Rewrite the READMEs from the real API, or generate API docs with TypeDoc, and link to this file.
 6. **Library API polish (Q4, Q6).** (`TOTAL_CARDS` is exported since spec 02.) Add a progress helper, index cards in a `Map` for `getCard`, and consider a dual ESM/CJS build with an `exports` map.
-7. **Fill in the data (§7.1).** `TMonsterType` already covers every FM type (spec 02); add each `data/cards/monsters/<type>.json` file with its first card (see `catalog/CONTRIBUTING-DATA.md`), fill the relation collections, and decide on the shape of `duelists/` (TBD-D9). Consider an importer script that generates the data files from a trusted source (spec 03 A-5).
+7. **Fill in the data (§7.1).** `TMonsterType` already covers every FM type (spec 02); add each `data/cards/monsters/<type>.json` file with its first card (see `catalog/CONTRIBUTING-DATA.md`), fill the relation collections (`duelists/` is done, TBD-D9). Consider an importer script that generates the data files from a trusted source (spec 03 A-5).
 8. **Website features (Q7).** Add a card detail view, search, filters by type, monster type and stars, a progress bar, and, once the data exists, fusion or ritual lookups.

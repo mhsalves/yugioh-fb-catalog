@@ -80,7 +80,8 @@ function write(outDir: string, path: string[], html: string): void {
 export function writeCardPages(outDir: string, siteUrl: string): number {
     // The catalog's built CommonJS output, through its public API (spec 06 S-4).
     const require = createRequire(import.meta.url);
-    const { getCardList } = require("@mhsalves/yugioh-fm-catalog") as typeof import("@mhsalves/yugioh-fm-catalog");
+    const { getCardList, getDuelistList } =
+        require("@mhsalves/yugioh-fm-catalog") as typeof import("@mhsalves/yugioh-fm-catalog");
     const shell = readFileSync(resolve(outDir, "index.html"), "utf8");
     const cards = getCardList();
 
@@ -101,9 +102,25 @@ export function writeCardPages(outDir: string, siteUrl: string): number {
         write(outDir, route.path.split("/").filter(Boolean), page(shell, head));
     }
 
+    const duelists = routes.some((route) => route.id === "duelists") ? getDuelistList() : [];
+    for (const duelist of duelists) {
+        const url = `${siteUrl}/duelists/${duelist.id}/`;
+        const title = escapeHtml(`${duelist.name} – Duelists – ${SITE_NAME}`);
+        const description = escapeHtml(
+            `${duelist.name} in Yu-Gi-Oh! Forbidden Memories: the cards they drop at each rank and their deck, with the game's rates.`,
+        );
+        const head = [
+            `<title>${title}</title>`,
+            `<meta name="description" content="${description}" />`,
+            `<link rel="canonical" href="${url}" />`,
+        ].join("\n        ");
+        write(outDir, ["duelists", duelist.id], page(shell, head));
+    }
+
     const urls = [
         `${siteUrl}/`,
         ...routes.map((route) => `${siteUrl}${route.path}/`),
+        ...duelists.map((duelist) => `${siteUrl}/duelists/${duelist.id}/`),
         ...cards.map((card) => `${siteUrl}/cards/${card.id}/`),
     ];
     writeFileSync(
