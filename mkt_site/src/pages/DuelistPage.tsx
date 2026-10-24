@@ -72,12 +72,14 @@ function NeighborLink({ duelist, direction }: { duelist: DuelistView | undefined
             className={`duelist-neighbor duelist-neighbor--${direction}`}
             aria-label={`${direction === "prev" ? "Previous" : "Next"} duelist: ${duelist.name}`}
         >
+            {/* Mirrored: the arrow on the outer edge, then the portrait, then the name. */}
             {direction === "prev" && <ChevronLeftIcon />}
-            <DuelistPortrait name={duelist.name} portrait={duelist.portrait} />
+            {direction === "prev" && <DuelistPortrait name={duelist.name} portrait={duelist.portrait} />}
             <span className="duelist-neighbor__text">
                 <span className="duelist-neighbor__label">{direction === "prev" ? "Previous" : "Next"}</span>
                 <span className="duelist-neighbor__name">{duelist.name}</span>
             </span>
+            {direction === "next" && <DuelistPortrait name={duelist.name} portrait={duelist.portrait} />}
             {direction === "next" && <ChevronRightIcon />}
         </Link>
     );

@@ -670,6 +670,12 @@ body:has(.duelist-page[data-panel="true"]) .page {
     border-color: var(--color-accent);
 }
 
+/* First or last duelist: the missing side keeps its half of the row, unseen. */
+.duelist-neighbor--empty {
+    border-color: transparent;
+    background: none;
+}
+
 .duelist-neighbor--prev:hover {
     transform: translateX(-3px);
 }
@@ -1001,9 +1007,27 @@ body:has(.duelist-page[data-panel="true"]) .page {
         align-self: stretch;
     }
 
-    .duelist-neighbor--next {
-        justify-content: flex-start;
-        text-align: left;
+    .duelist-hero__nav {
+        gap: 10px;
+    }
+
+    .duelist-neighbor {
+        gap: 12px;
+        min-height: 64px;
+        padding: 8px 14px;
+    }
+
+    .duelist-neighbor .duelist-portrait {
+        width: 44px;
+        height: 44px;
+    }
+
+    .duelist-neighbor__name {
+        font-size: 1rem;
+    }
+
+    .duelist-neighbor--empty {
+        display: none;
     }
 
     /* All three ranks side by side, to compare them; the rank chips are not needed. */
