@@ -81,6 +81,10 @@ Desktop (≥ 720px)                                    Phone (< 720px)
 Clicking a grid item opens the **details card** over the page (C-4).
 
 ### C-1 One page, header without menu · ✅ Built
+> **Changed 2026-10-23 by [10](./10-site-feature-shell-mobile-first.md) F-3:** with more than one visible page, the header gets navigation tabs (a bottom tab bar on phones). With only the catalog visible it stays as described here.
+
+> **Changed 2026-10-23 (owner request):** the catalog moved to **`/cards`**, and `/` is now a **home page**: what the project is, a card search that opens `/cards?q=`, tiles to Cards, Fusion and Duelists, special thanks to the image sources, how to use the npm package, and the author. Old catalog addresses (`/?type=…&card=…`) redirect to `/cards?…`.
+
 - The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
 - The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fb-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).
@@ -96,7 +100,7 @@ Clicking a grid item opens the **details card** over the page (C-4).
 | Search box | `text` | Free text | Case- and accent-insensitive substring on the name (Q-4). Debounced ~150 ms |
 | "Also search descriptions" checkbox | `includeDescription` | On / off | Off by default |
 | **By type** row, above the grid | `cardType[]` | "All types" + `CARD_TYPES` | Always visible (not inside the panel). Multi-select; "All types" clears the selection and is shown selected when none is chosen (owner request, 2026-10-20) |
-| Monster type chips | `monsterType[]` | `MONSTER_TYPES` | Multi-select. Disabled, with a hint, when card types are selected and "Monster" is not one of them |
+| Monster type chips | `monsterType[]` | `MONSTER_TYPES` | Multi-select. Enabled only while "Monster" is selected in "By type" (owner request, 2026-10-23); disabled with a hint otherwise, "All types" included |
 | Guardian star chips | `guardianStar[]` | `GUARDIAN_STARS` | Matches either of a monster's two stars |
 | Level | `level { min, max }` | Two number inputs, 1–12 | Monster-only, like ATK and DEF |
 | ATK / DEF | `attack`, `defense` `{ min, max }` | Two number inputs each | Empty = no limit |
@@ -107,10 +111,13 @@ Clicking a grid item opens the **details card** over the page (C-4).
 - Results update as the user types or clicks; there is no "Apply" button.
 - The page shows the result count from `searchCards(...).total` and the catalogue coverage: "**N cards** · 5 of 722 catalogued" (`getCardList().length` of `TOTAL_CARDS`).
 - **Zero results:** a placeholder in place of the grid: an empty dashed card frame, "No cards found", "No cards match these filters. Try another type or clear the filters." and a "Clear filters" button that resets everything except the sort (owner request, 2026-10-20).
-- Monster-only filters (monster type, star, level, ATK, DEF) leave non-monster cards out of the results while they are set. That follows Q-4 and is said in a hint under the group.
+- Monster-only filters (monster type, star, level, ATK, DEF) are **enabled only while "Monster" is selected** in "By type". Deselecting "Monster" (or choosing "All types") clears them, so a disabled filter never narrows the results. A URL with monster filters and no card type selects "Monster" (older links keep working); one with only other card types drops them. With "Monster" and other types selected, set monster filters leave the other types out (Q-4), as the hint says.
 - Desktop: filters in a left column. Phones: a "Filters" button opens them in a full-screen sheet with "Show N cards" to close (TBD-C2).
 
 ### C-3 Results grid · ✅ Built
+> **Changed 2026-10-23 (owner request):** results are **paged, 30 cards a page** (owner choice; first built with 48) (`?page=` in the URL; through `searchCards`'s `limit` and `offset`). A filter change goes back to page 1; page changes add a history entry; previous / next in the details card cross page edges and the grid follows. Phones show Previous / "Page N of M" / Next, wider screens numbered pages.
+> **Grid columns (2026-10-23):** the column count follows the width of the results area (a container query): 2, 3, 4 or 6 columns; a 30-card page fills every row at 2, 3 and 6 columns, and leaves 2 cards in the last row at 4. Six columns need about 1040px of results, so the page is now up to 1440px wide; at 1280px six columns would make 144px tiles with names wrapping, so that width keeps 4.
+
 - A responsive grid: `repeat(auto-fill, minmax(~180px, 1fr))`, which gives 2 columns on phones and 4–6 on desktop.
 - **Each grid item** shows: `#id`, name, card type badge (color per type, 06 U-1), and for monsters the monster type, level and ATK/DEF. The image area shows the styled placeholder frame until card images land ([08](./08-card-images.md) I-4).
 - Each item is a **button** (keyboard focusable, `Enter`/`Space` opens the details card) with an accessible name such as "Thunder Dragon, #425, Monster".
@@ -145,6 +152,8 @@ Focus moves to the panel's title when it opens and back to the card's tile when 
 - Fusions, equips, fields and drops are added to this card when their data and library functions exist (04 Q-5). The card shows nothing for relations that have no data, with no empty sections.
 
 ### C-5 Footer with owner links · ✅ Built
+> **Changed 2026-10-23 (owner request):** the footer is two short lines: "Made by Matheus Alves" (linked to GitHub) · "About & credits" (the home page), then the fan-project notice and image attribution with links to both wikis. The home page link (matheusalves.dev) and the full thanks moved to the home page.
+
 At the bottom of the page, on every view (including 404):
 
 | Link | URL |

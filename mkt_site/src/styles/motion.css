@@ -1,0 +1,20 @@
+/* Motion is decoration: turn it off for people who ask for less. */
+
+@media (prefers-reduced-motion: reduce) {
+    .page,
+    .footer__bar,
+    .card-tile,
+    .button,
+    .icon-button,
+    .text-button,
+    .chip {
+        transition: none;
+    }
+
+    .card-panel,
+    .card-panel[data-state="closing"],
+    .card-panel__body,
+    .sheet[open] {
+        animation: none;
+    }
+}

@@ -1,0 +1,50 @@
+/* Placeholder tokens until the style guide lands (spec 06 U-1, spec 09 TBD-C5). Change colors and fonts here only. */
+
+/*
+ * Mobile first (spec 10 F-1): base styles are the phone layout, wider screens add to them with min-width queries
+ * only. Breakpoints (media queries cannot read custom properties, so they are listed here):
+ *   md 721px   filter column, docked details panel, navigation in the header
+ *   lg 1200px  wide details panel (721–1199px uses a narrower one)
+ */
+:root {
+    /* Option A for the wiki's dull card images (spec 08 I-4); "none" shows them as they are. */
+    --card-image-filter: contrast(1.2) saturate(1.25) brightness(1.05);
+    --color-bg: #0b1530;
+    --color-surface: #14244a;
+    --color-surface-2: #1b2e5a;
+    --color-border: #2c3f6e;
+    --color-text: #e8ecf6;
+    --color-text-muted: #a4b0cc;
+    --color-accent: #d4a937;
+    --color-accent-hover: #e6be52;
+    /* Hover fill for ghost buttons, chips and rows. */
+    --color-surface-hover: #22386b;
+    --color-accent-contrast: #14244a;
+
+    /* One color per card type (spec 06 U-1; Equip is TBD-U4). */
+    --type-monster: #c98a3c;
+    --type-magic: #2f9e6e;
+    --type-trap: #b0457f;
+    --type-ritual: #3f6fc4;
+    --type-equip: #2a9fa8;
+    /* Default for elements without a card type; [data-type] rules below override it. */
+    --type-color: var(--color-border);
+
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --radius: 8px;
+    /* Details panel: docked to the window's right edge, at most 1.5rem from it. */
+    --panel-width: 380px;
+    --panel-edge: 1.5rem;
+    --panel-gap: 24px;
+    /* 56px on phones, 64px from md up (layout.css). */
+    --header-height: 56px;
+    /* The phone tab bar (spec 10 F-3), not counting the bottom safe area. */
+    --nav-height: 56px;
+    /* Wide enough for 6 grid columns next to the filter column (catalog.css). */
+    --page-width: 1440px;
+    --gutter: 16px;
+
+    color-scheme: dark;
+}

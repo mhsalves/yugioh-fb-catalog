@@ -7,6 +7,9 @@ import {
     type CardId,
     type ICard,
 } from "@mhsalves/yugioh-fb-catalog";
+import { getDroppedBy } from "../data/duelists";
+import { getFusionsFor, getFusionsWith } from "../data/fusions";
+import { isRouteVisible } from "../features";
 import { cardPath, Link } from "../router";
 import { useCopy } from "../useCopy";
 import CardImage from "./CardImage";
@@ -91,6 +94,81 @@ function Ritual({ card, onSelect }: { card: ICard; onSelect: SelectCard }) {
     );
 }
 
+const RELATION_LIMIT = 5;
+
+/** Fusions the card is in (spec 10 F-5), while the fusion tool is visible. Sample data until spec 04 Q-5. */
+function Fusions({ card, onSelect }: { card: ICard; onSelect: SelectCard }) {
+    if (!isRouteVisible("fusion")) return null;
+    const madeFrom = getFusionsFor(card.id).slice(0, RELATION_LIMIT);
+    const uses = getFusionsWith(card.id).slice(0, RELATION_LIMIT);
+    if (madeFrom.length === 0 && uses.length === 0) return null;
+
+    return (
+        <section className="details__section">
+            <h3>
+                Fusions <span className="sample-tag">Sample data</span>
+            </h3>
+            <dl className="fields">
+                {madeFrom.length > 0 && (
+                    <Field label="Made from">
+                        <ul className="card-refs">
+                            {madeFrom.map(({ materials: [a, b] }) => (
+                                <li key={`${a.id}+${b.id}`}>
+                                    <CardRef id={a.id} onSelect={onSelect} /> +{" "}
+                                    <CardRef id={b.id} onSelect={onSelect} />
+                                </li>
+                            ))}
+                        </ul>
+                    </Field>
+                )}
+                {uses.length > 0 && (
+                    <Field label="Fuses into">
+                        <ul className="card-refs">
+                            {uses.map(({ materials, result }) => {
+                                const partner = materials[0].id === card.id ? materials[1] : materials[0];
+                                return (
+                                    <li key={`${partner.id}>${result.id}`}>
+                                        + <CardRef id={partner.id} onSelect={onSelect} /> →{" "}
+                                        <CardRef id={result.id} onSelect={onSelect} />
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </Field>
+                )}
+            </dl>
+            <Link to={`/fusion?mode=with&of=${card.id}`} className="details__more">
+                Every fusion with this card
+            </Link>
+        </section>
+    );
+}
+
+/** Duelists that drop the card (spec 10 F-5), while the duelist pages are visible. Sample data until TBD-D9. */
+function DroppedBy({ card }: { card: ICard }) {
+    if (!isRouteVisible("duelists")) return null;
+    const drops = getDroppedBy(card.id).slice(0, RELATION_LIMIT);
+    if (drops.length === 0) return null;
+
+    return (
+        <section className="details__section">
+            <h3>
+                Dropped by <span className="sample-tag">Sample data</span>
+            </h3>
+            <ul className="card-refs">
+                {drops.map((drop) => (
+                    <li key={`${drop.duelist.id}-${drop.rank}`}>
+                        <Link to={`/duelists/${drop.duelist.id}`}>{drop.duelist.name}</Link>{" "}
+                        <span className="hint">
+                            {drop.rank} · {drop.rate.toFixed(2)}%
+                        </span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+}
+
 /** A card's full data (spec 09 C-4), shared by the details dialog and the shared card page (C-7). */
 export default function CardInfo({ card, onSelect }: { card: ICard; onSelect?: (id: CardId) => void }) {
     const image = getCardImage(card.id);
@@ -153,6 +231,8 @@ export default function CardInfo({ card, onSelect }: { card: ICard; onSelect?: (
             </section>
 
             <Ritual card={card} onSelect={onSelect} />
+            <Fusions card={card} onSelect={onSelect} />
+            <DroppedBy card={card} />
         </>
     );
 }

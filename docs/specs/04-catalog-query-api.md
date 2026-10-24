@@ -108,6 +108,20 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 
 Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `getFusion` must implement exactly what the agreed model says, and nothing more.
 
+**Waiting in the site (2026-10-23).** The site's Fusion and Duelists pages and its Cards search ([10](./10-site-feature-shell-mobile-first.md) F-6) already call these functions through mocks in `mkt_site/src/data/`, listed in `mkt_site/src/data/pending.ts`. The signatures they code against, to build here with tests:
+
+| Function | Notes from the site |
+|---|---|
+| `getFusion(a, b)`, `getFusionsWith(id)`, `getFusionsFor(resultId)` | The site sorts lists by result ATK, strongest first; return `IFusion[]` and let callers sort, or sort here |
+| `getDuelistList(query?: { text?: string })` | `text`: case- and accent-insensitive name match, like `searchCards` |
+| `getDuelist(id)` | — |
+| `getDropsFrom(duelistId, options?: { rank?: TDropRank; sort?: "rate" \| "attack" })` | Rank list and rate unit (weights or percent) wait for TBD-D9 |
+| `getDroppedBy(cardId)` | Most likely first |
+| `getDeckOf(duelistId, options?: { sort?: "rate" \| "attack" })` | **New** (not in the list above): the cards a deck is drawn from, with their rates |
+| `getCardByPassword(code)` | **New**: the site mocks it over `getCardList()`; could also be a `password` field in `CardQuery` (Q-4) |
+
+When one ships, re-export it from its adapter in `mkt_site/src/data/`, delete the mock and its `pending.ts` entry, and update spec 10.
+
 ### Q-6 Metadata · 🟡 Partial
 ```ts
 TOTAL_CARDS;                                 // from data/rules.json

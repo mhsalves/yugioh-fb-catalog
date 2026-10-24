@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
-import { writeCardPages } from "./build/cardPages";
+import { writeCardPages } from "./build/cardPages.ts";
 
 const require = createRequire(import.meta.url);
 // The catalog the site is built against (the workspace copy, spec 07 P-2), shown in the header.

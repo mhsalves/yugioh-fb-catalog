@@ -48,9 +48,21 @@ interface NavigateOptions {
     state?: unknown;
 }
 
+// Back and Forward return to where each page was scrolled (spec 10 F-2), which phones need when Back leads to a long
+// list: navigate() stores the position on the entry it leaves, and popstate restores it once the view has rendered.
+if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+window.addEventListener("popstate", (event) => {
+    const scrollY = (event.state as { scrollY?: number } | null)?.scrollY;
+    if (typeof scrollY === "number") window.requestAnimationFrame(() => window.scrollTo(0, scrollY));
+});
+
 export function navigate(path: string, { replace = false, state = null }: NavigateOptions = {}): void {
-    if (replace) window.history.replaceState(state, "", href(path));
-    else window.history.pushState(state, "", href(path));
+    if (replace) {
+        window.history.replaceState(state, "", href(path));
+    } else {
+        window.history.replaceState({ ...window.history.state, scrollY: window.scrollY }, "");
+        window.history.pushState(state, "", href(path));
+    }
     window.dispatchEvent(new Event(NAVIGATE_EVENT));
 }
 

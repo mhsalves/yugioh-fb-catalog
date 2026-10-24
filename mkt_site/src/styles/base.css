@@ -1,0 +1,214 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+}
+
+#root {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+a {
+    color: var(--color-accent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+.hint {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+}
+
+/* Buttons and inputs: every control is at least 36px tall (44px for the main ones), shows hover, pressed and disabled
+   states, and keeps the global focus ring. */
+
+.button,
+.icon-button,
+.text-button {
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        color 120ms ease,
+        transform 80ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.icon-button {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: inherit;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
+}
+
+.icon-button--small {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+}
+
+/* Primary: gold, for the one main action in a place (Show N cards, Clear filters in an empty result). */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow:
+        0 1px 0 rgb(255 255 255 / 25%) inset,
+        0 2px 6px rgb(0 0 0 / 25%);
+}
+
+.button:hover:not(:disabled) {
+    border-color: var(--color-accent-hover);
+    background: var(--color-accent-hover);
+}
+
+.button:active:not(:disabled),
+.icon-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.button--small {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 0.875rem;
+}
+
+/* Secondary: outlined, for everything else. */
+.button--ghost {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.button--ghost:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
+}
+
+.button:disabled,
+.icon-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* A quiet action inside text, such as "Clear all" next to the active filters. */
+.text-button {
+    min-height: 32px;
+    padding: 0 4px;
+    border: 0;
+    border-radius: 4px;
+    background: none;
+    color: var(--color-accent);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.text-button:hover {
+    color: var(--color-accent-hover);
+}
+
+input[type="search"],
+input[type="number"],
+select {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+    transition: border-color 120ms ease;
+}
+
+input[type="search"]:hover,
+input[type="number"]:hover,
+select:hover {
+    border-color: var(--color-text-muted);
+}
+
+input[type="search"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--color-accent);
+}
+
+/* Selects: the native arrow replaced by a chevron in the muted text color (#a4b0cc, see tokens.css). */
+select {
+    appearance: none;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a4b0cc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+select option {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
