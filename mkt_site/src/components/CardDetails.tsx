@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getCard, type CardId } from "@mhsalves/yugioh-fb-catalog";
+import { isTyping } from "../keyboard";
 import CardInfo from "./CardInfo";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "./icons";
 import ShareButton from "./ShareButton";
@@ -17,14 +18,11 @@ interface CardDetailsProps {
 /** Matches the panel-out animation in styles.css. */
 const CLOSE_MS = 180;
 
-/** Keys typed into a field belong to the field, not to the panel's shortcuts. */
-const isTyping = (target: EventTarget | null) =>
-    target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName));
-
 /**
  * The details card (spec 09 C-4) as a side panel, like a file manager's details pane: the grid and filters stay
- * usable while it is open, and choosing another card swaps its content. Docked to the window's right edge on
- * wider screens and full screen on phones; it slides in and out (layout and motion in styles.css).
+ * usable while it is open, and choosing another card swaps its content. Full screen on phones and docked to the
+ * window's right edge on wider screens; it slides in and out (layout and motion in styles/card-panel.css). Used by
+ * the catalog and, through PageCardDetails, by every other page (spec 10 F-5).
  */
 export default function CardDetails({ cardId, prevId, nextId, onSelect, onClose }: CardDetailsProps) {
     const titleRef = useRef<HTMLHeadingElement>(null);
@@ -54,12 +52,13 @@ export default function CardDetails({ cardId, prevId, nextId, onSelect, onClose 
 
     const card = shownId === undefined ? undefined : getCard(shownId);
 
-    // Move focus into the panel when it opens; on close, give it back to the card's tile.
+    // Move focus into the panel when it opens; on close, give it back to the card's tile or row.
     useEffect(() => {
         const wasOpen = lastId.current !== undefined;
-        if (cardId !== undefined && !wasOpen) titleRef.current?.focus();
+        // preventScroll: the panel is still sliding in from off-screen, and scrolling it into view shifts the page.
+        if (cardId !== undefined && !wasOpen) titleRef.current?.focus({ preventScroll: true });
         if (cardId === undefined && wasOpen) {
-            document.querySelector<HTMLElement>(`.card-tile[data-card-id="${lastId.current}"]`)?.focus();
+            document.querySelector<HTMLElement>(`[data-card-id="${lastId.current}"]`)?.focus();
         }
         lastId.current = cardId;
     }, [cardId]);
@@ -67,7 +66,7 @@ export default function CardDetails({ cardId, prevId, nextId, onSelect, onClose 
     useEffect(() => {
         if (cardId === undefined) return;
         const onKey = (event: KeyboardEvent) => {
-            if (isTyping(event.target) || document.querySelector('.filters[data-open="true"]')) return;
+            if (isTyping(event.target) || document.querySelector('.filters[data-open="true"], dialog[open]')) return;
             if (event.key === "Escape") onClose();
             if (event.key === "ArrowLeft" && prevId !== undefined) onSelect(prevId);
             if (event.key === "ArrowRight" && nextId !== undefined) onSelect(nextId);

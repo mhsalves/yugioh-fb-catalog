@@ -1,33 +1,49 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import { isRouteVisible } from "./features";
 import CardPage from "./pages/CardPage";
 import CatalogPage from "./pages/CatalogPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import SearchPage from "./pages/SearchPage";
 import { usePath } from "./router";
+import { SITE_TITLE } from "./routes";
 
-// The catalog is the site's one page (spec 09 C-1). /cards/<id>/ is a card's own page, reached through a shared
-// link (C-7). Any other path is the 404 view.
+// Preview features load on demand, so the catalog does not pay for their code (spec 10 F-2).
+const FusionPage = lazy(() => import("./pages/FusionPage"));
+const DuelistsPage = lazy(() => import("./pages/DuelistsPage"));
+const DuelistPage = lazy(() => import("./pages/DuelistPage"));
+
+/** The page for a path, or undefined for the 404 view. Pages of features that are not visible are 404s (routes.ts). */
+function pageFor(path: string): ReactNode | undefined {
+    if (path === "/") return <CatalogPage />;
+    // /cards/<id>/ is a card's own page, reached through a shared link (spec 09 C-7).
+    const cardId = path.match(/^\/cards\/(\d+)$/)?.[1];
+    if (cardId !== undefined) return <CardPage id={Number(cardId)} />;
+    if (path === "/search" && isRouteVisible("search")) return <SearchPage />;
+    if (path === "/fusion" && isRouteVisible("fusion")) return <FusionPage />;
+    if (isRouteVisible("duelists")) {
+        if (path === "/duelists") return <DuelistsPage />;
+        const duelistId = path.match(/^\/duelists\/([\w-]+)$/)?.[1];
+        if (duelistId !== undefined) return <DuelistPage id={duelistId} />;
+    }
+    return undefined;
+}
+
 export default function App() {
     const path = usePath();
-    const cardId = path.match(/^\/cards\/(\d+)$/)?.[1];
-    const isCatalog = path === "/";
+    const page = pageFor(path);
+    const notFound = page === undefined;
 
     useEffect(() => {
-        if (!isCatalog && cardId === undefined) document.title = "Page not found · Yu-Gi-Oh! FM Catalog";
-    }, [isCatalog, cardId]);
+        if (notFound) document.title = `Page not found · ${SITE_TITLE}`;
+    }, [notFound]);
 
     return (
         <>
             <Header />
             <main className="page">
-                {isCatalog ? (
-                    <CatalogPage />
-                ) : cardId !== undefined ? (
-                    <CardPage id={Number(cardId)} />
-                ) : (
-                    <NotFoundPage />
-                )}
+                <Suspense fallback={<p className="hint">Loading…</p>}>{page ?? <NotFoundPage />}</Suspense>
             </main>
             <Footer />
         </>

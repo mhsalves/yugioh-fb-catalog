@@ -1,25 +1,51 @@
 # 10 – Site: mobile-first shell for Search, Fusion and Duelists
 
-> **Status: Proposed** (2026-10-23). Requested by the project owner: prepare the site's UI for three features (**card search**, a **duelist list** and a **fusion tool**) before the catalog supports all of them, **mobile-first**. Builds on [09](./09-site-catalog-page.md) and reopens two of its decisions (C-1 "no menu", one page), which needs the owner's agreement (TBD-F1). Visuals still follow the style guide when it lands ([06](./06-site-ux-forbidden-memories.md) U-1).
+> **Status: Built with the §6 defaults** (2026-10-23, branch `site-feature-shell`). Requested by the project owner: prepare the site's UI for three features (**card search**, a **duelist list** and a **fusion tool**) before the catalog supports all of them, **mobile-first**, with the catalog methods that do not exist yet **mocked in the site and listed to be added to the catalog** (F-6). Builds on [09](./09-site-catalog-page.md) and reopens its C-1 "no menu" (TBD-F1, built with the default "yes"). Visuals still follow the style guide when it lands ([06](./06-site-ux-forbidden-memories.md) U-1).
 
 ## 0. Status
 
-Checked against `main` @ `5443e78` (2026-10-23). Legend in the [index](./README.md#status-system).
+Checked against branch `site-feature-shell` (based on `main` @ `5443e78`, 2026-10-23). Legend in the [index](./README.md#status-system).
 
-**0 built · 0 partial · 10 not built**
+**9 built · 1 partial · 0 not built**
+
+Live in production: **Cards** and **Search**. **Fusion** and **Duelists** are `preview` (sample data): they show in `yarn dev`, or with `?preview=1` on any page, and go `live` when the catalog ships the methods in [§ Catalog methods the site mocks](#catalog-methods-the-site-mocks).
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| F-1 | Mobile-first CSS: base = phone, `min-width` breakpoints, split stylesheet | Proposed | ❌ Not built | `styles.css` (1,080 lines) is desktop-first: phone layout comes from 3 `max-width` overrides |
-| F-2 | Route table and feature flags | Proposed | ❌ Not built | `App.tsx` matches `/` and `/cards/<id>` by hand; no flags |
-| F-3 | App shell: bottom tab bar on phones, header tabs on desktop | TBD (F1, F2) | ❌ Not built | Header without menu (09 C-1) |
-| F-4 | Shared UI primitives (Sheet, CardRow, CardPicker, EmptyState, Tabs) | Proposed | ❌ Not built | Full-screen phone sheets implemented twice (`Filters`, `CardDetails`); empty state inline in `CatalogPage` |
-| F-5 | Card details on every page (`?card=` at app level) | Proposed | ❌ Not built | `CardDetails` belongs to `CatalogPage` |
-| F-6 | Data adapters and dev fixtures for features without catalog data | Proposed | ❌ Not built | — |
-| F-7 | **Search card**: quick search reachable from any page | TBD (F3) | ❌ Not built | Search box on the catalog page only |
-| F-8 | **Fusion tool** UI | TBD (F4) | ❌ Not built | No fusion data or `getFusion*` in the catalog (04 Q-5) |
-| F-9 | **Duelists** list and duelist page UI | Proposed | ❌ Not built | No duelist types or data (02 TBD-D9) |
-| F-10 | Static pages and sitemap for the new routes | Proposed | ❌ Not built | `build/cardPages.ts` writes card pages only |
+| F-1 | Mobile-first CSS: base = phone, `min-width` breakpoints, split stylesheet | Agreed | ✅ Built | `src/styles/{tokens,base,layout,catalog,card-panel,features,motion}.css`; phone is the base, `md` 721px and `sm` 401px are `min-width`; only the 721–1199px panel range stays a bounded query. Split by import order, without `@layer` (same cascade as before) |
+| F-2 | Route table and feature flags | Agreed | ✅ Built | `src/routes.ts` (pure data, also read by the build), `src/features.ts` (`?preview=1`), lazy Fusion and Duelists pages, scroll restoration in `router.tsx` |
+| F-3 | App shell: bottom tab bar on phones, header tabs on desktop | Agreed (F1, F2 defaults) | ✅ Built | `components/Nav.tsx`; hidden while only one page is visible |
+| F-4 | Shared UI primitives (Sheet, CardRow, CardPicker, EmptyState, Tabs) | Agreed | 🟡 Partial | `Sheet` (`<dialog>`), `CardRow`, `CardPicker`, `EmptyState`, `SearchBox`, `Tabs`, `PercentBar`, `PreviewBanner`, `DuelistPortrait`, `useUrlParams`. Not done: `Filters` and `CardDetails` still have their own phone sheets, and Back does not close a `Sheet` |
+| F-5 | Card details on every page (`?card=`) | Agreed | ✅ Built | `useCardParam` + `PageCardDetails` on Search, Fusion and Duelist pages; `CardInfo` shows "Fusions" and "Dropped by" while those features are visible |
+| F-6 | Data adapters and sample data for features without catalog data | Agreed | ✅ Built | `src/data/{fusions,duelists,cards}.ts` (mocks with the catalog's planned signatures), `src/data/sample.ts` (seeded sample data from the real card list), `src/data/pending.ts` (the list of methods owed to the catalog) |
+| F-7 | **Search card**: quick search reachable from any page | Agreed (F3 default) | ✅ Built | `/search`: name, `#id`/number, 8-digit password (mocked `getCardByPassword`), recent searches; `/` opens it |
+| F-8 | **Fusion tool** UI | Agreed (F4 default) | ✅ Built (preview) | `/fusion`: Combine, Uses, Recipes on sample data |
+| F-9 | **Duelists** list and duelist page UI | Agreed | ✅ Built (preview) | `/duelists`, `/duelists/<id>`: drops by rank with rates, deck, on sample data |
+| F-10 | Static pages and sitemap for the new routes | Agreed | ✅ Built | `build/cardPages.ts` writes `search/index.html` and lists it in `sitemap.xml`; preview routes get nothing |
+
+### Catalog methods the site mocks
+
+Registered in `mkt_site/src/data/pending.ts` (the source of truth; the preview banner reads it) and in [04](./04-catalog-query-api.md) Q-5. When the catalog ships one, its adapter in `src/data/` re-exports it and the mock and its entry are deleted.
+
+| Method (signature the site codes against) | Spec | Mock answers with | Used by |
+|---|---|---|---|
+| `getFusion(a, b): ICard \| undefined` | 04 Q-5 | Sample data | Fusion |
+| `getFusionsWith(id): IFusion[]` | 04 Q-5 | Sample data | Fusion, card details |
+| `getFusionsFor(resultId): IFusion[]` | 04 Q-5 | Sample data | Fusion, card details |
+| `getDuelistList(query?: { text? }): IDuelist[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
+| `getDuelist(id): IDuelist \| undefined` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
+| `getDropsFrom(duelistId, { rank?, sort? }?): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
+| `getDroppedBy(cardId): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists, card details |
+| `getDeckOf(duelistId, { sort? }?): IDeckEntry[]` | New (F-9) | Sample data | Duelists |
+| `getCardByPassword(code): ICard \| undefined` | New (F-7) | Real data, computed in the site | Search |
+
+### As built: differences from the plan below
+
+- **F-1:** no `@layer`; the files are imported in the old cascade order, so specificity behaves exactly as before.
+- **F-2:** previews also need `?preview=1` under `yarn preview` (it serves the production build).
+- **F-6:** sample data is generated from the real card list with a seeded random function (`src/data/sample.ts`), not hand-written fixtures. It is a few lines of code in the main bundle, and only runs when a preview feature asks for it.
+- **F-7:** on desktop, `/` opens the Search page (and focuses its box) instead of a header search field with a dropdown; one search box instead of two.
+- **F-8:** the look-up card is `?of=` (not `?card=`, which opens the details panel). The material picker is limited to monsters.
 
 ## 1. Why this spec exists
 

@@ -1,6 +1,7 @@
 import logoUrl from "../assets/logo.svg";
 import { Link } from "../router";
 import CatalogVersion from "./CatalogVersion";
+import Nav from "./Nav";
 
 export default function Header() {
     return (
@@ -10,6 +11,7 @@ export default function Header() {
                     <img src={logoUrl} alt="" width={32} height={32} />
                     <span className="header__brand-text">FM Catalog</span>
                 </Link>
+                <Nav />
                 <CatalogVersion />
             </div>
         </header>

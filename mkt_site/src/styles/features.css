@@ -1,0 +1,531 @@
+/* Shared pieces and the Search, Fusion and Duelists pages (spec 10 F-4, F-7 to F-9). Phone first. */
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.section-title {
+    margin: 0 0 8px;
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sample-tag {
+    margin-left: 6px;
+    padding: 1px 6px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+}
+
+.details__more {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+/* Pages built from a column of blocks */
+
+.search-page,
+.fusion-page,
+.fusion-panel,
+.duelists-page,
+.duelist-page,
+.duelist-panel,
+.search-page__recent {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.search-page > .search,
+.duelists-page > .search,
+.sheet .search {
+    width: 100%;
+}
+
+.search-page__all {
+    align-self: flex-start;
+    text-decoration: none;
+}
+
+/* Preview notice */
+
+.preview-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 14px;
+    border: 1px dashed var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    font-size: 0.875rem;
+}
+
+.preview-banner strong {
+    color: var(--color-accent);
+}
+
+.preview-banner p {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.preview-banner code {
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+/* Card rows */
+
+.card-rows,
+.duelist-list,
+.fusion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--type-color);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.card-row:hover {
+    border-color: var(--color-accent);
+    border-left-color: var(--type-color);
+}
+
+.card-row__art {
+    position: relative;
+    overflow: hidden;
+    width: 40px;
+    aspect-ratio: 300 / 423;
+    border-radius: 4px;
+    background: linear-gradient(160deg, var(--type-color), var(--color-surface-2));
+}
+
+.card-row__art .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-row__art .card-image--crop {
+    width: 100%;
+}
+
+.card-row__main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.card-row__name {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-row__meta {
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+}
+
+.card-row__stats {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+/* Sheet: a <dialog>, full screen on phones */
+
+.sheet {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.sheet[open] {
+    display: flex;
+    flex-direction: column;
+    animation: sheet-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sheet::backdrop {
+    background: rgb(0 0 0 / 60%);
+}
+
+body:has(dialog[open]) {
+    overflow: hidden;
+}
+
+.sheet__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    padding-top: max(12px, env(safe-area-inset-top, 0px));
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sheet__head h2 {
+    margin: 0;
+    font-size: 1.125rem;
+}
+
+.sheet__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+}
+
+@keyframes sheet-in {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+}
+
+/* Tabs */
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+}
+
+.tabs__tab {
+    flex: 1;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: calc(var(--radius) - 2px);
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tabs__tab[aria-selected="true"] {
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+}
+
+/* Rates */
+
+.percent {
+    display: grid;
+    grid-template-columns: 56px auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.percent__track {
+    overflow: hidden;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-surface-2);
+}
+
+.percent__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+}
+
+.percent__value {
+    min-width: 4.5ch;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+/* Fusion tool */
+
+.fusion-combine {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.fusion-combine__swap {
+    align-self: center;
+}
+
+.fusion-slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+}
+
+.fusion-slot[data-filled="true"] {
+    border-style: solid;
+    border-color: var(--type-color);
+}
+
+.fusion-slot__pick {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    min-height: 96px;
+    padding: 10px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.fusion-slot__art {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    width: 52px;
+    aspect-ratio: 300 / 423;
+    border-radius: 4px;
+    background: var(--color-surface-2);
+    color: var(--color-accent);
+    font-size: 1.5rem;
+}
+
+.fusion-slot__art .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fusion-slot__art .card-image--crop {
+    width: 100%;
+}
+
+.fusion-slot__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.fusion-slot__label {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.fusion-slot__name {
+    font-weight: 700;
+}
+
+.fusion-result {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fusion-result > .button {
+    align-self: center;
+}
+
+.fusion-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.fusion-item__materials {
+    font-size: 0.875rem;
+}
+
+.fusion-item .card-row {
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+/* Duelists */
+
+.duelist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 8px 12px 8px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.duelist-row:hover {
+    border-color: var(--color-accent);
+}
+
+.duelist-row .icon {
+    color: var(--color-text-muted);
+}
+
+.duelist-row__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.duelist-row__name {
+    font-weight: 600;
+}
+
+.duelist-row__meta {
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+}
+
+.duelist-portrait {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    background: var(--color-surface-2);
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+.duelist-portrait--large {
+    width: 64px;
+    height: 64px;
+    font-size: 1.375rem;
+}
+
+.duelist-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.duelist-head .hint {
+    margin-top: 2px;
+}
+
+.duelist-page .back-link {
+    align-self: flex-start;
+    margin-bottom: 0;
+}
+
+.duelist-panel .toolbar--secondary {
+    margin: 0;
+}
+
+/* Wider screens */
+
+@media (min-width: 721px) {
+    .search-page,
+    .fusion-page,
+    .duelists-page,
+    .duelist-page {
+        max-width: 760px;
+    }
+
+    .sheet {
+        inset: 0;
+        width: min(560px, 100% - 48px);
+        height: min(720px, 100dvh - 96px);
+        margin: auto;
+        border: 2px solid var(--color-accent);
+        border-radius: var(--radius);
+        box-shadow: 0 16px 40px rgb(0 0 0 / 40%);
+    }
+
+    .sheet__head {
+        padding-top: 12px;
+    }
+
+    .tabs {
+        align-self: flex-start;
+    }
+
+    .tabs__tab {
+        flex: none;
+        padding: 0 20px;
+    }
+
+    .fusion-combine {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .fusion-combine .fusion-slot {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .duelist-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .percent {
+        grid-template-columns: 96px auto;
+    }
+}

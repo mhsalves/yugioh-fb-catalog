@@ -74,8 +74,8 @@ Checked as of 2026-10-20, `main` @ `9a353ee`; spec 01 (and 05 N-5, 07 P-2, which
 | [07 – Site delivery on GitHub Pages](./07-site-github-pages-delivery.md) | 4 | 0 | 2 | 0 |
 | [08 – Card images](./08-card-images.md) | 0 | 0 | 7 | 0 |
 | [09 – Site: single catalog page](./09-site-catalog-page.md) | 7 | 0 | 0 | 0 |
-| [10 – Site: mobile-first shell for Search, Fusion and Duelists](./10-site-feature-shell-mobile-first.md) | 0 | 0 | 10 | 0 |
-| **Total** | **30** | **11** | **27** | **2** |
+| [10 – Site: mobile-first shell for Search, Fusion and Duelists](./10-site-feature-shell-mobile-first.md) | 9 | 1 | 0 | 0 |
+| **Total** | **39** | **12** | **17** | **2** |
 
 ## Automation rules
 
@@ -110,6 +110,7 @@ Both workflows can also be started by hand (`workflow_dispatch`) to retry a fail
 
 | Date | Decision | Status | Where |
 |---|---|---|---|
+| 2026-10-23 | **Spec 10 built** with its §6 defaults: bottom tab bar on phones, Search live, Fusion and Duelists as `preview` on sample data. Catalog methods the site needs but the catalog lacks are **mocked in `mkt_site/src/data/` and listed in `pending.ts`** (and 04 Q-5) to be added to the catalog | Built (defaults; open to change) | [10](./10-site-feature-shell-mobile-first.md), [04](./04-catalog-query-api.md) Q-5 |
 | 2026-10-23 | **Prepare the site for card search, a duelist list and a fusion tool, mobile-first**: route table with feature flags (`live` / `preview` / `hidden`), bottom tab bar on phones, shared primitives, adapters with dev fixtures until the catalog has the data. Reopens 09 C-1 (TBD-F1) | **Proposed** (requested by the owner) | [10](./10-site-feature-shell-mobile-first.md) |
 | 2026-10-20 | **Release automation built** (05 N-2, N-2a, N-3, N-7 + 01 R-4 step 7): `release.yml` and the `release-check` CI job. **A release is breaking if and only if its CHANGELOG entry has `### BREAKING`**, which needs at least a minor bump in `0.x`. Defaults: npm pinned to 11.21.0 in the job (TBD-N8), environment `npm` without approval (TBD-N9). Trusted-publisher and branch-protection setup still pending | Built (defaults; open to change) | [05](./05-catalog-npm-distribution.md) N-2, N-3 |
 | 2026-10-20 | **Each release is also published to GitHub Packages** (`npm.pkg.github.com`), so the package appears in the repository's Packages; npmjs.com stays primary | **Agreed** (requested by the owner) | [05](./05-catalog-npm-distribution.md) N-7 |

@@ -81,6 +81,8 @@ Desktop (≥ 720px)                                    Phone (< 720px)
 Clicking a grid item opens the **details card** over the page (C-4).
 
 ### C-1 One page, header without menu · ✅ Built
+> **Changed 2026-10-23 by [10](./10-site-feature-shell-mobile-first.md) F-3:** with more than one visible page, the header gets navigation tabs (a bottom tab bar on phones). With only the catalog visible it stays as described here.
+
 - The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
 - The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fb-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).

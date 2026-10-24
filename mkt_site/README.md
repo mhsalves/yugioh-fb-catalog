@@ -4,7 +4,18 @@ Interface web do catálogo Yu-Gi-Oh! Forbidden Memories: uma SPA estática feita
 
 ## O que existe hoje
 
-Uma única página, o catálogo ([spec 09](../docs/specs/09-site-catalog-page.md)):
+Mobile-first ([spec 10](../docs/specs/10-site-feature-shell-mobile-first.md)): o layout base é o do celular, e telas maiores somam a ele com `min-width`. Com mais de uma página visível, aparece uma barra de abas embaixo no celular (no desktop, abas no cabeçalho).
+
+| Página | Endereço | Estado |
+|---|---|---|
+| Cartas (catálogo) | `/` | No ar |
+| Busca rápida (nome, número ou senha) | `/search` | No ar |
+| Fusões | `/fusion` | Prévia com dados de exemplo |
+| Duelistas | `/duelists`, `/duelists/<id>` | Prévia com dados de exemplo |
+
+As prévias aparecem no `yarn dev` ou abrindo qualquer página com `?preview=1` (vale para a sessão do navegador; `?preview=0` desliga). Em produção, sem isso, elas dão 404 e não entram no sitemap.
+
+O catálogo ([spec 09](../docs/specs/09-site-catalog-page.md)):
 
 - Cabeçalho com logo (volta ao catálogo completo), versão do catálogo usada no build (clique para copiar `@mhsalves/yugioh-fb-catalog@<versão>`) e link para essa versão no npm
 - Busca por nome, filtro **By type** ("All types" + os 5 tipos de carta) e um painel com os outros filtros (tipo de monstro, guardian star, level, ATK, DEF, custo); no celular o painel abre em tela cheia
@@ -53,6 +64,16 @@ O catálogo precisa estar compilado antes (`yarn build` na raiz cria `catalog/li
 - `yarn preview`: serve `dist/` em `http://localhost:4173/yugioh-fb-catalog/`
 - `yarn typecheck`: verifica os tipos (TypeScript strict)
 
+## Métodos simulados (mock)
+
+Alguns métodos que o site usa ainda não existem no catálogo. O site simula cada um em `src/data/` com a assinatura planejada para o catálogo, e todos estão listados em **`src/data/pending.ts`** (e na [spec 04](../docs/specs/04-catalog-query-api.md) Q-5) para serem adicionados ao catálogo depois:
+
+- Fusões: `getFusion`, `getFusionsWith`, `getFusionsFor` (`src/data/fusions.ts`)
+- Duelistas: `getDuelistList`, `getDuelist`, `getDropsFrom`, `getDroppedBy`, `getDeckOf` (`src/data/duelists.ts`)
+- Senha: `getCardByPassword` (`src/data/cards.ts`, com os dados reais)
+
+Os dados de exemplo (`src/data/sample.ts`) usam as cartas reais, mas as fusões, duelistas e taxas são inventados; as páginas em prévia mostram um aviso dizendo isso. Quando o catálogo ganhar um desses métodos: reexporte-o no adaptador em `src/data/`, apague o mock e a entrada em `pending.ts`, e mude a rota para `"live"` em `src/routes.ts` quando todos os métodos da página forem reais.
+
 ## Regras
 
 - Filtrar e ordenar cartas é trabalho do catálogo (`searchCards`); o site só monta a consulta e mostra o resultado.
@@ -73,17 +94,21 @@ O site fica em `https://mhsalves.github.io/yugioh-fb-catalog`.
 mkt_site/
 ├── index.html           # Shell da SPA
 ├── vite.config.ts       # Base path, 404.html, páginas por carta, versão do catálogo
-├── build/cardPages.ts   # Gera cards/<id>/index.html e sitemap.xml no build
+├── build/cardPages.ts   # Gera cards/<id>/index.html, páginas das rotas no ar e sitemap.xml no build
 └── src/
-    ├── main.tsx         # Entrada
-    ├── App.tsx          # Cabeçalho, catálogo (ou 404) e rodapé
-    ├── router.tsx       # usePath, useSearch, navigate, <Link>
+    ├── main.tsx         # Entrada (importa os CSS na ordem da cascata)
+    ├── App.tsx          # Cabeçalho, página da rota (ou 404) e rodapé
+    ├── routes.ts        # Lista de páginas e estado de cada uma (live / preview / hidden)
+    ├── features.ts      # Flag de prévia (?preview=1)
+    ├── router.tsx       # usePath, useSearch, navigate, <Link>, posição de rolagem no Voltar
+    ├── urlParams.ts     # useUrlParams, useCardParam (?card= em qualquer página)
     ├── catalogUrl.ts    # Query string ⇄ CardQuery
     ├── useCopy.ts       # Copiar para a área de transferência
-    ├── styles.css       # Tokens e estilos globais
+    ├── styles/          # tokens, base, layout, catalog, card-panel, features, motion (mobile-first)
+    ├── data/            # Adaptadores com mocks (fusions, duelists, cards), sample.ts, pending.ts
     ├── assets/logo.svg
-    ├── components/      # Header, Footer, CatalogVersion, Filters, CardTile, CardDetails, CardInfo, ShareButton, ícones
-    └── pages/           # CatalogPage, CardPage (link compartilhado), NotFoundPage
+    ├── components/      # Header, Nav, Footer, Filters, CardTile, CardRow, CardDetails, CardInfo, Sheet, CardPicker, Tabs, ...
+    └── pages/           # CatalogPage, SearchPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage
 ```
 
 ## Licença

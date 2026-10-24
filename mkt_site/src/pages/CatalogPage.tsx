@@ -19,7 +19,9 @@ import {
 } from "../catalogUrl";
 import CardDetails from "../components/CardDetails";
 import CardTile from "../components/CardTile";
+import EmptyState from "../components/EmptyState";
 import Filters from "../components/Filters";
+import SearchBox from "../components/SearchBox";
 import { FilterIcon, SortIcon } from "../components/icons";
 import { navigate, useSearch } from "../router";
 
@@ -60,34 +62,6 @@ function TypeFilter({ selected, onChange }: { selected: TCardType[]; onChange: (
                 ))}
             </div>
         </fieldset>
-    );
-}
-
-/** Search text is debounced before it reaches the URL; everything else updates at once. */
-function SearchBox({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-    const [draft, setDraft] = useState(value);
-    const [lastValue, setLastValue] = useState(value);
-    if (value !== lastValue) {
-        // The URL changed from outside (Clear, Back): show it.
-        setLastValue(value);
-        setDraft(value);
-    }
-
-    useEffect(() => {
-        if (draft === value) return;
-        const timer = window.setTimeout(() => onChange(draft), 150);
-        return () => window.clearTimeout(timer);
-    }, [draft, value, onChange]);
-
-    return (
-        <input
-            type="search"
-            className="search"
-            placeholder="Search cards by name"
-            aria-label="Search cards by name"
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-        />
     );
 }
 
@@ -144,7 +118,8 @@ export default function CatalogPage() {
                     Card catalog
                 </h1>
                 <div className="toolbar">
-                    <SearchBox value={query.text ?? ""} onChange={setText} />
+                    {/* Search text is debounced before it reaches the URL; everything else updates at once. */}
+                    <SearchBox value={query.text ?? ""} onChange={setText} label="Search cards by name" />
                     <button
                         type="button"
                         className="button button--ghost toolbar__filters"
@@ -208,16 +183,16 @@ export default function CatalogPage() {
                 </div>
 
                 {result.total === 0 ? (
-                    <div className="empty">
-                        <div className="empty__frame" aria-hidden="true">
-                            <span>?</span>
-                        </div>
-                        <h2>No cards found</h2>
-                        <p>No cards match these filters. Try another type or clear the filters.</p>
-                        <button type="button" className="button" onClick={() => setQuery({ sort: query.sort })}>
-                            Clear filters
-                        </button>
-                    </div>
+                    <EmptyState
+                        title="No cards found"
+                        action={
+                            <button type="button" className="button" onClick={() => setQuery({ sort: query.sort })}>
+                                Clear filters
+                            </button>
+                        }
+                    >
+                        No cards match these filters. Try another type or clear the filters.
+                    </EmptyState>
                 ) : (
                     <ul className="grid">
                         {result.items.map((card) => (

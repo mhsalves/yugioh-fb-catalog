@@ -1,0 +1,290 @@
+/* Card details (spec 09 C-4): full screen on phones; from md up a side panel docked to the window's right edge
+   below the header, full height (see the media queries at the end). */
+
+.card-panel {
+    --panel-offset: 100%;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: var(--color-surface);
+    animation: panel-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-panel[data-state="closing"] {
+    animation: panel-out 180ms ease-in forwards;
+    pointer-events: none;
+}
+
+.card-panel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: panel-content-in 180ms ease-out;
+}
+
+/* Previous / next stay at the bottom of the panel. */
+.card-panel .details__nav {
+    margin-top: auto;
+}
+
+.card-panel h2:focus {
+    outline: none;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateX(var(--panel-offset));
+    }
+}
+
+@keyframes panel-out {
+    to {
+        opacity: 0;
+        transform: translateX(var(--panel-offset));
+    }
+}
+
+@keyframes panel-content-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.card-tile {
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.card-tile[aria-current="true"] {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.details__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.details__head h1,
+.details__head h2 {
+    margin: 0;
+    font-size: 1.375rem;
+}
+
+.details__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.details__id {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+}
+
+.details__art {
+    position: relative;
+    height: 96px;
+    margin: 0;
+    border-radius: var(--radius);
+}
+
+.details__art[data-has-image] {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: auto;
+    padding: 16px;
+}
+
+.details__art[data-has-image] .type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.details__art .card-image {
+    width: min(100%, 300px);
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 45%);
+}
+
+.details__credit {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+}
+
+.details__empty {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.details__section h3 {
+    margin: 0 0 6px;
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.details__section p {
+    margin: 0;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 16px;
+    margin: 0;
+}
+
+.field {
+    display: contents;
+}
+
+.field dt {
+    color: var(--color-text-muted);
+}
+
+.field dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.password {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+}
+
+.stars,
+.card-refs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card-ref {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.card-ref--missing {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    cursor: default;
+}
+
+.details__nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+/* A card's own page, reached through a shared link (spec 09 C-7) */
+
+.card-page {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.card-page__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+}
+
+.card-page .details__nav {
+    justify-content: center;
+}
+
+.card-page .details__nav .button {
+    text-decoration: none;
+}
+
+/* Per-card page content before the app starts, and for crawlers without JavaScript (spec 09 C-7) */
+
+.static-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px var(--gutter);
+}
+
+.static-card h1 {
+    color: var(--color-accent);
+}
+
+.static-card dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+}
+
+.static-card dt {
+    color: var(--color-text-muted);
+}
+
+.static-card dd {
+    margin: 0;
+}
+
+@media (min-width: 721px) {
+    .card-panel {
+        --panel-offset: 32px;
+        inset: calc(var(--header-height) + 16px) var(--panel-edge) 16px auto;
+        z-index: 15;
+        width: var(--panel-width);
+        border: 2px solid var(--color-accent);
+        border-radius: var(--radius);
+        box-shadow: 0 16px 40px rgb(0 0 0 / 40%);
+    }
+}
+
+@media (min-width: 721px) and (max-width: 1199px) {
+    :root {
+        --panel-width: 360px;
+    }
+}

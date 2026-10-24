@@ -77,6 +77,47 @@ export const FilterIcon = () => (
     </Icon>
 );
 
+export const SearchIcon = () => (
+    <Icon>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+    </Icon>
+);
+
+export const CardsIcon = () => (
+    <Icon>
+        <rect x="4" y="3" width="11" height="15" rx="1.5" />
+        <path d="M8 21h10a2 2 0 0 0 2-2V7" />
+    </Icon>
+);
+
+export const FusionIcon = () => (
+    <Icon>
+        <circle cx="8" cy="9" r="5" />
+        <circle cx="16" cy="9" r="5" />
+        <path d="M12 14v7M9 18h6" />
+    </Icon>
+);
+
+export const DuelistIcon = () => (
+    <Icon>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+    </Icon>
+);
+
+export const PlusIcon = () => (
+    <Icon>
+        <path d="M12 5v14M5 12h14" />
+    </Icon>
+);
+
+export const SwapIcon = () => (
+    <Icon>
+        <path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4" />
+    </Icon>
+);
+
 export const SortIcon = ({ descending }: { descending: boolean }) => (
     <Icon>{descending ? <path d="M12 5v14M5 12l7 7 7-7" /> : <path d="M12 19V5M5 12l7-7 7 7" />}</Icon>
 );
