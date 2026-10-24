@@ -1,34 +1,46 @@
 # Yu-Gi-Oh! Forbidden Memories Catalog
 
-Este é um catálogo completo de cartas do jogo Yu-Gi-Oh! Forbidden Memories, lançado em 1999 para PlayStation 1. O projeto fornece uma biblioteca npm para acesso aos dados das cartas e uma interface web para consulta.
+Este é um catálogo completo de cartas do jogo Yu-Gi-Oh! Forbidden Memories, lançado em 1999 para PlayStation 1. O projeto fornece uma biblioteca npm para acesso aos dados das cartas e um site para consulta.
 
-## Visão Geral do Projeto
+🌐 **Site do catálogo:** [mhsalves.github.io/yugioh-fb-catalog](https://mhsalves.github.io/yugioh-fb-catalog)
 
-O projeto está dividido em dois componentes principais, cada um com seu próprio README detalhado:
+## Módulos
 
-1. **[Biblioteca e Catálogo de Dados](./catalog/README.md)** (`catalog/`)
-   - Pacote npm: `@mhsalves/yugioh-fb-catalog`
-   - Base de dados estruturada das cartas e acesso programático a ela
-   - [Documentação do Catálogo](./catalog/README.md)
+O repositório é um workspace Yarn com dois módulos:
 
-2. **[Site](./mkt_site/README.md)** (`mkt_site/`)
-   - Interface visual do catálogo, publicada no GitHub Pages
-   - Desenvolvido com Vite, React e CSS puro
-   - [Documentação do Site](./mkt_site/README.md)
+| Módulo | O que é | Linguagens e tecnologias | Documentação | Link |
+|---|---|---|---|---|
+| **Catalog** (`catalog/`) | Biblioteca npm com os dados das cartas e uma API de consulta tipada | TypeScript, JSON + JSON Schema, Zod, Vitest | [catalog/README.md](./catalog/README.md) | [npm](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog) |
+| **MKT Site** (`mkt_site/`) | Site público do catálogo, publicado no GitHub Pages | TypeScript, React, Vite, CSS puro | [mkt_site/README.md](./mkt_site/README.md) | [Site](https://mhsalves.github.io/yugioh-fb-catalog) |
 
-Para a arquitetura, as decisões de design e o roadmap de melhorias, veja [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+### Catalog
 
-## Início Rápido
+Pacote npm [`@mhsalves/yugioh-fb-catalog`](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog): os dados de todas as 722 cartas (monstros, Magic, Equip, Trap e Ritual), as receitas de ritual e as regras do jogo (guardian stars e bônus de batalha), com funções puras e síncronas para consultá-los. Os dados ficam em JSON (`catalog/data/`), validados por JSON Schema e Zod, e são empacotados na biblioteca, sem chamadas de rede.
+
+- **Linguagens:** TypeScript (compilado com `tsc`), dados em JSON
+- **Ferramentas:** Vitest (testes), Zod e JSON Schema (validação), tsx (scripts de dados)
+- **Documentação:** [catalog/README.md](./catalog/README.md) (uso e API), [catalog/docs/DATA.md](./catalog/docs/DATA.md) (modelo de dados), [catalog/CONTRIBUTING-DATA.md](./catalog/CONTRIBUTING-DATA.md) (como cadastrar dados), [catalog/CHANGELOG.md](./catalog/CHANGELOG.md)
+- **Link:** [npmjs.com/package/@mhsalves/yugioh-fb-catalog](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog)
 
 ```bash
-# Instalar a biblioteca via npm
 npm install @mhsalves/yugioh-fb-catalog
-
-# Ou via yarn
+# ou
 yarn add @mhsalves/yugioh-fb-catalog
 ```
 
-Para acessar a interface web, visite: [Yu-Gi-Oh! FB Catalog](https://mhsalves.github.io/yugioh-fb-catalog)
+### MKT Site
+
+Site do catálogo: uma SPA estática, mobile-first, para buscar e filtrar as cartas, ver os detalhes de cada uma e compartilhar o link da carta. Usa o módulo Catalog local do workspace e é publicado automaticamente no GitHub Pages a cada merge na `main`.
+
+- **Linguagens:** TypeScript, React (TSX), CSS puro (sem biblioteca de UI)
+- **Ferramentas:** Vite (dev server e build), roteador próprio, GitHub Actions + GitHub Pages (deploy)
+- **Documentação:** [mkt_site/README.md](./mkt_site/README.md)
+- **Link:** [mhsalves.github.io/yugioh-fb-catalog](https://mhsalves.github.io/yugioh-fb-catalog)
+
+## Documentação geral
+
+- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md): arquitetura, decisões de design e roadmap
+- [docs/specs](./docs/specs/README.md): especificações do catálogo e do site
 
 ## Desenvolvimento
 
@@ -36,7 +48,7 @@ O repositório é um workspace Yarn 1 (`catalog/` e `mkt_site/`) com um único `
 
 ```bash
 yarn install          # instala tudo na raiz
-yarn dev              # site em http://localhost:3000 usando o catálogo local (atualiza ao editar catalog/src)
+yarn dev              # site em http://localhost:5173 usando o catálogo local (atualiza ao editar catalog/src)
 yarn typecheck        # TypeScript (strict) nos dois pacotes
 yarn lint             # ESLint
 yarn format:check     # Prettier (yarn format para corrigir)
@@ -46,7 +58,7 @@ yarn coverage:data    # quantas cartas já foram cadastradas
 yarn build            # build do catálogo e do site
 ```
 
-Cada PR passa pelo CI (`.github/workflows/ci.yml`). As especificações ficam em [docs/specs](./docs/specs/README.md).
+Cada PR passa pelo CI (`.github/workflows/ci.yml`).
 
 ## Licença
 
