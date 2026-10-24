@@ -43,10 +43,11 @@ export default function DuelistsPage() {
                             <Link to={`/duelists/${duelist.id}`} className="duelist-row">
                                 <DuelistPortrait name={duelist.name} portrait={duelist.portrait} />
                                 <span className="duelist-row__main">
+                                    <span className="duelist-row__number">#{duelist.number}</span>
                                     <span className="duelist-row__name">{duelist.name}</span>
                                     <span className="duelist-row__meta">
-                                        #{duelist.number} · {getDropsFrom(duelist.id).length} drops ·{" "}
-                                        {getDeckOf(duelist.id).length} deck cards
+                                        {getDropsFrom(duelist.id).length} drops · {getDeckOf(duelist.id).length} deck
+                                        cards
                                     </span>
                                 </span>
                                 <ChevronRightIcon />

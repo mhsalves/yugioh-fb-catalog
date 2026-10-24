@@ -490,6 +490,35 @@ body:has(.duelist-page[data-panel="true"]) .page {
     box-shadow: 0 8px 20px rgb(0 0 0 / 30%);
 }
 
+/* The list is picked by face: big portraits. */
+.duelist-row {
+    gap: 16px;
+    min-height: 92px;
+    padding: 10px 14px 10px 10px;
+}
+
+.duelist-row .duelist-portrait {
+    width: 72px;
+    height: 72px;
+    border-width: 3px;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 35%);
+}
+
+.duelist-row__name {
+    font-size: 1.0625rem;
+}
+
+.duelist-row__number {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.duelist-row__meta {
+    white-space: nowrap;
+}
+
 .duelist-row .duelist-portrait img,
 .duelist-row .icon {
     transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -925,7 +954,7 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
     .duelist-list {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
         gap: 8px;
     }
 
@@ -979,6 +1008,15 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
     .rate-row .card-row__art {
         width: 72px;
+    }
+
+    .duelist-row {
+        min-height: 116px;
+    }
+
+    .duelist-row .duelist-portrait {
+        width: 96px;
+        height: 96px;
     }
 
     .duelist-controls .tabs {
