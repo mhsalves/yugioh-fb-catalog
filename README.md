@@ -2,7 +2,7 @@
 
 Este é um catálogo completo de cartas do jogo Yu-Gi-Oh! Forbidden Memories, lançado em 1999 para PlayStation 1. O projeto fornece uma biblioteca npm para acesso aos dados das cartas e um site para consulta.
 
-🌐 **Site do catálogo:** [mhsalves.github.io/yugioh-fb-catalog](https://mhsalves.github.io/yugioh-fb-catalog)
+🌐 **Site do catálogo:** [matheusalves.dev/yugioh-fm-catalog](https://matheusalves.dev/yugioh-fm-catalog)
 
 ## Módulos
 
@@ -11,7 +11,7 @@ O repositório é um workspace Yarn com dois módulos:
 | Módulo | O que é | Linguagens e tecnologias | Documentação | Link |
 |---|---|---|---|---|
 | **Catalog** (`catalog/`) | Biblioteca npm com os dados das cartas e uma API de consulta tipada | TypeScript, JSON + JSON Schema, Zod, Vitest | [catalog/README.md](./catalog/README.md) | [npm](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog) |
-| **MKT Site** (`mkt_site/`) | Site público do catálogo, publicado no GitHub Pages | TypeScript, React, Vite, CSS puro | [mkt_site/README.md](./mkt_site/README.md) | [Site](https://mhsalves.github.io/yugioh-fb-catalog) |
+| **MKT Site** (`mkt_site/`) | Site público do catálogo, publicado no GitHub Pages | TypeScript, React, Vite, CSS puro | [mkt_site/README.md](./mkt_site/README.md) | [Site](https://matheusalves.dev/yugioh-fm-catalog) |
 
 ### Catalog
 
@@ -35,7 +35,7 @@ Site do catálogo: uma SPA estática, mobile-first, para buscar e filtrar as car
 - **Linguagens:** TypeScript, React (TSX), CSS puro (sem biblioteca de UI)
 - **Ferramentas:** Vite (dev server e build), roteador próprio, GitHub Actions + GitHub Pages (deploy)
 - **Documentação:** [mkt_site/README.md](./mkt_site/README.md)
-- **Link:** [mhsalves.github.io/yugioh-fb-catalog](https://mhsalves.github.io/yugioh-fb-catalog)
+- **Link:** [matheusalves.dev/yugioh-fm-catalog](https://matheusalves.dev/yugioh-fm-catalog)
 
 ## Documentação geral
 
