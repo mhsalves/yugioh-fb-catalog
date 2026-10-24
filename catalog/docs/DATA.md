@@ -20,7 +20,8 @@ catalog/
 │   ├── equips.json               # Compatibilidade de equips
 │   ├── fields.json               # Efeitos de campo
 │   ├── images.json               # Links das imagens das cartas (spec 08)
-│   └── rules.json                # Total de cartas, vantagem e bônus das guardian stars
+│   ├── duelists/<id>.json        # Um arquivo por duelista: deck, drops por rank (pesos de 2048) e retrato
+│   └── rules.json                # Total de cartas, guardian stars e total dos pesos (2048)
 ├── docs/                         # Esta documentação
 ├── schema/                       # Esquemas Zod e os JSON Schemas gerados ($schema dos arquivos)
 ├── scripts/                      # validate, data:build, schema:build, coverage:data

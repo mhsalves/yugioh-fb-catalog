@@ -28,3 +28,4 @@ console.log(`  Rituals       ${catalog.rituals.length}`);
 console.log(`  Fusions       ${catalog.fusions.length}`);
 console.log(`  Equips        ${catalog.equips.length}`);
 console.log(`  Fields        ${catalog.fields.length}`);
+console.log(`Duelists:       ${catalog.duelists.length}`);

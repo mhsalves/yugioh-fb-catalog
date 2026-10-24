@@ -6,13 +6,13 @@
 
 Build status as of 2026-10-20, after the spec 02 build PR (based on `main` @ `d06bf94`); D-4 and D-5 rechecked after the spec 03 build PR. Legend in the [index](./README.md#status-system).
 
-**4 built · 1 partial · 0 not built**
+**5 built · 0 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
 | D-1 | Separate entities from relations | Agreed | ✅ Built | Cards describe what a card is; ritual recipes live in `data/rituals.ts`, keyed by card ID |
 | D-2 | Card entity (target shape) | Agreed | ✅ Built | `IMagicCard`/`ITrapCard`/`IEquipCard` split, flat `attack`/`defense`, `guardianStars` tuple, recipe out of `IRitualCard`. TBD-gated fields (attribute D3, magic/trap kinds D5, rarity D6) deferred |
-| D-3 | Relation collections | Agreed | 🟡 Partial | Typed `fusions`, `rituals`, `equips`, `fields` (only `rituals` has data). Duelists, decks and drops wait for TBD-D9 |
+| D-3 | Relation collections | Agreed | ✅ Built | Typed `fusions`, `rituals`, `equips`, `fields` (`rituals` has data), and duelists with their deck and drop pools in `data/duelists/<id>.json` (all 39, TBD-D9) |
 | D-4 | Game rules as data | Agreed | ✅ Built | `MONSTER_TYPES` (all 20), `CARD_TYPES`, `GUARDIAN_STARS` in `src/data/enums.ts` are the single list used by the schema enums (`z.enum(MONSTER_TYPES)`) and by the TS types; rule values in `data/rules.json`, validated by the `rules` schema ([03](./03-catalog-data-authoring.md)) |
 | D-5 | One organization rule for files | Agreed | ✅ Built | `data/cards/monsters/<type>.json` and `data/cards/{magic,trap,equip,ritual}.json`; no `pageN` split. The validator rejects a monster in another type's file |
 
@@ -173,9 +173,9 @@ Splitting `ISupportCard` into `IMagicCard`, `ITrapCard` and `IEquipCard` lets ea
 
 **Built:** as proposed, in catalog `0.2.0` with a migration note in `catalog/CHANGELOG.md` (TBD-D7) and no deprecated getters. `ISupportCard` remains as the union `IMagicCard | ITrapCard | IEquipCard`. `attribute`, `magicKind`/`trapKind` and rarity are **not** added until TBD-D3, TBD-D5 and TBD-D6 are resolved.
 
-### D-3 Relation collections · 🟡 Partial
+### D-3 Relation collections · ✅ Built
 
-**Built:** `IFusion`, `IRitual`, `IEquipCompat` and `IFieldEffect` (`data/relation-types.ts`), with collections `fusions/index.ts`, `rituals.ts` (holding the one known recipe), `equips.ts` and `fields.ts`. `getRitual()` reads `rituals`. **Not built:** `IDuelist`, `IDeckEntry` and `IDrop` wait for TBD-D9.
+**Built:** `IFusion`, `IRitual`, `IEquipCompat` and `IFieldEffect` (`data/relation-types.ts`), with collections `fusions/index.ts`, `rituals.ts` (holding the one known recipe), `equips.ts` and `fields.ts`. `getRitual()` reads `rituals`. **Built (2026-10-24):** `IDuelist`, `IDeckEntry` and `IDrop` in `data/duelist-types.ts`, as resolved by TBD-D9. A duelist file holds the duelist and its four pools (`deck` and `drops` by rank) as `{ card, weight }` lists; the loader keeps the pools apart from the entity, and the API flattens them into `IDeckEntry` / `IDrop`. `campaignStage` was dropped (the game has none), `number` (the game's order) and `portrait` (a Yugipedia link, like the card images of 08) were added.
 
 `IFusion` follows the resolved TBD-D2: the game stores **only specific card pairs**, so there is no `MaterialRef`.
 
@@ -266,7 +266,7 @@ Drop the `pageN.ts` ID-range split. ID order is restored by a single sort in the
 ## 5. Acceptance criteria
 
 - [x] `TMonsterType`, `TGuardianStar` and `TCardType` are derived from the schema enums, and game rule values live in `data/rules.json`. *(The types and the Zod enums derive from the same `as const` lists in `src/data/enums.ts`; the rules are in `catalog/data/rules.json` since spec 03.)*
-- [ ] Every FM concept listed in D-3 has a typed collection, even if it is still empty. *(Fusions, rituals, equips and fields: yes. Duelists, decks and drops: deferred, TBD-D9.)*
+- [x] Every FM concept listed in D-3 has a typed collection, even if it is still empty. *(Duelists, decks and drops since 2026-10-24, with data.)*
 - [x] A contributor can find where any card belongs from **one** rule (D-5).
 - [x] `TOTAL_CARDS` comes from the library. The site no longer hard-codes 721.
 - [x] Every TBD in §6 is resolved, or explicitly deferred, before its part of the model is coded.
@@ -291,7 +291,7 @@ Sources for the resolved items, checked 2026-10-20. They were preferred when der
 | **TBD-D6** | Extra card fields: rarity, Japanese/PAL names | Artwork reference resolved: a separate relation file, `data/images.json` ([08](./08-card-images.md) I-2). **Deferred**: no rarity or localized names yet |
 | ~~**TBD-D7**~~ | Breaking-change strategy for reshaping fields (D-2) | **Applied: `0.2.0` with a migration note** in `catalog/CHANGELOG.md`, no deprecated getters |
 | **TBD-D8** | Equip boost values (+500 typical, larger for some cards?) and field-effect amounts | Open. The shapes (`boost`, `amount`) are built; no values are entered |
-| **TBD-D9** | Duelist list, campaign stages, drop rank categories, and whether we store drop weights or percentages | Open. **Deferred**: no duelist, deck or drop types yet. (The game's drop table is in the [Decomp] fusion-and-drop-tables notes, which is a starting point) |
+| ~~**TBD-D9**~~ | Duelist list, campaign stages, drop rank categories, and whether we store drop weights or percentages | **Resolved (2026-10-24):** the 39 Free Duel opponents, in the game's order (`number` 1-39), with a slug `id`. Campaign stages are **not** stored: the game's tables have none. Drop rank categories: `S/A-POW`, `B/C/D`, `S/A-TEC` (`DROP_RANKS`), the three pools of each duelist's record. **Weights**, not percentages: each pool adds up to 2048 (`poolWeightTotal` in `rules.json`), and the game rolls 1-2048 and walks the pool. Source: [Decomp] `notes/research/fusion-and-drop-tables/drops.csv` (dumped from `WA_MRG.MRG`), which matches GenericMadScientist's FmDatabase (via MarceloSilvarolla/YFM-Database-and-Fusion-Guide) weight for weight for duelists 1-38; Duel Master K's drops match yugiohfm.com. Built as `data/duelists/<id>.json`, `IDuelist`, `IDeckEntry`, `IDrop` |
 | ~~**TBD-D10**~~ | Total card count: 722 or 721? | **Resolved: 722**, IDs 1–722. #1 is "Blue-eyes White Dragon" (the game's spelling) and #722 "Magician of Black Chaos". Sources: [Decomp] card catalog (722 rows), [FusionCalc] `Cards.json` (722 entries), [DataCrystal] (the drop routine loops over 722 cards), and the Fandom gallery (001–722, [08](./08-card-images.md) §2). Built as `TOTAL_CARDS = 722` |
 | ~~**TBD-D11**~~ | Guardian-star advantage cycle and bonus | **Resolved:** two cycles that never interact: Mars→Jupiter→Saturn→Uranus→Pluto→Neptune→Mars and Sun→Moon→Venus→Mercury→Sun ("A→B": A beats B). In battle the advantaged card gets **+500** and the disadvantaged card **−500**, applied to both the ATK and the DEF calculation. Sources: [Decomp] `duel_calc_guardian_star_matchup.c` (constant 500, two cycles, ±500), plus a community forum thread for the cycles. Only the decompilation shows the −500 side. Built as `GUARDIAN_STAR_ADVANTAGE` and `GUARDIAN_STAR_BONUS = 500` |
 

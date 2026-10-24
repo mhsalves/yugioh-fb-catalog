@@ -8,7 +8,7 @@ Checked against branch `site-feature-shell` (based on `main` @ `5443e78`, 2026-1
 
 **9 built · 1 partial · 0 not built**
 
-Live in production: **Cards** (with the search look-ups of F-7). **Fusion** and **Duelists** are `preview` (sample data): they show in `yarn dev`, or with `?preview=1` on any page, and go `live` when the catalog ships the methods in [§ Catalog methods the site mocks](#catalog-methods-the-site-mocks).
+Live in production: **Cards** (with the search look-ups of F-7) and **Duelists** (since catalog 0.7.0). **Fusion** is `preview` (sample data): they show in `yarn dev`, or with `?preview=1` on any page, and go `live` when the catalog ships the methods in [§ Catalog methods the site mocks](#catalog-methods-the-site-mocks).
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ Live in production: **Cards** (with the search look-ups of F-7). **Fusion** and 
 | F-6 | Data adapters and sample data for features without catalog data | Agreed | ✅ Built | `src/data/{fusions,duelists,cards}.ts` (mocks with the catalog's planned signatures), `src/data/sample.ts` (seeded sample data from the real card list), `src/data/pending.ts` (the list of methods owed to the catalog) |
 | F-7 | **Search card** | Agreed (changed 2026-10-23) | ✅ Built | Folded into the Cards search box: name, `#425` (card number), 8-digit password (mocked `getCardByPassword`); `/` focuses it from any page. The separate `/search` page was built, then removed (see As built) |
 | F-8 | **Fusion tool** UI | Agreed (F4 default) | ✅ Built (preview) | `/fusion`: Combine, Uses, Recipes on sample data |
-| F-9 | **Duelists** list and duelist page UI | Agreed | ✅ Built (preview) | `/duelists`, `/duelists/<id>`: drops by rank with rates, deck, on sample data |
+| F-9 | **Duelists** list and duelist page UI | Agreed | ✅ Built (live) | `/duelists`, `/duelists/<id>`: the 39 duelists with Yugipedia portraits, drops by rank with the game's rates, deck; static pages and sitemap entries per duelist |
 | F-10 | Static pages and sitemap for the new routes | Agreed | ✅ Built | `build/cardPages.ts` writes a page and a sitemap entry for every `live` route besides `/` (none today); preview routes get nothing |
 
 **Home page (2026-10-23, owner request):** `/` is a home page (`pages/HomePage.tsx`): intro, a card search, tiles to Cards, Fusion and Duelists ("Coming soon" without a link while a feature is not visible), special thanks, how to use the data, and the author. The catalog moved to `/cards`; `/` with catalog parameters and the short-lived `/about` redirect. With Home and Cards live, production shows the tab bar (Home, Cards).
@@ -34,11 +34,6 @@ Registered in `mkt_site/src/data/pending.ts` (the source of truth; the preview b
 | `getFusion(a, b): ICard \| undefined` | 04 Q-5 | Sample data | Fusion |
 | `getFusionsWith(id): IFusion[]` | 04 Q-5 | Sample data | Fusion, card details |
 | `getFusionsFor(resultId): IFusion[]` | 04 Q-5 | Sample data | Fusion, card details |
-| `getDuelistList(query?: { text? }): IDuelist[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
-| `getDuelist(id): IDuelist \| undefined` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
-| `getDropsFrom(duelistId, { rank?, sort? }?): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
-| `getDroppedBy(cardId): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists, card details |
-| `getDeckOf(duelistId, { sort? }?): IDeckEntry[]` | New (F-9) | Sample data | Duelists |
 | `getCardByPassword(code): ICard \| undefined` | New (F-7) | Real data, computed in the site | Cards search |
 
 ### As built: differences from the plan below
@@ -201,8 +196,8 @@ Phone layout of **Combine**, top to bottom: two large **material slots** (tap op
 
 **Uses** and **Recipes** show one picked card and a list of `CardRow` pairs ("+ Material → Result"), sortable by result ATK, which is what players compare.
 
-### F-9 Duelists · ❌ Not built
-Routes `/duelists` and `/duelists/<id>`, `preview` until 02 TBD-D9 is resolved and the data lands.
+### F-9 Duelists · ✅ Built (live)
+Routes `/duelists` and `/duelists/<id>`, `live` since 02 TBD-D9 was resolved and the data landed (catalog 0.7.0). As built: no stage grouping (the game has no stages); rows show the portrait, the game's number, and the drop and deck counts.
 
 - **List** (`/duelists`): a search box and `CardRow`-like duelist rows (portrait placeholder, name, campaign stage), grouped by stage when the data has stages (TBD-D9); phones get one column, `md`+ a grid.
 - **Duelist page** (`/duelists/<id>`): header with name and stage; `Tabs` for **Drops** (default, the most looked-up) and **Deck**. Drops are split by rank (S/A-POW, B/C/D, S/A-TEC, per 02's draft; final list TBD-D9) with a segmented control, each card as a `CardRow` with a `PercentBar`. Sort by rate or ATK.
@@ -230,7 +225,7 @@ Routes `/duelists` and `/duelists/<id>`, `preview` until 02 TBD-D9 is resolved a
 - **TBD-F3:** What "Search card" should do: a quick look-up from any page (default, F-7), or something more: search by password, by description, or a "find cards like this" search?
 - **TBD-F4:** Fusion tool scope: two-card look-up plus the "uses" and "recipes" lists (default), or also a **hand simulator** (up to 5 cards, fused in order, as the game does)? The simulator needs the catalog to define how chained fusions resolve (02 TBD-D2 covers pairs only).
 - **TBD-F5:** Unfinished features in production: hidden behind the preview flag (default, keeps 06's "no empty screens"), or a visible "Coming soon" tab?
-- **TBD-F6:** Duelist portraits: none (default, initials in a frame) or linked from the wiki like card images (would extend 08)?
+- ~~**TBD-F6:**~~ Duelist portraits: none (default, initials in a frame) or linked from the wiki like card images (would extend 08)? **Resolved (owner, 2026-10-24): linked from the wiki**, Yugipedia's `Portal:Yu-Gi-Oh! Forbidden Memories characters` (every duelist has one; rematches reuse the first portrait), never from fan sites. Stored in each duelist file and checked like card images; initials remain the fallback when an image fails to load.
 
 ## Delivery
 

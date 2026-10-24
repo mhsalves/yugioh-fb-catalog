@@ -44,3 +44,9 @@ export const GUARDIAN_STARS = [
     "Moon",
     "Venus",
 ] as const;
+
+/**
+ * Drop rank categories: the three drop pools of every duelist, in the game's table order. The duel's rank picks
+ * the pool: S or A with a POW win, any B, C or D win, and S or A with a TEC win.
+ */
+export const DROP_RANKS = ["S/A-POW", "B/C/D", "S/A-TEC"] as const;

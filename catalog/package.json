@@ -1,6 +1,6 @@
 {
   "name": "@mhsalves/yugioh-fm-catalog",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
   "files": [

@@ -9,6 +9,8 @@ export interface IGameRules {
     /** The star each guardian star has the advantage over. */
     guardianStarAdvantage: Record<TGuardianStar, TGuardianStar>;
     guardianStarBonus: number;
+    /** What the weights of every deck and drop pool add up to. */
+    poolWeightTotal: number;
 }
 
 /** Number of cards in the game: ids 1 (Blue-eyes White Dragon) to 722 (Magician of Black Chaos). */
@@ -22,3 +24,9 @@ export const GUARDIAN_STAR_ADVANTAGE: Readonly<Record<TGuardianStar, TGuardianSt
 
 /** In battle, the advantaged card gets +GUARDIAN_STAR_BONUS and the disadvantaged card -GUARDIAN_STAR_BONUS. */
 export const GUARDIAN_STAR_BONUS: number = rules.guardianStarBonus;
+
+/**
+ * Every deck and drop pool's weights add up to 2048: the game rolls 1-2048 and walks the pool, so a card's
+ * chance is its weight / POOL_WEIGHT_TOTAL.
+ */
+export const POOL_WEIGHT_TOTAL: number = rules.poolWeightTotal;

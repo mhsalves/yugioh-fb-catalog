@@ -67,4 +67,4 @@ export interface ICardImageRef {
     crop?: IImageCrop;
 }
 
-// Duelists, deck pools and drops wait for TBD-D9 (duelist list, rank categories, weights vs percentages).
+// Duelists, deck pools and drops: ./duelist-types.ts.

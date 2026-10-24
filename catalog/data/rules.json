@@ -13,5 +13,6 @@
     "Moon": "Venus",
     "Venus": "Mercury"
   },
-  "guardianStarBonus": 500
+  "guardianStarBonus": 500,
+  "poolWeightTotal": 2048
 }
