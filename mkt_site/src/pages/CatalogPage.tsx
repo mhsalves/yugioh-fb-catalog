@@ -8,7 +8,7 @@ import {
     type CardId,
     type CardQuery,
     type TCardType,
-} from "@mhsalves/yugioh-fb-catalog";
+} from "@mhsalves/yugioh-fm-catalog";
 import {
     catalogUrl,
     countFilters,

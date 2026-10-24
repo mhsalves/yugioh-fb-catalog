@@ -70,7 +70,7 @@ The other options and why they were not chosen:
 Why JSON works for this project:
 - JSON can be edited in the GitHub web UI, so contributors need no tooling.
 - With a JSON Schema referenced through `$schema`, VS Code gives autocomplete and inline errors as you type. This keeps most of the "free validation" that TS gives today.
-- The same files can be shipped in the npm package (`@mhsalves/yugioh-fb-catalog/data/...`) for non-JS consumers ([05](./05-catalog-npm-distribution.md)).
+- The same files can be shipped in the npm package (`@mhsalves/yugioh-fm-catalog/data/...`) for non-JS consumers ([05](./05-catalog-npm-distribution.md)).
 - TS types are **inferred from** the schema (for example Zod's `z.infer<>`, with the JSON Schema exported from Zod), so there is still one source of truth. The schema library is TBD-A6.
 - JSON imports natively in Node, in bundlers and in any site stack ([06](./06-site-ux-forbidden-memories.md)).
 

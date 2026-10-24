@@ -1,5 +1,5 @@
 import { useEffect, useId } from "react";
-import { GUARDIAN_STARS, MONSTER_TYPES, type CardQuery, type NumberRange } from "@mhsalves/yugioh-fb-catalog";
+import { GUARDIAN_STARS, MONSTER_TYPES, type CardQuery, type NumberRange } from "@mhsalves/yugioh-fm-catalog";
 import { countFilters, hasMonsterFilters, monstersSelected, type RangeField } from "../catalogUrl";
 import { CloseIcon } from "./icons";
 

@@ -6,7 +6,7 @@ import {
     GUARDIAN_STAR_ADVANTAGE,
     type CardId,
     type ICard,
-} from "@mhsalves/yugioh-fb-catalog";
+} from "@mhsalves/yugioh-fm-catalog";
 import { getDroppedBy } from "../data/duelists";
 import { getFusionsFor, getFusionsWith } from "../data/fusions";
 import { isRouteVisible } from "../features";

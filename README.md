@@ -10,22 +10,22 @@ O repositório é um workspace Yarn com dois módulos:
 
 | Módulo | O que é | Linguagens e tecnologias | Documentação | Link |
 |---|---|---|---|---|
-| **Catalog** (`catalog/`) | Biblioteca npm com os dados das cartas e uma API de consulta tipada | TypeScript, JSON + JSON Schema, Zod, Vitest | [catalog/README.md](./catalog/README.md) | [npm](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog) |
+| **Catalog** (`catalog/`) | Biblioteca npm com os dados das cartas e uma API de consulta tipada | TypeScript, JSON + JSON Schema, Zod, Vitest | [catalog/README.md](./catalog/README.md) | [npm](https://www.npmjs.com/package/@mhsalves/yugioh-fm-catalog) |
 | **MKT Site** (`mkt_site/`) | Site público do catálogo, publicado no GitHub Pages | TypeScript, React, Vite, CSS puro | [mkt_site/README.md](./mkt_site/README.md) | [Site](https://matheusalves.dev/yugioh-fm-catalog) |
 
 ### Catalog
 
-Pacote npm [`@mhsalves/yugioh-fb-catalog`](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog): os dados de todas as 722 cartas (monstros, Magic, Equip, Trap e Ritual), as receitas de ritual e as regras do jogo (guardian stars e bônus de batalha), com funções puras e síncronas para consultá-los. Os dados ficam em JSON (`catalog/data/`), validados por JSON Schema e Zod, e são empacotados na biblioteca, sem chamadas de rede.
+Pacote npm [`@mhsalves/yugioh-fm-catalog`](https://www.npmjs.com/package/@mhsalves/yugioh-fm-catalog): os dados de todas as 722 cartas (monstros, Magic, Equip, Trap e Ritual), as receitas de ritual e as regras do jogo (guardian stars e bônus de batalha), com funções puras e síncronas para consultá-los. Os dados ficam em JSON (`catalog/data/`), validados por JSON Schema e Zod, e são empacotados na biblioteca, sem chamadas de rede.
 
 - **Linguagens:** TypeScript (compilado com `tsc`), dados em JSON
 - **Ferramentas:** Vitest (testes), Zod e JSON Schema (validação), tsx (scripts de dados)
 - **Documentação:** [catalog/README.md](./catalog/README.md) (uso e API), [catalog/docs/DATA.md](./catalog/docs/DATA.md) (modelo de dados), [catalog/CONTRIBUTING-DATA.md](./catalog/CONTRIBUTING-DATA.md) (como cadastrar dados), [catalog/CHANGELOG.md](./catalog/CHANGELOG.md)
-- **Link:** [npmjs.com/package/@mhsalves/yugioh-fb-catalog](https://www.npmjs.com/package/@mhsalves/yugioh-fb-catalog)
+- **Link:** [npmjs.com/package/@mhsalves/yugioh-fm-catalog](https://www.npmjs.com/package/@mhsalves/yugioh-fm-catalog)
 
 ```bash
-npm install @mhsalves/yugioh-fb-catalog
+npm install @mhsalves/yugioh-fm-catalog
 # ou
-yarn add @mhsalves/yugioh-fb-catalog
+yarn add @mhsalves/yugioh-fm-catalog
 ```
 
 ### MKT Site

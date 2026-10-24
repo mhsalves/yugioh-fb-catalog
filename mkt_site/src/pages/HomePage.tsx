@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent, type JSX, type ReactNode } from "react";
-import { getCardImage, getCardList, getRitual, MONSTER_TYPES, TOTAL_CARDS } from "@mhsalves/yugioh-fb-catalog";
+import { getCardImage, getCardList, getRitual, MONSTER_TYPES, TOTAL_CARDS } from "@mhsalves/yugioh-fm-catalog";
 import logoUrl from "../assets/logo.svg";
 import { catalogUrl } from "../catalogUrl";
 import {
@@ -18,7 +18,7 @@ import { Link, navigate } from "../router";
 import { SITE_TITLE, type RouteId } from "../routes";
 import { useCopy } from "../useCopy";
 
-const REPOSITORY_URL = "https://github.com/mhsalves/yugioh-fb-catalog";
+const REPOSITORY_URL = "https://github.com/mhsalves/yugioh-fm-catalog";
 const NPM_URL = `https://www.npmjs.com/package/${__CATALOG_NAME__}`;
 const AUTHOR = {
     name: "Matheus Alves",

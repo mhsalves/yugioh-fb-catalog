@@ -7,11 +7,11 @@ import { writeCardPages } from "./build/cardPages.ts";
 
 const require = createRequire(import.meta.url);
 // The catalog the site is built against (the workspace copy, spec 07 P-2), shown in the header.
-const catalog = require("@mhsalves/yugioh-fb-catalog/package.json") as { name: string; version: string };
+const catalog = require("@mhsalves/yugioh-fm-catalog/package.json") as { name: string; version: string };
 
 /** Base path for GitHub Pages project sites (spec 07 P-3). `SITE_BASE_PATH` overrides it for forks or a custom domain. */
 function basePath(production: boolean): string {
-    const raw = process.env.SITE_BASE_PATH ?? (production ? "/yugioh-fb-catalog" : "/");
+    const raw = process.env.SITE_BASE_PATH ?? (production ? "/yugioh-fm-catalog" : "/");
     const trimmed = raw.replace(/^\/+|\/+$/g, "");
     return trimmed ? `/${trimmed}/` : "/";
 }
@@ -59,5 +59,5 @@ export default defineConfig(({ command, isPreview }) => ({
     },
     // The workspace catalog is linked, not installed, so the dev server would serve its CommonJS build as-is and
     // named imports would fail. Pre-bundling converts it; the build handles CommonJS on its own.
-    optimizeDeps: { include: ["@mhsalves/yugioh-fb-catalog"] },
+    optimizeDeps: { include: ["@mhsalves/yugioh-fm-catalog"] },
 }));

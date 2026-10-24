@@ -1,5 +1,5 @@
 {
-  "name": "yugioh-fb-catalog-mkt-site",
+  "name": "yugioh-fm-catalog-mkt-site",
   "private": true,
   "version": "0.0.1",
   "author": "Matheus Alves <30807170+mhsalves@users.noreply.github.com>",
@@ -7,7 +7,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mhsalves/yugioh-fb-catalog.git"
+    "url": "git+ssh://git@github.com/mhsalves/yugioh-fm-catalog.git"
   },
   "scripts": {
     "dev": "vite",
@@ -16,14 +16,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mhsalves/yugioh-fb-catalog": "*",
+    "@mhsalves/yugioh-fm-catalog": "*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "bugs": {
-    "url": "https://github.com/mhsalves/yugioh-fb-catalog/issues"
+    "url": "https://github.com/mhsalves/yugioh-fm-catalog/issues"
   },
-  "homepage": "https://github.com/mhsalves/yugioh-fb-catalog#readme",
+  "homepage": "https://github.com/mhsalves/yugioh-fm-catalog#readme",
   "keywords": [
     "yugioh",
     "forbidden",

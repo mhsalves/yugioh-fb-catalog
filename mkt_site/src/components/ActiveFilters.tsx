@@ -1,4 +1,4 @@
-import type { CardQuery } from "@mhsalves/yugioh-fb-catalog";
+import type { CardQuery } from "@mhsalves/yugioh-fm-catalog";
 import { activeFilters } from "../catalogUrl";
 import { CloseIcon } from "./icons";
 

@@ -1,4 +1,4 @@
-import { getCardList, type CardId, type IFusion, type IMonsterCard } from "@mhsalves/yugioh-fb-catalog";
+import { getCardList, type CardId, type IFusion, type IMonsterCard } from "@mhsalves/yugioh-fm-catalog";
 
 // Sample data for the mocked catalog methods (spec 10 F-6, see ./pending.ts). Built from the real card list, so names,
 // images and stats are real, but every fusion, duelist, deck and drop rate here is made up. It is generated with a

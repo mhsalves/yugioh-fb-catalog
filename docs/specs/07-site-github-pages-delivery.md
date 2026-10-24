@@ -17,7 +17,7 @@ Build status as of 2026-10-20, `main` @ `9a353ee` (P-2 rechecked after the spec 
 |---|---|---|---|---|
 | P-1 | Deploy with GitHub Actions after site changes | Agreed | ✅ Built | `.github/workflows/pages.yml`; first deploy on 2026-10-20 (merge of #35). `gh-pages` package and `gh:deploy` removed |
 | P-2 | Site builds from the workspace catalog | Proposed | ✅ Built | Built by [01](./01-repository-and-workspaces.md) R-1: `mkt_site/` links the workspace `catalog/` (TBD-P2 still open) |
-| P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fb-catalog/` (`pages.yml` sets it from `actions/configure-pages`) |
+| P-3 | Configurable base path | Proposed | ✅ Built | `SITE_BASE_PATH` in `mkt_site/vite.config.ts`, default `/yugioh-fm-catalog/` (`pages.yml` sets it from `actions/configure-pages`) |
 | P-4 | Static hosting constraints | Proposed | ✅ Built | Static Vite SPA, links through the router's base-path helper, `dist/404.html` fallback with the site's own 404 view |
 | P-5 | PR previews | TBD | ❌ Not built | None (TBD-P4) |
 | P-6 | Publish API docs with the site | Proposed | ❌ Not built | No API docs generated |
@@ -31,12 +31,12 @@ Goal **G2**: the site must **keep being served from GitHub Pages**. Pages is fre
 | Item | Current state | Reference |
 |---|---|---|
 | Rendering | Vite + React SPA: `vite build` → static `dist/` (replaced the Next.js `output: 'export'` → `out/` on 2026-10-20, [06](./06-site-ux-forbidden-memories.md) U-4) | `mkt_site/vite.config.ts` |
-| Base path | `base` from `SITE_BASE_PATH`, default `/yugioh-fb-catalog/` for build and preview, `/` in dev | `mkt_site/vite.config.ts` |
+| Base path | `base` from `SITE_BASE_PATH`, default `/yugioh-fm-catalog/` for build and preview, `/` in dev | `mkt_site/vite.config.ts` |
 | Unknown paths | The build copies `index.html` to `404.html`; Pages serves it and the router renders the page or the 404 view | `mkt_site/vite.config.ts` |
 | Jekyll | No `.nojekyll` needed: the output has no `_`-prefixed folders | — |
 | Deploy | Automatic after a merge to `main` (P-1): `pages.yml` builds and deploys with `actions/deploy-pages`. No manual deploy script | `.github/workflows/pages.yml` |
 | Data source | The **workspace** catalog (`catalog/`, linked by Yarn; see [01](./01-repository-and-workspaces.md) R-1) | `mkt_site/package.json` |
-| URL | `https://mhsalves.github.io/yugioh-fb-catalog` | `README.md` |
+| URL | `https://mhsalves.github.io/yugioh-fm-catalog` | `README.md` |
 
 The table describes **today's** Next.js setup. The future stack is open ([06](./06-site-ux-forbidden-memories.md) U-4, TBD-U1). This spec is written so it applies to any static-site stack.
 
@@ -108,7 +108,7 @@ jobs:
 With workspaces ([01](./01-repository-and-workspaces.md) R-1), the site is built from the catalog source on `main`. Merged data goes live on the next deploy, with no npm publish needed (fixes P-gap-3). npm publishing ([05](./05-catalog-npm-distribution.md)) stays independent: the site may be ahead of the latest npm release. **TBD-P2:** is that acceptable, or should the site show only released data?
 
 ### P-3 Configurable base path · ✅ Built
-The base path is read from one environment variable (for example `SITE_BASE_PATH`), defaulting to `/yugioh-fb-catalog` in production and `''` in development. The workflow sets it from `actions/configure-pages` (`steps.pages.outputs.base_path`). Forks and a future custom domain then work without code edits (TBD-P3).
+The base path is read from one environment variable (for example `SITE_BASE_PATH`), defaulting to `/yugioh-fm-catalog` in production and `''` in development. The workflow sets it from `actions/configure-pages` (`steps.pages.outputs.base_path`). Forks and a future custom domain then work without code edits (TBD-P3).
 
 How it is wired depends on the stack ([06](./06-site-ux-forbidden-memories.md) U-4). With today's Vite site it is `base` in `vite.config.ts` (built).
 
@@ -131,7 +131,7 @@ Put the TypeDoc output ([04](./04-catalog-query-api.md) Q-8) in `mkt_site/dist/d
 
 - [x] Merging to `main` a PR that changes the site (or catalog data, while P-2 applies) deploys the site with no manual step, and a failing test blocks the deploy.
 - [ ] Merging a PR that changes only docs or tests does not deploy.
-- [x] `https://mhsalves.github.io/yugioh-fb-catalog/` and `/cards/425` load with no 404s on assets.
+- [x] `https://mhsalves.github.io/yugioh-fm-catalog/` and `/cards/425` load with no 404s on assets.
 - [x] Unknown URLs show the project's own 404 page.
 - [x] `gh-pages` package and `gh:*` scripts removed.
 - [x] The base path can be overridden by an environment variable.

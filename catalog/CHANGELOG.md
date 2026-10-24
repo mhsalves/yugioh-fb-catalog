@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
+All notable changes to `@mhsalves/yugioh-fm-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
+
+## 0.6.0
+
+### Changed
+
+- **Renamed** from `@mhsalves/yugioh-fb-catalog` to `@mhsalves/yugioh-fm-catalog` ("FM" for Forbidden Memories). The API and data are the same as 0.5.0. To migrate, install the new name and update your imports; the old package is deprecated and stays at 0.5.0.
 
 ## 0.5.0
 

@@ -1,6 +1,8 @@
-# @mhsalves/yugioh-fb-catalog
+# @mhsalves/yugioh-fm-catalog
 
 Card data for **Yu-Gi-Oh! Forbidden Memories** (PlayStation, 1999), with a small typed query API.
+
+> Formerly `@mhsalves/yugioh-fb-catalog`. Same API: install this name and update your imports.
 
 - All **722 cards**: 621 monsters, 33 Magic, 34 Equip, 10 Trap and 24 Ritual cards
 - All **24 ritual recipes**
@@ -11,9 +13,9 @@ Card data for **Yu-Gi-Oh! Forbidden Memories** (PlayStation, 1999), with a small
 ## Installation
 
 ```bash
-npm install @mhsalves/yugioh-fb-catalog
+npm install @mhsalves/yugioh-fm-catalog
 # or
-yarn add @mhsalves/yugioh-fb-catalog
+yarn add @mhsalves/yugioh-fm-catalog
 ```
 
 The package is CommonJS and works with both `import` and `require`.
@@ -21,7 +23,7 @@ The package is CommonJS and works with both `import` and `require`.
 ## Quick start
 
 ```ts
-import { getCard, getCardImage, searchCards, getRitual } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, getCardImage, searchCards, getRitual } from "@mhsalves/yugioh-fm-catalog";
 
 getCard(1);
 // {
@@ -66,7 +68,7 @@ Cards are identified by their **number in the game** (`id`, from 1 to 722). Ever
 | `getCardsByMonsterType(monsterType)` | `IMonsterCard[]`     | Every monster of one monster type, such as `"Dragon"` or `"Thunder"`.                   |
 
 ```ts
-import { getCard, getCardsByType, getCardsByMonsterType } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, getCardsByType, getCardsByMonsterType } from "@mhsalves/yugioh-fm-catalog";
 
 getCard(425)?.name; // "Thunder Dragon"
 getCard(9999); // undefined
@@ -138,7 +140,7 @@ searchCards({ text: "dragon", includeDescription: true });
 `getRitual(id)` returns the recipe of a ritual. You can look it up by the id of the **ritual card** or by the id of the **monster it summons**. It returns `undefined` when neither matches.
 
 ```ts
-import { getRitual, getCard } from "@mhsalves/yugioh-fb-catalog";
+import { getRitual, getCard } from "@mhsalves/yugioh-fm-catalog";
 
 getRitual(674); // { ritual: 674, result: 365, materials: [186, 261, 595] }
 getRitual(365); // the same recipe, found by the summoned monster
@@ -157,7 +159,7 @@ The package ships **links only, no images**. Every card has one: 618 are the car
 | `getCardImageSrcSet(id)`   | `string \| undefined`     | A `srcset` with the thumbnail and the full image. `undefined` for cropped images.            |
 
 ```ts
-import { getCardImage } from "@mhsalves/yugioh-fb-catalog";
+import { getCardImage } from "@mhsalves/yugioh-fm-catalog";
 
 getCardImage(425, "thumb");
 // {
@@ -177,7 +179,7 @@ getCardImage(580);
 - **When `crop` is set**, show only that rectangle, for example with a wrapper that has `overflow: hidden` and the crop's aspect ratio, and the image scaled and moved inside it.
 - **Fandom's CDN answers 403 without a `Referer`.** Web pages send one by default, so do not set `referrerpolicy="no-referrer"`. Servers, CLIs and apps that download the images must send their own.
 - **Credit the source** with `source.name` and a link to `source.pageUrl`. Yu-Gi-Oh! and its card artwork are © Kazuki Takahashi / Konami.
-- The images are captures of a PS1 game and look dull. The [site](https://mhsalves.github.io/yugioh-fb-catalog) lifts them with CSS: `filter: contrast(1.2) saturate(1.25) brightness(1.05)`.
+- The images are captures of a PS1 game and look dull. The [site](https://mhsalves.github.io/yugioh-fm-catalog) lifts them with CSS: `filter: contrast(1.2) saturate(1.25) brightness(1.05)`.
 
 ### Constants
 
@@ -198,7 +200,7 @@ The guardian star advantages form two cycles that never interact:
 The lists are useful to build filters and menus:
 
 ```ts
-import { MONSTER_TYPES, getCardsByMonsterType } from "@mhsalves/yugioh-fb-catalog";
+import { MONSTER_TYPES, getCardsByMonsterType } from "@mhsalves/yugioh-fm-catalog";
 
 const countByType = MONSTER_TYPES.map((type) => [type, getCardsByMonsterType(type).length]);
 ```
@@ -208,7 +210,7 @@ const countByType = MONSTER_TYPES.map((type) => [type, getCardsByMonsterType(typ
 All types are exported:
 
 ```ts
-import type { ICard, IMonsterCard, CardQuery, TMonsterType } from "@mhsalves/yugioh-fb-catalog";
+import type { ICard, IMonsterCard, CardQuery, TMonsterType } from "@mhsalves/yugioh-fm-catalog";
 ```
 
 ### Cards
@@ -313,15 +315,15 @@ interface IImageCrop {
 
 ## Data accuracy
 
-The cards come from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards) and were checked against two dumps of the game data. Where the wiki is wrong, the catalog follows the game; the corrected cards are listed in the [CHANGELOG](https://github.com/mhsalves/yugioh-fb-catalog/blob/main/catalog/CHANGELOG.md). Found a wrong value? [Open an issue](https://github.com/mhsalves/yugioh-fb-catalog/issues).
+The cards come from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards) and were checked against two dumps of the game data. Where the wiki is wrong, the catalog follows the game; the corrected cards are listed in the [CHANGELOG](https://github.com/mhsalves/yugioh-fm-catalog/blob/main/catalog/CHANGELOG.md). Found a wrong value? [Open an issue](https://github.com/mhsalves/yugioh-fm-catalog/issues).
 
 ## Versioning
 
-The package is in `0.x`: a minor version may contain breaking changes, marked **BREAKING** in the [CHANGELOG](https://github.com/mhsalves/yugioh-fb-catalog/blob/main/catalog/CHANGELOG.md), with migration notes.
+The package is in `0.x`: a minor version may contain breaking changes, marked **BREAKING** in the [CHANGELOG](https://github.com/mhsalves/yugioh-fm-catalog/blob/main/catalog/CHANGELOG.md), with migration notes.
 
 ## Contributing
 
-How the data is organized, how to add or fix a card and how to sync with the wiki: [catalog/docs/DATA.md](https://github.com/mhsalves/yugioh-fb-catalog/blob/main/catalog/docs/DATA.md) (in Portuguese).
+How the data is organized, how to add or fix a card and how to sync with the wiki: [catalog/docs/DATA.md](https://github.com/mhsalves/yugioh-fm-catalog/blob/main/catalog/docs/DATA.md) (in Portuguese).
 
 ## License
 

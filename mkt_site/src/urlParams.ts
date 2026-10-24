@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { CardId } from "@mhsalves/yugioh-fb-catalog";
+import type { CardId } from "@mhsalves/yugioh-fm-catalog";
 import { navigate, usePath, useSearch } from "./router";
 
 // A page's state in the query string (spec 10 F-4), the pattern catalogUrl.ts uses for the catalog.

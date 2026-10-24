@@ -58,7 +58,7 @@ jobs:
         run: yarn test
 
       - name: Build catalog
-        run: yarn workspace @mhsalves/yugioh-fb-catalog build
+        run: yarn workspace @mhsalves/yugioh-fm-catalog build
 
       - name: Read version
         id: version

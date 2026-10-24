@@ -27,7 +27,7 @@ Build status as of 2026-10-21, after the first CI release, `0.3.0` (`main` @ `86
 
 ## 1. Why this spec exists
 
-Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalves/yugioh-fb-catalog`. npm is how third-party apps (and today, the site) get the data. For that to be dependable, a release must be:
+Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalves/yugioh-fm-catalog`. npm is how third-party apps (and today, the site) get the data. For that to be dependable, a release must be:
 
 - **reproducible**: built by CI, not from whatever is on a laptop;
 - **correctly versioned**: consumers on `^0.x` must not get surprise breaking changes;
@@ -37,7 +37,7 @@ Goal **G4**: the catalog must **stay published on the npm registry** as `@mhsalv
 
 | Item | Current state | Reference |
 |---|---|---|
-| Name and version | `@mhsalves/yugioh-fb-catalog@0.3.0` (published: `0.0.1-alpha6`, `0.1.0`, `0.1.1`, `0.3.0`; `0.2.0` was never published) | `catalog/package.json`, `npm view` |
+| Name and version | `@mhsalves/yugioh-fm-catalog@0.3.0` (published: `0.0.1-alpha6`, `0.1.0`, `0.1.1`, `0.3.0`; `0.2.0` was never published) | `catalog/package.json`, `npm view` |
 | Build | `tsc` → `lib/`, CommonJS, ES2016, `.d.ts` | `catalog/tsconfig.json` |
 | Entry | `"main": "./lib/index.js"`. No `exports` map, no `types` field (resolved implicitly next to `main`) | `catalog/package.json` |
 | Contents | Controlled by `catalog/.npmignore`, a copy of `.gitignore` that also excludes `src/` and `tsconfig.json` | `catalog/.npmignore` |
@@ -155,7 +155,7 @@ How it works: when the workflow runs, GitHub Actions issues a short-lived OIDC i
 
 Why trusted publishing rather than an `NPM_TOKEN` secret:
 - **Nothing to leak or rotate.** There is no long-lived token in the repository secrets.
-- **Only the reviewed workflow can publish.** A token can be used from anywhere; trusted publishing is bound to `mhsalves/yugioh-fb-catalog` + `release.yml`. Combined with SHA-pinned actions ([01](./01-repository-and-workspaces.md) R-4), this makes the publish path tamper-resistant.
+- **Only the reviewed workflow can publish.** A token can be used from anywhere; trusted publishing is bound to `mhsalves/yugioh-fm-catalog` + `release.yml`. Combined with SHA-pinned actions ([01](./01-repository-and-workspaces.md) R-4), this makes the publish path tamper-resistant.
 - **Provenance for free.** No `--provenance` flag is needed.
 
 Requirements for the workflow:
@@ -168,7 +168,7 @@ One-time setup (needs npm package owner + repository admin):
 
 | # | Where | Step |
 |---|---|---|
-| 1 | npmjs.com → `@mhsalves/yugioh-fb-catalog` → Settings → **Trusted publishing** | Add a GitHub Actions publisher: owner `mhsalves`, repository `yugioh-fb-catalog`, workflow `release.yml`, environment `npm` (optional, TBD-N9) |
+| 1 | npmjs.com → `@mhsalves/yugioh-fm-catalog` → Settings → **Trusted publishing** | Add a GitHub Actions publisher: owner `mhsalves`, repository `yugioh-fm-catalog`, workflow `release.yml`, environment `npm` (optional, TBD-N9) |
 | 2 | npmjs.com → package Settings → Publishing access | After the first successful trusted publish, set **"Require two-factor authentication and disallow tokens"**, so the package can only be published through the trusted workflow |
 | 3 | npmjs.com → account → Access tokens | Revoke any existing automation/publish tokens used for manual publishing |
 | 4 | GitHub → Settings → Branches | Protect `main`: require PRs and require the `ci.yml` check (including the version-bump check) to pass |
@@ -180,7 +180,7 @@ Setup progress (checked 2026-10-21):
 
 | # | Step | State |
 |---|---|---|
-| 1 | Trusted publisher on npmjs.com | ✅ Done: `mhsalves/yugioh-fb-catalog`, `release.yml`, environment `npm`. Allowed actions: `npm publish` (needed for direct publishing; `npm stage publish` is always allowed). Validated by the `0.3.0` publish |
+| 1 | Trusted publisher on npmjs.com | ✅ Done: `mhsalves/yugioh-fm-catalog`, `release.yml`, environment `npm`. Allowed actions: `npm publish` (needed for direct publishing; `npm stage publish` is always allowed). Validated by the `0.3.0` publish |
 | 2 | "Require two-factor authentication and disallow tokens" | ❌ Not done |
 | 3 | Revoke old publish tokens | ❌ Not done |
 | 4 | Protect `main`, require `check` and `release-check` | ❌ Not done: the `Main` ruleset blocks deletion and force-pushes only |
@@ -226,13 +226,13 @@ The check cannot tell data from features, so patch versus minor for non-breaking
 Covered by [01](./01-repository-and-workspaces.md) R-4 step 5: `npm pack`, install the tarball into a scratch project, then `require` **and** `import` it and call `getCard(425)`. Optionally add `publint` and `@arethetypeswrong/cli` to lint the package shape.
 
 ### N-6 Size budget · ❌ Not built
-Track the packed size in CI. At about 722 cards plus relations, a few hundred KB is the expected ceiling (**TBD-N4**). If relations grow large, offer subpath entries (`@mhsalves/yugioh-fb-catalog/fusions`) so consumers load only what they use.
+Track the packed size in CI. At about 722 cards plus relations, a few hundred KB is the expected ceiling (**TBD-N4**). If relations grow large, offer subpath entries (`@mhsalves/yugioh-fm-catalog/fusions`) so consumers load only what they use.
 
 ### N-7 Also publish to GitHub Packages · ✅ Built
 **Agreed (2026-10-20, requested by the owner):** every release is also published to the **GitHub Packages npm registry** (`npm.pkg.github.com`), so the package shows under the repository's **Packages** sidebar next to the code.
 
 - **Same build, same version.** The `release.yml` job publishes the `lib/` it just built to npmjs.com first, then to GitHub Packages. npmjs.com stays the primary registry: README install instructions and the site point there.
-- **Name.** GitHub Packages requires the scope to match the owner. `@mhsalves/yugioh-fb-catalog` already does, so no rename is needed. The `repository` field in `catalog/package.json` links the package to this repository.
+- **Name.** GitHub Packages requires the scope to match the owner. `@mhsalves/yugioh-fm-catalog` already does, so no rename is needed. The `repository` field in `catalog/package.json` links the package to this repository.
 - **Auth.** The workflow's `GITHUB_TOKEN` with `packages: write` on the release job. It is short-lived and needs no setup or secret. Trusted publishing (N-2b) is an npmjs.com feature and does not apply here, and GitHub Packages shows no npm provenance.
 - **Separate npmrc.** The step writes its own `npmrc` for `npm.pkg.github.com`, so the npmjs.com config and `catalog/package.json` stay unchanged (no `publishConfig`, which would redirect `npm publish`).
 - **Safe to re-run.** If the version is already on GitHub Packages, the step skips it, the same way the npm step does.
@@ -246,7 +246,7 @@ Track the packed size in CI. At about 722 cards plus relations, a few hundred KB
 - [x] A PR that changes catalog code or data without a version bump fails CI (`release-check`; still to be made a required check).
 - [x] A PR whose CHANGELOG entry has `### BREAKING` with only a patch bump fails CI (N-3).
 - [ ] Re-running the release workflow for a version that is already published succeeds as a no-op.
-- [ ] `import { getCard } from "@mhsalves/yugioh-fb-catalog"` and `require(...)` both work, with types.
+- [ ] `import { getCard } from "@mhsalves/yugioh-fm-catalog"` and `require(...)` both work, with types.
 - [ ] `npm pack --dry-run` lists only `dist/`, `data/`, `schema/`, `README.md`, `LICENSE`, `package.json`.
 - [x] Every published version has a `CHANGELOG.md` entry, from `0.1.1` on (enforced by `release-check`; `0.0.1-alpha6` and `0.1.0` predate the changelog).
 - [x] Each version published by CI shows npm provenance, from `0.3.0` on (earlier versions were published by hand).

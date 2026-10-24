@@ -1,4 +1,4 @@
-import type { ICard } from "@mhsalves/yugioh-fb-catalog";
+import type { ICard } from "@mhsalves/yugioh-fm-catalog";
 import { cardPath, href } from "../router";
 import { useCopy } from "../useCopy";
 import { CheckIcon, ShareIcon } from "./icons";

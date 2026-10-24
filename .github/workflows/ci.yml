@@ -80,15 +80,15 @@ jobs:
           npm pack --pack-destination "$RUNNER_TEMP"
           mkdir "$RUNNER_TEMP/smoke" && cd "$RUNNER_TEMP/smoke"
           npm init -y > /dev/null
-          npm install "$RUNNER_TEMP"/mhsalves-yugioh-fb-catalog-*.tgz
+          npm install "$RUNNER_TEMP"/mhsalves-yugioh-fm-catalog-*.tgz
           node -e '
-            const catalog = require("@mhsalves/yugioh-fb-catalog");
+            const catalog = require("@mhsalves/yugioh-fm-catalog");
             if (!catalog.getCardList().length) throw new Error("require: packed catalog has no cards");
             if (catalog.getCard(425)?.id !== 425) throw new Error("require: getCard(425) failed");
             console.log(`require OK: ${catalog.getCardList().length} cards`);
           '
           node --input-type=module -e '
-            import { getCard, getCardList } from "@mhsalves/yugioh-fb-catalog";
+            import { getCard, getCardList } from "@mhsalves/yugioh-fm-catalog";
             if (!getCardList().length) throw new Error("import: packed catalog has no cards");
             if (getCard(425)?.id !== 425) throw new Error("import: getCard(425) failed");
             console.log(`import OK: ${getCardList().length} cards`);

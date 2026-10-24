@@ -1,6 +1,6 @@
 # Dados do catálogo
 
-Como os dados do `@mhsalves/yugioh-fb-catalog` ficam organizados no repositório, como contribuir e como sincronizar com a Yu-Gi-Oh! Wiki. Para usar a biblioteca, veja o [README](../README.md).
+Como os dados do `@mhsalves/yugioh-fm-catalog` ficam organizados no repositório, como contribuir e como sincronizar com a Yu-Gi-Oh! Wiki. Para usar a biblioteca, veja o [README](../README.md).
 
 ## Estrutura dos Dados
 

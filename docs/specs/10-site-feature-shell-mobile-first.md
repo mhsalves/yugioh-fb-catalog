@@ -67,7 +67,7 @@ The catalog does not have the data for two of the three features yet (fusions: 0
 | Card details | Side panel on desktop, full screen on phones, `?card=` in the URL, Back closes it | `components/CardDetails.tsx`, `catalogUrl.ts` |
 | Phone sheets | `Filters` and `CardDetails` each have their own full-screen phone CSS, Esc handling and focus code | `components/Filters.tsx`, `components/CardDetails.tsx`, `styles.css` |
 | CSS | One file. Desktop is the base; phones are `@media (max-width: 720px)` and `(max-width: 400px)`; tablets `721–1199px` | `src/styles.css` |
-| Catalog API used | `searchCards`, `getCard`, `getCardList`, `getRitual`, `getCardImage*`, enums | `@mhsalves/yugioh-fb-catalog` |
+| Catalog API used | `searchCards`, `getCard`, `getCardList`, `getRitual`, `getCardImage*`, enums | `@mhsalves/yugioh-fm-catalog` |
 
 ## 3. Gaps
 

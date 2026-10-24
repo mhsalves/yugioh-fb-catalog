@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getCardImage, getCardImageSrcSet, type CardId, type ImageSize } from "@mhsalves/yugioh-fb-catalog";
+import { getCardImage, getCardImageSrcSet, type CardId, type ImageSize } from "@mhsalves/yugioh-fm-catalog";
 
 /**
  * A card's picture, linked from the Yu-Gi-Oh! Wiki (spec 08 I-4). Returns null when the card has no
