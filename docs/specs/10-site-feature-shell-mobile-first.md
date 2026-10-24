@@ -158,6 +158,7 @@ A **quick look-up from anywhere**, separate from the catalog's filters. Works wi
 - **Desktop:** a search field in the header; `/` focuses it from any page (06 §4); results in a dropdown (`role="combobox"` + `listbox`, arrow keys, `Enter` opens the card's details).
 - **Matches** by name today. An `#id` or a number (`425`) jumps to that card (`searchCards({ ids: [425] })`). Searching by **password** (8 digits) needs a catalog field in `CardQuery` (04 follow-up), not site code.
 - Picking a result opens the card's details on the current page (F-5), so search does not lose the player's place.
+- **No filters here.** The filter panel (09 C-2) stays on the Cards page only (owner request, 2026-10-23); quick search is text only, with "Show all N in the catalog" handing over to the Cards page and its filters. Fusion and Duelists pages do not get the panel either; their `CardPicker` may be limited by a fixed `CardQuery` (for example monsters only), not a user-facing filter.
 
 ### F-8 Fusion tool · ❌ Not built · TBD-F4
 Route `/fusion`, `preview` until the catalog has fusion data and the Q-5 functions. Three modes in a segmented control, each kept in the URL (`useUrlState`):
