@@ -220,7 +220,7 @@ body:has(.catalog[data-panel="true"]) .footer__bar {
     font-size: 1.125rem;
 }
 
-/* Footer */
+/* Footer: two short lines (Footer.tsx) */
 
 .footer {
     border-top: 1px solid var(--color-border);
@@ -230,13 +230,11 @@ body:has(.catalog[data-panel="true"]) .footer__bar {
 
 .footer__bar {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px 24px;
+    flex-direction: column;
+    gap: 2px;
     max-width: var(--page-width);
     margin: 0 auto;
-    padding: 16px var(--gutter);
+    padding: 12px var(--gutter);
     transition: padding-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -245,24 +243,16 @@ body:has(.catalog[data-panel="true"]) .footer__bar {
     color: var(--color-text-muted);
 }
 
-.footer__links {
-    display: flex;
-    gap: 16px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+/* Inline links with the height of a tap target */
+.footer__credit a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
 }
 
 .footer__notice {
-    flex-basis: 100%;
     font-size: 0.75rem;
-}
-
-.footer__links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
 }
 
 @media (min-width: 721px) {
