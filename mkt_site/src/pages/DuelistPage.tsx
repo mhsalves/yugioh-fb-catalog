@@ -151,13 +151,13 @@ export default function DuelistPage({ id }: { id: string }) {
                             </a>
                         </p>
                     )}
-                    <dl className="duelist-stats">
-                        <Stat label="Deck pool" value={deck.length} />
-                        {drops.map(([item, rows]) => (
-                            <Stat key={item} label={`${item} drops`} value={rows.length} />
-                        ))}
-                    </dl>
                 </div>
+                <dl className="duelist-stats">
+                    <Stat label="Deck pool" value={deck.length} />
+                    {drops.map(([item, rows]) => (
+                        <Stat key={item} label={`${item} drops`} value={rows.length} />
+                    ))}
+                </dl>
                 <nav className="duelist-hero__nav" aria-label="Other duelists">
                     <NeighborLink duelist={all[index - 1]} direction="prev" />
                     <NeighborLink duelist={all[index + 1]} direction="next" />

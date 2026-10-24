@@ -518,9 +518,10 @@ body:has(.duelist-page[data-panel="true"]) .page {
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
         "portrait info"
+        "stats stats"
         "nav nav";
     align-items: center;
-    gap: 16px;
+    gap: 14px 16px;
     padding: 16px;
     border: 1px solid var(--color-border);
     border-radius: calc(var(--radius) * 1.5);
@@ -551,8 +552,8 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
 .duelist-hero .duelist-portrait--large {
     grid-area: portrait;
-    width: 96px;
-    height: 96px;
+    width: 76px;
+    height: 76px;
     border-width: 3px;
     box-shadow:
         0 0 0 6px rgb(212 169 55 / 15%),
@@ -580,10 +581,6 @@ body:has(.duelist-page[data-panel="true"]) .page {
     animation-delay: 140ms;
 }
 
-.duelist-hero__info > :nth-child(4) {
-    animation-delay: 210ms;
-}
-
 .duelist-hero__eyebrow {
     margin: 0;
     color: var(--color-accent);
@@ -606,13 +603,20 @@ body:has(.duelist-page[data-panel="true"]) .page {
 }
 
 .duelist-stats {
+    grid-area: stats;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    margin: 12px 0 0;
+    margin: 0;
+    animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 210ms both;
 }
 
+/* Label on top, number at the bottom: tiles line up even when a label is longer. */
 .duelist-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
     padding: 8px 12px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -621,8 +625,11 @@ body:has(.duelist-page[data-panel="true"]) .page {
 }
 
 .duelist-stat dt {
+    overflow: hidden;
     color: var(--color-text-muted);
     font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .duelist-stat dd {
@@ -636,8 +643,8 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
 .duelist-hero__nav {
     grid-area: nav;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 280ms both;
 }
@@ -647,7 +654,6 @@ body:has(.duelist-page[data-panel="true"]) .page {
     align-items: center;
     gap: 8px;
     min-width: 0;
-    max-width: 50%;
     min-height: 44px;
     padding: 6px 10px;
     border: 1px solid var(--color-border);
@@ -669,7 +675,7 @@ body:has(.duelist-page[data-panel="true"]) .page {
 }
 
 .duelist-neighbor--next {
-    margin-left: auto;
+    justify-content: flex-end;
     text-align: right;
 }
 
@@ -905,8 +911,20 @@ body:has(.duelist-page[data-panel="true"]) .page {
     }
 
     .duelist-hero {
-        gap: 20px 28px;
+        grid-template-areas:
+            "portrait info"
+            "portrait stats"
+            "nav nav";
+        gap: 16px 28px;
         padding: 24px 28px;
+    }
+
+    .duelist-hero__info {
+        align-self: end;
+    }
+
+    .duelist-stats {
+        align-self: start;
     }
 
     .duelist-hero .duelist-portrait--large {
@@ -917,6 +935,10 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
     .duelist-stats {
         grid-template-columns: repeat(4, minmax(0, 160px));
+    }
+
+    .duelist-stat {
+        gap: 2px;
     }
 
     .duelist-controls .tabs {
@@ -934,21 +956,20 @@ body:has(.duelist-page[data-panel="true"]) .page {
 @media (min-width: 1200px) {
     .duelist-hero {
         grid-template-columns: auto minmax(0, 1fr) minmax(220px, 280px);
-        grid-template-areas: "portrait info nav";
+        grid-template-areas:
+            "portrait info nav"
+            "portrait stats nav";
     }
 
     .duelist-hero__nav {
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: center;
         align-self: stretch;
-        justify-content: center;
-    }
-
-    .duelist-neighbor {
-        max-width: none;
     }
 
     .duelist-neighbor--next {
-        margin-left: 0;
+        justify-content: flex-start;
+        text-align: left;
     }
 
     /* All three ranks side by side, to compare them; the rank chips are not needed. */
