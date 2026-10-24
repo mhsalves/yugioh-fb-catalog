@@ -1,0 +1,149 @@
+{
+  "$schema": "../../../schema/monster-list.schema.json",
+  "cards": [
+    {
+      "id": 51,
+      "name": "Armored Lizard",
+      "description": "A lizard with a very tough hide and a very vicious bite.",
+      "cardType": "Monster",
+      "password": { "code": "15480588", "cost": 999999 },
+      "monsterType": "Reptile",
+      "level": 4,
+      "attack": 1500,
+      "defense": 1200,
+      "guardianStars": ["Neptune", "Sun"]
+    },
+    {
+      "id": 76,
+      "name": "Krokodilus",
+      "description": "A vicious crocodile with intelligence. Hard scales from a natural armor for this creature.",
+      "cardType": "Monster",
+      "password": { "code": "76512652", "cost": 80 },
+      "monsterType": "Reptile",
+      "level": 4,
+      "attack": 1100,
+      "defense": 1200,
+      "guardianStars": ["Neptune", "Jupiter"]
+    },
+    {
+      "id": 77,
+      "name": "Grappler",
+      "description": "A devious snake with a think body that wraps around an enemy monster and squeezes the life out of it.",
+      "cardType": "Monster",
+      "password": { "code": "02906250", "cost": 100 },
+      "monsterType": "Reptile",
+      "level": 4,
+      "attack": 1300,
+      "defense": 1200,
+      "guardianStars": ["Neptune", "Saturn"]
+    },
+    {
+      "id": 285,
+      "name": "Serpent Marauder",
+      "description": "A snake with a single eye that blows an icy breath to freeze its opponents.",
+      "cardType": "Monster",
+      "password": { "code": "82742611", "cost": 30 },
+      "monsterType": "Reptile",
+      "level": 2,
+      "attack": 700,
+      "defense": 600,
+      "guardianStars": ["Sun", "Neptune"]
+    },
+    {
+      "id": 381,
+      "name": "Toon Alligator",
+      "description": "An alligator monster straight from the cartoons.",
+      "cardType": "Monster",
+      "password": { "code": "59383041", "cost": 120 },
+      "monsterType": "Reptile",
+      "level": 4,
+      "attack": 800,
+      "defense": 1600,
+      "guardianStars": ["Neptune", "Mars"]
+    },
+    {
+      "id": 400,
+      "name": "Emperor of the Land and Sea",
+      "description": "A fire-breathing reptilian monster.",
+      "cardType": "Monster",
+      "password": { "code": "11250655", "cost": 290 },
+      "monsterType": "Reptile",
+      "level": 5,
+      "attack": 1800,
+      "defense": 1500,
+      "guardianStars": ["Neptune", "Venus"]
+    },
+    {
+      "id": 475,
+      "name": "Sinister Serpent",
+      "description": "A flying poison snake that is not very good at maneuvering on the ground.",
+      "cardType": "Monster",
+      "password": { "code": "08131171", "cost": 10 },
+      "monsterType": "Reptile",
+      "level": 1,
+      "attack": 300,
+      "defense": 250,
+      "guardianStars": ["Neptune", "Jupiter"]
+    },
+    {
+      "id": 536,
+      "name": "Mechaleon",
+      "description": "A chameleon-like monster that can hide anywhere by changing colors.",
+      "cardType": "Monster",
+      "password": { "code": "94412545", "cost": 30 },
+      "monsterType": "Reptile",
+      "level": 2,
+      "attack": 800,
+      "defense": 600,
+      "guardianStars": ["Neptune", "Saturn"]
+    },
+    {
+      "id": 566,
+      "name": "Yormungarde",
+      "description": "A very long snake that often appears in legends and myths.",
+      "cardType": "Monster",
+      "password": { "code": "17115745", "cost": 60 },
+      "monsterType": "Reptile",
+      "level": 3,
+      "attack": 1200,
+      "defense": 900,
+      "guardianStars": ["Neptune", "Moon"]
+    },
+    {
+      "id": 569,
+      "name": "Drooling Lizard",
+      "description": "A blood-sucking snake in human form that attacks any living thing that passes nearby.",
+      "cardType": "Monster",
+      "password": { "code": "16353197", "cost": 40 },
+      "monsterType": "Reptile",
+      "level": 3,
+      "attack": 900,
+      "defense": 800,
+      "guardianStars": ["Neptune", "Venus"]
+    },
+    {
+      "id": 590,
+      "name": "Beaked Snake",
+      "description": "Wraps its coils around opponents and pecks them with its huge beak.",
+      "cardType": "Monster",
+      "password": { "code": "06103114", "cost": 40 },
+      "monsterType": "Reptile",
+      "level": 3,
+      "attack": 800,
+      "defense": 900,
+      "guardianStars": ["Neptune", "Jupiter"]
+    },
+    {
+      "id": 630,
+      "name": "Ancient Lizard Warrior",
+      "description": "A powerful prehistoric lizard warrior.",
+      "cardType": "Monster",
+      "password": { "code": "43230671", "cost": 100 },
+      "monsterType": "Reptile",
+      "level": 4,
+      "attack": 1400,
+      "defense": 1100,
+      "guardianStars": ["Neptune", "Saturn"]
+    }
+  ]
+}

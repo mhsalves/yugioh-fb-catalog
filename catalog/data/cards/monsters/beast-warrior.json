@@ -1,0 +1,161 @@
+{
+  "$schema": "../../../schema/monster-list.schema.json",
+  "cards": [
+    {
+      "id": 3,
+      "name": "Hitotsu-me Giant",
+      "description": "A one-eyed behemoth with thick, powerful arms made for delivering punishing blows.",
+      "cardType": "Monster",
+      "password": { "code": "76184692", "cost": 70 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1200,
+      "defense": 1000,
+      "guardianStars": ["Moon", "Mars"]
+    },
+    {
+      "id": 14,
+      "name": "Battle Steer",
+      "description": "A bull monster often found in the woods. Charges enemy monsters with a pair of razor-sharp horns.",
+      "cardType": "Monster",
+      "password": { "code": "18246479", "cost": 230 },
+      "monsterType": "Beast-Warrior",
+      "level": 5,
+      "attack": 1800,
+      "defense": 1300,
+      "guardianStars": ["Moon", "Uranus"]
+    },
+    {
+      "id": 26,
+      "name": "Battle Ox",
+      "description": "A monster with tremendous power. Destroys enemies with a swing of its axe.",
+      "cardType": "Monster",
+      "password": { "code": "05053103", "cost": 999999 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1700,
+      "defense": 1000,
+      "guardianStars": ["Jupiter", "Moon"]
+    },
+    {
+      "id": 27,
+      "name": "Beaver Warrior",
+      "description": "What this creature lacks in size, it makes up for in defense when battling in the meadow.",
+      "cardType": "Monster",
+      "password": { "code": "32452818", "cost": 140 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1200,
+      "defense": 1500,
+      "guardianStars": ["Jupiter", "Venus"]
+    },
+    {
+      "id": 29,
+      "name": "Mountain Warrior",
+      "description": "A solid warrior that can move swiftly over rough terrain.",
+      "cardType": "Monster",
+      "password": { "code": "04931562", "cost": 35 },
+      "monsterType": "Beast-Warrior",
+      "level": 3,
+      "attack": 600,
+      "defense": 1000,
+      "guardianStars": ["Uranus", "Mars"]
+    },
+    {
+      "id": 64,
+      "name": "Tiger Axe",
+      "description": "A fast and powerful axe-wielding beast warrior.",
+      "cardType": "Monster",
+      "password": { "code": "49791927", "cost": 999999 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1300,
+      "defense": 1100,
+      "guardianStars": ["Jupiter", "Neptune"]
+    },
+    {
+      "id": 68,
+      "name": "Garoozis",
+      "description": "An axe-swinging beast warrior with the head of a dragon.",
+      "cardType": "Monster",
+      "password": { "code": "14977074", "cost": 290 },
+      "monsterType": "Beast-Warrior",
+      "level": 5,
+      "attack": 1800,
+      "defense": 1500,
+      "guardianStars": ["Mars", "Venus"]
+    },
+    {
+      "id": 92,
+      "name": "Rabid Horseman",
+      "description": "A powerful and unstoppable combination of bull and horse.",
+      "cardType": "Monster",
+      "password": { "code": "94905343", "cost": 999999 },
+      "monsterType": "Beast-Warrior",
+      "level": 6,
+      "attack": 2000,
+      "defense": 1700,
+      "guardianStars": ["Jupiter", "Pluto"]
+    },
+    {
+      "id": 219,
+      "name": "Solitude",
+      "description": "A beast-warrior that swings a massive scythe that draws on the spirit of its enemies to deliver devastating blows.",
+      "cardType": "Monster",
+      "password": { "code": "84794011", "cost": 55 },
+      "monsterType": "Beast-Warrior",
+      "level": 3,
+      "attack": 1050,
+      "defense": 1000,
+      "guardianStars": ["Moon", "Uranus"]
+    },
+    {
+      "id": 246,
+      "name": "One Who Hunts Souls",
+      "description": "A creature with a sword that gains its power from the life forces of its victims.",
+      "cardType": "Monster",
+      "password": { "code": "03606209", "cost": 60 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1100,
+      "defense": 1000,
+      "guardianStars": ["Moon", "Mercury"]
+    },
+    {
+      "id": 287,
+      "name": "Ogre of the Black Shadow",
+      "description": "An ogre possessed by the powers of the dark. Few can withstand its rapid charge.",
+      "cardType": "Monster",
+      "password": { "code": "45121025", "cost": 120 },
+      "monsterType": "Beast-Warrior",
+      "level": 4,
+      "attack": 1200,
+      "defense": 1400,
+      "guardianStars": ["Moon", "Saturn"]
+    },
+    {
+      "id": 382,
+      "name": "Rude Kaiser",
+      "description": "With an axe in each hand, this monster delivers heavy damage.",
+      "cardType": "Monster",
+      "password": { "code": "26378150", "cost": 320 },
+      "monsterType": "Beast-Warrior",
+      "level": 5,
+      "attack": 1800,
+      "defense": 1600,
+      "guardianStars": ["Uranus", "Sun"]
+    },
+    {
+      "id": 627,
+      "name": "Nekogal #2",
+      "description": "This fast creature can easily elude enemy attacks and counter them with its vicious claws.",
+      "cardType": "Monster",
+      "password": { "code": "43352213", "cost": 550 },
+      "monsterType": "Beast-Warrior",
+      "level": 6,
+      "attack": 1900,
+      "defense": 2000,
+      "guardianStars": ["Jupiter", "Uranus"]
+    }
+  ]
+}

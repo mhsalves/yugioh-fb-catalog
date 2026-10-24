@@ -2,6 +2,15 @@
 
 All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.4.0
+
+### Added
+
+- **698 of the 722 cards** (was 5): 598 monsters across all 20 monster types, 33 Magic, 34 Equip, 10 Trap and 23 Ritual cards, imported from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) with `yarn data:sync` (spec 03 A-5). The wiki's text is CC BY-SA 3.0; see the attribution in the README.
+- **24 ritual recipes** (was 1) in `getRitual()`, one for every ritual card.
+
+The 24 cards the wiki gives no password or starchip cost for (ritual results and story cards, such as 364 Black Luster Soldier, 380 Blue-eyes Ultimate Dragon and 701–722) are not in the catalog yet. A recipe that summons one of them still lists its id.
+
 ## 0.3.0
 
 ### Added

@@ -1,4 +1,29 @@
 {
   "$schema": "../schema/rituals.schema.json",
-  "rituals": [{ "ritual": 674, "result": 365, "materials": [186, 261, 595] }]
+  "rituals": [
+    { "ritual": 665, "result": 362, "materials": [255, 296, 629] },
+    { "ritual": 666, "result": 357, "materials": [29, 31, 101] },
+    { "ritual": 667, "result": 374, "materials": [371, 372, 373] },
+    { "ritual": 670, "result": 364, "materials": [27, 38, 58] },
+    { "ritual": 671, "result": 360, "materials": [85, 298, 377] },
+    { "ritual": 673, "result": 356, "materials": [201, 403, 483] },
+    { "ritual": 674, "result": 365, "materials": [186, 261, 595] },
+    { "ritual": 675, "result": 380, "materials": [1, 1, 1] },
+    { "ritual": 676, "result": 701, "materials": [249, 395, 511] },
+    { "ritual": 677, "result": 702, "materials": [14, 295, 547] },
+    { "ritual": 678, "result": 703, "materials": [3, 64, 453] },
+    { "ritual": 679, "result": 704, "materials": [160, 161, 535] },
+    { "ritual": 680, "result": 705, "materials": [6, 47, 571] },
+    { "ritual": 691, "result": 706, "materials": [168, 294, 604] },
+    { "ritual": 692, "result": 710, "materials": [89, 449, 451] },
+    { "ritual": 693, "result": 720, "materials": [102, 182, 220] },
+    { "ritual": 694, "result": 709, "materials": [178, 269, 288] },
+    { "ritual": 695, "result": 715, "materials": [166, 405, 416] },
+    { "ritual": 696, "result": 717, "materials": [52, 480, 533] },
+    { "ritual": 697, "result": 716, "materials": [239, 378, 621] },
+    { "ritual": 698, "result": 708, "materials": [266, 635, 638] },
+    { "ritual": 699, "result": 719, "materials": [146, 479, 485] },
+    { "ritual": 700, "result": 718, "materials": [436, 441, 542] },
+    { "ritual": 721, "result": 722, "materials": [7, 35, 417] }
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@mhsalves/yugioh-fb-catalog",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
   "files": [

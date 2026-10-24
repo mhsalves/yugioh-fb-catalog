@@ -2,11 +2,165 @@
   "$schema": "../../schema/ritual-list.schema.json",
   "cards": [
     {
+      "id": 665,
+      "name": "Curse of Millennium Shield",
+      "description": "Sacrifices the monster with the highest defense rating and summons Shield.",
+      "cardType": "Ritual",
+      "password": { "code": "83094937", "cost": 10 }
+    },
+    {
+      "id": 666,
+      "name": "Yamadron Ritual",
+      "description": "Sacrifices Beast-Warrior, Dragon and Pyro monsters to summon Yamadron.",
+      "cardType": "Ritual",
+      "password": { "code": "29089635", "cost": 10 }
+    },
+    {
+      "id": 667,
+      "name": "Gate Guardian Ritual",
+      "description": "Sacrifices Kazejin, Suijin and Sanga of the Thunder to summon Gate Guardian.",
+      "cardType": "Ritual",
+      "password": { "code": "56483330", "cost": 999999 }
+    },
+    {
+      "id": 670,
+      "name": "Black Luster Ritual",
+      "description": "Ceremony conducted to summon Black Luster Soldier. Sacrifice required.",
+      "cardType": "Ritual",
+      "password": { "code": "55761792", "cost": 100 }
+    },
+    {
+      "id": 671,
+      "name": "Zera Ritual",
+      "description": "Ceremony conducted to summon Zera. Sacrifice required.",
+      "cardType": "Ritual",
+      "password": { "code": "81756897", "cost": 100 }
+    },
+    {
+      "id": 673,
+      "name": "War-lion Ritual",
+      "description": "Ceremony conducted to summon War Lion. Sacrifice required.",
+      "cardType": "Ritual",
+      "password": { "code": "54539105", "cost": 100 }
+    },
+    {
       "id": 674,
       "name": "Beastry Mirror Ritual",
       "description": "Ceremony conducted to summon Fiend's Mirror. Sacrifice required.",
       "cardType": "Ritual",
       "password": { "code": "81933259", "cost": 100 }
+    },
+    {
+      "id": 675,
+      "name": "Ultimate Dragon",
+      "description": "Sacrifice three Blue-eyes to summon Ultimate Dragon.",
+      "cardType": "Ritual",
+      "password": { "code": "17928958", "cost": 999999 }
+    },
+    {
+      "id": 676,
+      "name": "Commencement Dance",
+      "description": "Sacrifice Dancer and Warrior to summon Performance of Sword.",
+      "cardType": "Ritual",
+      "password": { "code": "43417563", "cost": 50 }
+    },
+    {
+      "id": 677,
+      "name": "Hamburger Recipe",
+      "description": "A card with the ingredients for making a delicious hamburger.",
+      "cardType": "Ritual",
+      "password": { "code": "80811661", "cost": 50 }
+    },
+    {
+      "id": 678,
+      "name": "Revival of Sennen Genjin",
+      "description": "Sacrifice Beast-Warrior and Golem to summon Sengenjin.",
+      "cardType": "Ritual",
+      "password": { "code": "16206366", "cost": 50 }
+    },
+    {
+      "id": 679,
+      "name": "Novox's Prayer",
+      "description": "Sacrifice Warrior and Scythe Wielder to summon Skull Guardian.",
+      "cardType": "Ritual",
+      "password": { "code": "43694075", "cost": 50 }
+    },
+    {
+      "id": 680,
+      "name": "Curse of Tri-Horned Dragon",
+      "description": "Sacrifice a horned monster to summon Tri-horned Dragon.",
+      "cardType": "Ritual",
+      "password": { "code": "79699070", "cost": 50 }
+    },
+    {
+      "id": 691,
+      "name": "Revived of Serpent Night Dragon",
+      "description": "Select a specific monster for sacrifice and summon Serpent Night Dragon.",
+      "cardType": "Ritual",
+      "password": { "code": "39411600", "cost": 50 }
+    },
+    {
+      "id": 692,
+      "name": "Turtle Oath",
+      "description": "Sacrifice crab and turtle to summon Crab Turtle.",
+      "cardType": "Ritual",
+      "password": { "code": "76806714", "cost": 100 }
+    },
+    {
+      "id": 693,
+      "name": "Contruct of Mask",
+      "description": "Sacrifice a masked one to summon a new mask.",
+      "cardType": "Ritual",
+      "password": { "code": "02304453", "cost": 100 }
+    },
+    {
+      "id": 694,
+      "name": "Resurrection of Chakra",
+      "description": "Sacrifice 3 Fiend monsters to conduct the ritual for the Resurrection of Chakra.",
+      "cardType": "Ritual",
+      "password": { "code": "39399168", "cost": 100 }
+    },
+    {
+      "id": 695,
+      "name": "Puppet Ritual",
+      "description": "Sacrifice Puppeteer and Machine Monsters to summon the puppet.",
+      "cardType": "Ritual",
+      "password": { "code": "05783166", "cost": 50 }
+    },
+    {
+      "id": 696,
+      "name": "Javelin Beetle Pact",
+      "description": "Sacrifice the stag beetle and beetle to summon Javelin Beetle.",
+      "cardType": "Ritual",
+      "password": { "code": "41182875", "cost": 999999 }
+    },
+    {
+      "id": 697,
+      "name": "Garma Sword Oath",
+      "description": "Sacrifice the Ashura's Arm and Sword-wielder to summon.",
+      "cardType": "Ritual",
+      "password": { "code": "78577570", "cost": 50 }
+    },
+    {
+      "id": 698,
+      "name": "Cosmo Queen's Prayer",
+      "description": "Sacrifice a normal Queen to summon Cosmo Queen.",
+      "cardType": "Ritual",
+      "password": { "code": "04561679", "cost": 50 }
+    },
+    {
+      "id": 699,
+      "name": "Revival of Skeleton Rider",
+      "description": "Sacrifice Temple and Cockroach to summon Dokurorider.",
+      "cardType": "Ritual",
+      "password": { "code": "31066283", "cost": 10 }
+    },
+    {
+      "id": 700,
+      "name": "Fortress Whale's Oath",
+      "description": "Sacrifice Horn and Machine Fish to summon Sea Fortress.",
+      "cardType": "Ritual",
+      "password": { "code": "77454922", "cost": 10 }
     }
   ]
 }

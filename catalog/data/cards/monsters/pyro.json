@@ -1,0 +1,113 @@
+{
+  "$schema": "../../../schema/monster-list.schema.json",
+  "cards": [
+    {
+      "id": 40,
+      "name": "Dragon Piper",
+      "description": "A jar carved with strange patterns. It has a particularly high defense factor.",
+      "cardType": "Monster",
+      "password": { "code": "55763552", "cost": 55 },
+      "monsterType": "Pyro",
+      "level": 3,
+      "attack": 200,
+      "defense": 1800,
+      "guardianStars": ["Mars", "Moon"]
+    },
+    {
+      "id": 101,
+      "name": "Wings of Wicked Flame",
+      "description": "Soaring over its enemies on wings of crimson fire, this monster attacks by blasting flames from its body.",
+      "cardType": "Monster",
+      "password": { "code": "92944626", "cost": 30 },
+      "monsterType": "Pyro",
+      "level": 2,
+      "attack": 700,
+      "defense": 600,
+      "guardianStars": ["Mars", "Saturn"]
+    },
+    {
+      "id": 133,
+      "name": "Charubin the Fire Knight",
+      "description": "A warrior protected by a shell that can even deflect the heat of burning flames.",
+      "cardType": "Monster",
+      "password": { "code": "37421579", "cost": 50 },
+      "monsterType": "Pyro",
+      "level": 3,
+      "attack": 1100,
+      "defense": 800,
+      "guardianStars": ["Mars", "Uranus"]
+    },
+    {
+      "id": 176,
+      "name": "Fire Eye",
+      "description": "A winged eye enveloped in flames that attacks enemies with fire.",
+      "cardType": "Monster",
+      "password": { "code": "88435542", "cost": 30 },
+      "monsterType": "Pyro",
+      "level": 2,
+      "attack": 800,
+      "defense": 600,
+      "guardianStars": ["Mars", "Saturn"]
+    },
+    {
+      "id": 210,
+      "name": "Hinotama Soul",
+      "description": "An intensely hot flame creature that rams anything that stands in its way.",
+      "cardType": "Monster",
+      "password": { "code": "96851799", "cost": 25 },
+      "monsterType": "Pyro",
+      "level": 2,
+      "attack": 600,
+      "defense": 500,
+      "guardianStars": ["Mars", "Uranus"]
+    },
+    {
+      "id": 291,
+      "name": "Fireyarou",
+      "description": "A malevolent creature wrapped in flames that attacks enemies with intense fire.",
+      "cardType": "Monster",
+      "password": { "code": "71407486", "cost": 80 },
+      "monsterType": "Pyro",
+      "level": 4,
+      "attack": 1300,
+      "defense": 1000,
+      "guardianStars": ["Mars", "Saturn"]
+    },
+    {
+      "id": 473,
+      "name": "Vermillion Sparrow",
+      "description": "A fiery warrior creature that unleashes intense heat from its body.",
+      "cardType": "Monster",
+      "password": { "code": "35752363", "cost": 320 },
+      "monsterType": "Pyro",
+      "level": 5,
+      "attack": 1900,
+      "defense": 1500,
+      "guardianStars": ["Mars", "Pluto"]
+    },
+    {
+      "id": 529,
+      "name": "Flame Cerebrus",
+      "description": "A flaming beast that is lethal to the touch.",
+      "cardType": "Monster",
+      "password": { "code": "60862676", "cost": 550 },
+      "monsterType": "Pyro",
+      "level": 6,
+      "attack": 2100,
+      "defense": 1800,
+      "guardianStars": ["Mars", "Pluto"]
+    },
+    {
+      "id": 644,
+      "name": "Flame Viper",
+      "description": "A very swift, fire breathing viper.",
+      "cardType": "Monster",
+      "password": { "code": "02830619", "cost": 20 },
+      "monsterType": "Pyro",
+      "level": 2,
+      "attack": 400,
+      "defense": 450,
+      "guardianStars": ["Mars", "Pluto"]
+    }
+  ]
+}
