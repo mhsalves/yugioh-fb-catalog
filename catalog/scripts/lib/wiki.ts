@@ -1,6 +1,6 @@
 import type { CardId, ICard, TMonsterType } from "../../src/data/card-types";
 import { GUARDIAN_STARS, MONSTER_TYPES } from "../../src/data/enums";
-import type { IRitual } from "../../src/data/relation-types";
+import type { ICardImageRef, IImageSource, IRitual } from "../../src/data/relation-types";
 import { expectedSchemaRef, fileKind, monsterTypeSlug } from "./data";
 
 /**
@@ -25,6 +25,7 @@ export const WIKI_PROPERTIES = [
     "Star Chip cost",
     "Guardian Star",
     "Lore",
+    "Card image",
 ] as const;
 
 interface WikiPage {
@@ -219,4 +220,67 @@ export const cardFiles = (cards: ICard[]) => {
         files.get(file)!.cards.push(card);
     }
     return files;
+};
+
+/** The sources entry of images.json (spec 08 I-2). */
+export const IMAGE_SOURCES: Record<string, IImageSource> = {
+    fandom: { name: "Yu-Gi-Oh! Wiki (Fandom)", filePageUrl: "https://yugioh.fandom.com/wiki/File:" },
+    yugipedia: { name: "Yugipedia", filePageUrl: "https://yugipedia.com/wiki/File:" },
+};
+
+/** Fandom shows the card back for the cards it has no picture of; Yugipedia fills those in. */
+export const PLACEHOLDER_IMAGE = "Back-FMR-EN-VG.png";
+
+/**
+ * Yugipedia's FM images are 320 × 240 screenshots of the game's card screen: the card is this
+ * rectangle on the left, the rest is its type, guardian stars and text (measured on the frame).
+ */
+export const YUGIPEDIA_SCREEN = { width: 320, height: 240 };
+export const YUGIPEDIA_CROP = { x: 4, y: 6, width: 136, height: 192 };
+
+/** File names Yugipedia may use for a card, "Patrol Robo" → "PatrolRobo-FMR-NA-VG.png" (NA = the US game). */
+export const yugipediaFiles = (name: string) => {
+    const words = name
+        .replace(/-/g, " ")
+        .replace(/[^A-Za-z0-9 ]/g, "")
+        .split(/\s+/)
+        .filter(Boolean);
+    const camel = words.map((word) => word[0].toUpperCase() + word.slice(1)).join("");
+    const plain = name.replace(/[^A-Za-z0-9]/g, "");
+    return Array.from(new Set([camel, plain])).map((base) => `${base}-FMR-NA-VG.png`);
+};
+
+/** An images.json entry for a Yugipedia screenshot, cropped to the card; a message when it is not one. */
+export const yugipediaImage = (card: CardId, info: { url: string; width: number; height: number }) =>
+    info.width === YUGIPEDIA_SCREEN.width && info.height === YUGIPEDIA_SCREEN.height
+        ? ({ card, source: "yugipedia", url: info.url, ...YUGIPEDIA_SCREEN, crop: YUGIPEDIA_CROP } as ICardImageRef)
+        : `image of card ${card}: Yugipedia's ${info.width} × ${info.height} image is not a 320 × 240 card screen`;
+
+/** A file name as MediaWiki stores it: underscores for spaces. */
+export const normalizeFileName = (name: string) => name.trim().replace(/ /g, "_");
+
+/** The card's image file on the wiki, or undefined when it only has the placeholder. */
+export const imageFile = ({ printouts: p }: WikiResult) => {
+    const file = text(p["Card image"]?.[0]);
+    return file && normalizeFileName(file) !== PLACEHOLDER_IMAGE ? normalizeFileName(file) : undefined;
+};
+
+/** The file name in an image URL: the segment after the md5 folders (…/<h>/<hh>/<file>). */
+export const imageUrlFile = (url: string) =>
+    decodeURIComponent(/\/[0-9a-f]\/[0-9a-f]{2}\/([^/?]+)/.exec(url)?.[1] ?? "");
+
+/**
+ * Merges wiki images into images.json. A wiki entry for the same file as the current one replaces it,
+ * so new "?cb=" revisions and sizes come in; a different file pasted by hand is kept unless `overwrite`.
+ */
+export const mergeImages = (current: ICardImageRef[], wiki: ICardImageRef[], overwrite: boolean) => {
+    const merged = merge(current, wiki, (image) => image.card, overwrite);
+    const wikiByCard = new Map(wiki.map((image) => [image.card, image]));
+    const sameFile = (image: ICardImageRef) => {
+        const update = wikiByCard.get(image.card);
+        return update !== undefined && imageUrlFile(update.url) === imageUrlFile(image.url);
+    };
+    const records = merged.records.map((image) => (sameFile(image) ? wikiByCard.get(image.card)! : image));
+    const refreshed = merged.report.changed.filter(({ current }) => sameFile(current)).length;
+    return { records, report: merged.report, refreshed };
 };

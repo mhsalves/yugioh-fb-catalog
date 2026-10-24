@@ -1,10 +1,18 @@
+import { createHash } from "crypto";
 import fs from "fs";
 import path from "path";
 
-import { FILE_SCHEMAS, type SchemaName } from "../../schema/schemas";
+import { FILE_SCHEMAS, IMAGE_URLS, type SchemaName } from "../../schema/schemas";
 import type { CardId, ICard, TMonsterType } from "../../src/data/card-types";
 import { MONSTER_TYPES } from "../../src/data/enums";
-import type { IEquipCompat, IFieldEffect, IFusion, IRitual } from "../../src/data/relation-types";
+import type {
+    ICardImageRef,
+    IEquipCompat,
+    IFieldEffect,
+    IFusion,
+    IImageSource,
+    IRitual,
+} from "../../src/data/relation-types";
 import type { IGameRules } from "../../src/data/rules";
 
 /**
@@ -34,6 +42,8 @@ export interface Catalog {
     fusions: IFusion[];
     equips: IEquipCompat[];
     fields: IFieldEffect[];
+    images: ICardImageRef[];
+    imageSources: Record<string, IImageSource>;
     rules: IGameRules;
 }
 
@@ -56,6 +66,7 @@ const FIXED_FILES: Record<string, SchemaName> = {
     "equips.json": "equips",
     "fields.json": "fields",
     "rules.json": "rules",
+    "images.json": "images",
 };
 
 /** The kind of a data file from its path, or an error message when the path is not part of the layout. */
@@ -115,7 +126,16 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
     const warning = (file: string, message: string) => issues.push({ level: "warning", file, message });
 
     const cardFile = new Map<CardId, string>();
-    const catalog: Catalog = { cards: [], rituals: [], fusions: [], equips: [], fields: [], rules: undefined! };
+    const catalog: Catalog = {
+        cards: [],
+        rituals: [],
+        fusions: [],
+        equips: [],
+        fields: [],
+        images: [],
+        imageSources: {},
+        rules: undefined!,
+    };
     const fusionFiles: { file: string; fusion: IFusion; monsterType: TMonsterType }[] = [];
     /** File each relation record came from, for error messages. */
     const relationFile = new Map<object, string>();
@@ -162,6 +182,13 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
                 for (const field of data.fields as IFieldEffect[]) {
                     catalog.fields.push(field);
                     relationFile.set(field, file);
+                }
+                break;
+            case "images":
+                Object.assign(catalog.imageSources, data.sources);
+                for (const image of data.images as ICardImageRef[]) {
+                    catalog.images.push(image);
+                    relationFile.set(image, file);
                 }
                 break;
             case "fusions":
@@ -267,6 +294,33 @@ export const validateData = (files: DataFile[]): { issues: Issue[]; catalog?: Ca
         fieldIds.add(field.field);
         reference(file, "field", field.field, "Magic");
     }
+
+    const imageIds = new Set<CardId>();
+    for (const image of catalog.images) {
+        const file = relationFile.get(image)!;
+        const label = `image of card ${image.card}`;
+        if (imageIds.has(image.card)) error(file, `card ${image.card} has more than one image`);
+        imageIds.add(image.card);
+        if (inRange(file, label, image.card) && !byId.has(image.card))
+            warning(file, `${label}: card not found (card not entered yet)`);
+        if (!catalog.imageSources[image.source]) error(file, `${label}: unknown source "${image.source}"`);
+        const [, h, hh, name] = IMAGE_URLS.map((pattern) => pattern.exec(image.url)).find(Boolean)!;
+        const md5 = createHash("md5").update(decodeURIComponent(name)).digest("hex");
+        if (`${h}/${hh}` !== `${md5[0]}/${md5.slice(0, 2)}`) {
+            error(
+                file,
+                `${label}: folder ${h}/${hh} does not match the file name (expected ${md5[0]}/${md5.slice(0, 2)})`,
+            );
+        }
+        // Fandom names the US game's images -FMR-EN-VG, Yugipedia -FMR-NA-VG.
+        if (!/-FMR-(EN|NA)-VG\.png$/.test(name)) warning(file, `${label}: "${name}" is not a -FMR-EN/NA-VG.png file`);
+        const { crop } = image;
+        if (crop && (!image.width || !image.height)) error(file, `${label}: a crop needs the image's width and height`);
+        else if (crop && (crop.x + crop.width > image.width! || crop.y + crop.height > image.height!)) {
+            error(file, `${label}: crop goes outside the ${image.width} × ${image.height} image`);
+        }
+    }
+    catalog.images.sort((a, b) => a.card - b.card);
 
     catalog.cards.sort((a, b) => a.id - b.id);
     const hasErrors = issues.some((issue) => issue.level === "error");

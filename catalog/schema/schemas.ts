@@ -2,7 +2,15 @@ import { z } from "zod";
 
 import type { IEquipCard, IMagicCard, IMonsterCard, IPassword, IRitualCard, ITrapCard } from "../src/data/card-types";
 import { GUARDIAN_STARS, MONSTER_TYPES } from "../src/data/enums";
-import type { IEquipCompat, IFieldEffect, IFusion, IRitual } from "../src/data/relation-types";
+import type {
+    ICardImageRef,
+    IEquipCompat,
+    IFieldEffect,
+    IFusion,
+    IImageCrop,
+    IImageSource,
+    IRitual,
+} from "../src/data/relation-types";
 import type { IGameRules } from "../src/data/rules";
 
 /**
@@ -65,6 +73,31 @@ export const FieldEffect = z.strictObject({
     weakens: z.array(MonsterType),
     amount: z.int().min(0),
 });
+/**
+ * Image URLs as the wikis give them (spec 08 I-2): Fandom's CDN, or Yugipedia's media server for the
+ * cards Fandom has no image of. Groups: md5 folder (<h>, <hh>) and file name; the folder is checked by the validator.
+ */
+export const FANDOM_IMAGE_URL =
+    /^https:\/\/static\.wikia\.nocookie\.net\/yugioh\/images\/([0-9a-f])\/([0-9a-f]{2})\/([^/?]+)\/revision\/latest(\?cb=\d+)?$/;
+export const YUGIPEDIA_IMAGE_URL = /^https:\/\/ms\.yugipedia\.com\/([0-9a-f])\/([0-9a-f]{2})\/([^/?]+)$/;
+export const IMAGE_URLS = [FANDOM_IMAGE_URL, YUGIPEDIA_IMAGE_URL];
+
+export const ImageSource = z.strictObject({ name: nonBlank, filePageUrl: z.url() });
+const pixels = z.int().min(0);
+export const ImageCrop = z.strictObject({ x: pixels, y: pixels, width: z.int().min(1), height: z.int().min(1) });
+export const CardImageRef = z.strictObject({
+    card: CardId,
+    source: nonBlank,
+    url: z
+        .string()
+        .refine(
+            (url) => IMAGE_URLS.some((pattern) => pattern.test(url)),
+            "must be a static.wikia.nocookie.net/yugioh or ms.yugipedia.com image URL",
+        ),
+    width: z.int().min(1).optional(),
+    height: z.int().min(1).optional(),
+    crop: ImageCrop.optional(),
+});
 export const GameRules = z.strictObject({
     totalCards: z.int().min(1),
     guardianStarAdvantage: z.record(GuardianStar, GuardianStar),
@@ -90,6 +123,11 @@ export const FILE_SCHEMAS = {
     equips: listFile("equips", EquipCompat),
     fields: listFile("fields", FieldEffect),
     rules: GameRules.extend({ $schema: z.string() }),
+    images: z.strictObject({
+        $schema: z.string(),
+        sources: z.record(z.string(), ImageSource),
+        images: z.array(CardImageRef),
+    }),
 } as const;
 
 export type SchemaName = keyof typeof FILE_SCHEMAS;
@@ -115,3 +153,6 @@ same<Same<z.infer<typeof Fusion>, IFusion>>();
 same<Same<z.infer<typeof EquipCompat>, IEquipCompat>>();
 same<Same<z.infer<typeof FieldEffect>, IFieldEffect>>();
 same<Same<z.infer<typeof GameRules>, IGameRules>>();
+same<Same<z.infer<typeof ImageSource>, IImageSource>>();
+same<Same<z.infer<typeof CardImageRef>, ICardImageRef>>();
+same<Same<z.infer<typeof ImageCrop>, IImageCrop>>();

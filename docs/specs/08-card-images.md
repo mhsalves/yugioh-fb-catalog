@@ -1,22 +1,31 @@
 # 08 – Card images
 
-> **Status: Proposed.** Image source **I-1 is Agreed (interim): reference images from the Yu-Gi-Oh! Fandom wiki** (2026-10-20). This resolves TBD-X3 for now.
+> **Status: Mostly built** (catalog `0.5.0`). Image source **I-1 is Agreed (interim): reference images from the Yu-Gi-Oh! Fandom wiki** (2026-10-20), with **Yugipedia** for the cards Fandom has no picture of (2026-10-23). This resolves TBD-X3 for now.
 
 ## 0. Status
 
-Build status as of 2026-10-20, `main` @ `9a353ee`. Legend in the [index](./README.md#status-system).
+Build status as of 2026-10-23. Legend in the [index](./README.md#status-system).
 
-**0 built · 0 partial · 7 not built**
+**5 built · 1 partial · 1 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
-| I-1 | Source: Fandom wiki, linked not copied | Agreed | ❌ Not built | No images anywhere |
-| I-2 | Image references in `data/images.json` | Agreed | ❌ Not built | No image field or mapping |
-| I-3 | Image API in the catalog | Proposed | ❌ Not built | None |
-| I-4 | Site usage, optimization and fallback | Proposed | ❌ Not built | Text-only cards |
-| I-5 | Attribution and notice | Proposed | ❌ Not built | None |
-| I-6 | Import script and health check | Proposed | ❌ Not built | None (wiki API access verified) |
-| I-7 | Exit plan: self-hosting via jsDelivr | Proposed | ❌ Not built | None |
+| I-1 | Source: Fandom wiki, linked not copied | Agreed | ✅ Built | 618 cards from Fandom, 104 from Yugipedia (see "As built"); no image in the repo or package |
+| I-2 | Image references in `data/images.json` | Agreed | ✅ Built | 722 entries, validated (host, md5 folder, `crop` inside the image) |
+| I-3 | Image API in the catalog | Proposed | ✅ Built | `getCardImage(id, size)` (with `crop`), `getCardImageSrcSet(id)` |
+| I-4 | Site usage, optimization and fallback | Proposed | ✅ Built | Lazy grid images, full image on the card page, styled-frame fallback, contrast filter |
+| I-5 | Attribution and notice | Proposed | ✅ Built | Footer notice, "Image: <source>" link to the file page on every card |
+| I-6 | Import script and health check | Proposed | 🟡 Partial | `yarn data:sync` imports images; the weekly health check is not built |
+| I-7 | Exit plan: self-hosting via jsDelivr | Proposed | ❌ Not built | Not needed yet |
+
+**As built (2026-10-23):**
+
+- **Coverage (TBD-I3):** the wiki's `Card image` property is set for all 722 cards, but **104 point at `Back-FMR-EN-VG.png`**, the card back. No `-FMR-EN-VG` file exists for them on Fandom. [Yugipedia](https://yugipedia.com/) has all 104 as `<Name>-FMR-NA-VG.png` (NA = the US game), read through its MediaWiki API (`imageinfo`). Those are **320 × 240 screenshots of the game's card screen**: the card on the left (measured: `x 4, y 6, 136 × 192`, the same ratio as a Fandom card), its type, stars and text on the right. `images.json` stores the screenshot's URL and size plus that `crop`; the site shows only the crop with a clipping wrapper. No image is copied or edited.
+- **URLs:** Fandom `static.wikia.nocookie.net/yugioh/images/<h>/<hh>/<file>/revision/latest?cb=…`, Yugipedia `ms.yugipedia.com/<h>/<hh>/<file>`. Both use the MediaWiki md5 folders, so the validator checks them the same way. Yugipedia answers without a `Referer`; it has no `?cb=` and no resizing, and its screenshots are already small (about 40 KB), so a cropped image has no thumbnail or `srcset`.
+- **Contrast ("option A", I-4):** the images are dull PS1 captures. The site lifts them in the browser with `filter: contrast(1.2) saturate(1.25) brightness(1.05)` (`--card-image-filter` in `mkt_site/src/styles.css`; `none` shows them as they are). A pre-processed 2× upscale was tried and added no real detail (the source is 300 px), and would mean hosting modified artwork (TBD-I4), so it was not used. There is no HD version of the FM images on either wiki; `-OW.png` (official artwork, 416 px) is the art alone, without the FM card frame.
+- **Sizes:** Fandom images are 300–304 × 423–434, stored per entry. Grid tiles are about 220 px wide, so the browser picks the full image from the `srcset` on most screens; the 160 px thumbnail is used on small phones.
+- **Sync (I-6):** `yarn data:sync` asks for `?Card image` with the card data, gets URLs and sizes from `imageinfo` (50 files per request) on Fandom, then on Yugipedia for the cards with only the placeholder. A new revision of the same file replaces the stored entry (new `?cb=`); a different file pasted by hand is kept unless `--overwrite`.
+- **Package (TBD-I5):** `images.json` (about 165 KB of JSON) ships in the main package for now.
 
 ## 1. Why this spec exists
 
@@ -179,6 +188,7 @@ If hotlinking is blocked, the terms forbid it, or more control is needed, switch
 | ~~**TBD-X3**~~ | Card artwork source | **Resolved (interim, 2026-10-20):** link to Yu-Gi-Oh! Fandom wiki images (I-1) |
 | **TBD-I1** | Is hotlinking allowed under Fandom's Terms of Use for a public site, long-term? | It works technically today, but the CDN already enforces a `Referer` rule (403 without one), so Fandom controls this and could tighten it. The terms need reading. If they forbid it, or embedding from other sites starts failing, use I-7 |
 | **TBD-I2** | Use the wiki's `Card image` data as a source for other fields too (names, numbers), which relates to TBD-X1? | The wiki's text is usually CC BY-SA, which requires attribution and share-alike. Images are usually non-free (fair use) |
-| **TBD-I3** | Real image coverage: the gallery references 619 files for 722 cards. Which cards have no image? | Measure with the import script. Missing cards use the fallback frame |
+| ~~**TBD-I3**~~ | Real image coverage: the gallery references 619 files for 722 cards. Which cards have no image? | **Resolved (2026-10-23):** 618 on Fandom; the other 104 only have the card back there and come from Yugipedia (see §0 "As built"). All 722 cards have an image |
 | **TBD-I4** | Legal position on displaying Konami artwork, even linked: is the notice in I-5 enough for a non-commercial fan project? | Not legal advice. If in doubt, ship with the styled frame only |
-| **TBD-I5** | Should `getCardImage` be in the main package, or a subpath (`@mhsalves/yugioh-fb-catalog/images`) so data-only users skip `images.json`? | Ties to TBD-N4 (size budget) |
+| **TBD-I5** | Should `getCardImage` be in the main package, or a subpath (`@mhsalves/yugioh-fb-catalog/images`) so data-only users skip `images.json`? | Ties to TBD-N4 (size budget). **Built in the main package for now (2026-10-23)** |
+| **TBD-I6** | Is hotlinking from Yugipedia (`ms.yugipedia.com`) acceptable to its operators, long-term? | It works today with and without a `Referer` (HTTP 200). Only 104 small images use it. Check Yugipedia's policy; if they object, self-host those 104 (I-7) or show the styled frame |

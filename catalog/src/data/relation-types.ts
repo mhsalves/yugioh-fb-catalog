@@ -37,4 +37,34 @@ export interface IFieldEffect {
     amount: number;
 }
 
+/** A host the card images are linked from (spec 08 I-2), keyed by id in images.json `sources`. */
+export interface IImageSource {
+    name: string;
+    /** Prefix of an image's file page: append the file name (for attribution, spec 08 I-5). */
+    filePageUrl: string;
+}
+
+/** The part of an image that shows the card, in the image's own pixels. */
+export interface IImageCrop {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+/**
+ * A card's image, as a link to an image the source hosts: the catalog ships URLs, never images (spec 08 I-1).
+ * `url` is the full-size image exactly as the wiki gives it (Fandom's `?cb=` revision included), and
+ * `width`/`height` its size. `crop` is set when the image shows more than the card, such as
+ * Yugipedia's screenshots of the game's card screen: only that rectangle is the card.
+ */
+export interface ICardImageRef {
+    card: CardId;
+    source: string;
+    url: string;
+    width?: number;
+    height?: number;
+    crop?: IImageCrop;
+}
+
 // Duelists, deck pools and drops wait for TBD-D9 (duelist list, rank categories, weights vs percentages).

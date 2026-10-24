@@ -1,6 +1,7 @@
 import type { ICard } from "@mhsalves/yugioh-fb-catalog";
+import CardImage from "./CardImage";
 
-/** One grid item (spec 09 C-3). The art area is a styled frame until card images land (spec 08). */
+/** One grid item (spec 09 C-3). The art area shows the card's image (spec 08), or a styled frame without one. */
 export default function CardTile(props: { card: ICard; onOpen: (id: number) => void; selected?: boolean }) {
     const { card, onOpen, selected = false } = props;
     const isMonster = card.cardType === "Monster";
@@ -16,6 +17,8 @@ export default function CardTile(props: { card: ICard; onOpen: (id: number) => v
             onClick={() => onOpen(card.id)}
         >
             <span className="card-tile__art" aria-hidden="true">
+                {/* Tiles are about 220 px wide: the 160 px thumbnail, or the full image on dense screens. */}
+                <CardImage id={card.id} size="thumb" sizes="(max-width: 600px) 45vw, 220px" />
                 <span className="card-tile__id">#{card.id}</span>
                 <span className="type-badge">{card.cardType}</span>
             </span>

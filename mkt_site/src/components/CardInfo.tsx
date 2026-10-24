@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
-import { getCard, getRitual, GUARDIAN_STAR_ADVANTAGE, type CardId, type ICard } from "@mhsalves/yugioh-fb-catalog";
+import {
+    getCard,
+    getCardImage,
+    getRitual,
+    GUARDIAN_STAR_ADVANTAGE,
+    type CardId,
+    type ICard,
+} from "@mhsalves/yugioh-fb-catalog";
 import { cardPath, Link } from "../router";
 import { useCopy } from "../useCopy";
+import CardImage from "./CardImage";
 import { CheckIcon, CopyIcon } from "./icons";
 
 /** Opens another card: in the details dialog through `onSelect`, on the card page as a link to its page. */
@@ -85,11 +93,24 @@ function Ritual({ card, onSelect }: { card: ICard; onSelect: SelectCard }) {
 
 /** A card's full data (spec 09 C-4), shared by the details dialog and the shared card page (C-7). */
 export default function CardInfo({ card, onSelect }: { card: ICard; onSelect?: (id: CardId) => void }) {
+    const image = getCardImage(card.id);
     return (
         <>
-            <div className="details__art" aria-hidden="true">
-                <span className="type-badge">{card.cardType}</span>
-            </div>
+            <figure className="details__art" data-has-image={image ? true : undefined}>
+                <CardImage id={card.id} size="full" />
+                <span className="type-badge" aria-hidden="true">
+                    {card.cardType}
+                </span>
+                {image && (
+                    <figcaption className="details__credit">
+                        Image:{" "}
+                        <a href={image.source.pageUrl} target="_blank" rel="noopener noreferrer">
+                            {image.source.name}
+                            <span className="visually-hidden"> (opens in a new tab)</span>
+                        </a>
+                    </figcaption>
+                )}
+            </figure>
 
             <dl className="fields">
                 <Field label="Card type">{card.cardType}</Field>

@@ -6,9 +6,13 @@ import {
     cardFiles,
     cleanWikiText,
     convertCard,
+    imageFile,
     merge,
+    mergeImages,
     nameIndex,
     ritualFromWikitext,
+    yugipediaFiles,
+    yugipediaImage,
 } from "../scripts/lib/wiki";
 
 /** Wiki fixtures follow the shape of real SMW ask results and {{FMR card}} pages (spec 03 A-5). */
@@ -207,5 +211,57 @@ describe("cardFiles", () => {
         expect(Array.from(files.keys())).toEqual(["cards/monsters/thunder.json", "cards/equip.json"]);
         expect(files.get("cards/monsters/thunder.json")!.$schema).toBe("../../../schema/monster-list.schema.json");
         expect(files.get("cards/equip.json")!.$schema).toBe("../../schema/equip-list.schema.json");
+    });
+});
+
+describe("images", () => {
+    const fandom = (file: string, cb: string) =>
+        `https://static.wikia.nocookie.net/yugioh/images/e/e1/${file}/revision/latest?cb=${cb}`;
+
+    it("takes the card's image file, but not Fandom's card-back placeholder", () => {
+        expect(imageFile(wikiMonster({ "Card image": ["ThunderDragon-FMR-EN-VG.png"] }))).toBe(
+            "ThunderDragon-FMR-EN-VG.png",
+        );
+        expect(imageFile(wikiMonster({ "Card image": ["Back-FMR-EN-VG.png"] }))).toBeUndefined();
+        expect(imageFile(wikiMonster())).toBeUndefined();
+    });
+
+    it("names Yugipedia's files from the card name", () => {
+        expect(yugipediaFiles("Patrol Robo")).toEqual(["PatrolRobo-FMR-NA-VG.png"]);
+        expect(yugipediaFiles("Wodan the Resident of the Forest")).toEqual([
+            "WodanTheResidentOfTheForest-FMR-NA-VG.png",
+            "WodantheResidentoftheForest-FMR-NA-VG.png",
+        ]);
+        expect(yugipediaFiles("Master & Expert")).toEqual(["MasterExpert-FMR-NA-VG.png"]);
+    });
+
+    it("crops Yugipedia's 320 × 240 card screens to the card, and refuses other sizes", () => {
+        const url = "https://ms.yugipedia.com/e/ee/PatrolRobo-FMR-NA-VG.png";
+        expect(yugipediaImage(580, { url, width: 320, height: 240 })).toEqual({
+            card: 580,
+            source: "yugipedia",
+            url,
+            width: 320,
+            height: 240,
+            crop: { x: 4, y: 6, width: 136, height: 192 },
+        });
+        expect(yugipediaImage(580, { url, width: 300, height: 423 })).toMatch(/not a 320 × 240 card screen/);
+    });
+
+    it("takes a new revision of the same file, but keeps a different file pasted by hand", () => {
+        const current = [
+            { card: 1, source: "fandom", url: fandom("A.png", "1") },
+            { card: 2, source: "fandom", url: fandom("Mine.png", "1") },
+        ];
+        const wiki = [
+            { card: 1, source: "fandom", url: fandom("A.png", "2"), width: 300, height: 423 },
+            { card: 2, source: "fandom", url: fandom("B.png", "2") },
+            { card: 3, source: "fandom", url: fandom("C.png", "2") },
+        ];
+        const { records, report, refreshed } = mergeImages(current, wiki, false);
+        expect(records).toEqual([wiki[0], current[1], wiki[2]]);
+        expect(report.added).toEqual([wiki[2]]);
+        expect(refreshed).toBe(1);
+        expect(mergeImages(current, wiki, true).records).toEqual(wiki);
     });
 });
