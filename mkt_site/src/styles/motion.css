@@ -7,8 +7,34 @@
     .button,
     .icon-button,
     .text-button,
-    .chip {
+    .chip,
+    .card-row,
+    .tabs__tab,
+    .duelist-row,
+    .duelist-row .duelist-portrait img,
+    .duelist-row .icon,
+    .duelist-neighbor {
         transition: none;
+    }
+
+    .card-row:hover,
+    .card-row:active,
+    .duelist-row:hover,
+    .duelist-row:hover .duelist-portrait img,
+    .duelist-row:hover .icon,
+    .duelist-neighbor:hover {
+        transform: none;
+    }
+
+    .duelist-list > li,
+    .duelist-hero__backdrop,
+    .duelist-hero .duelist-portrait--large,
+    .duelist-hero__info > *,
+    .duelist-hero__nav,
+    .duelist-panel,
+    .rate-row,
+    .rate-row .percent__fill {
+        animation: none;
     }
 
     .card-panel,

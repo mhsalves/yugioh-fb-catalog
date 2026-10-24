@@ -199,6 +199,8 @@ Phone layout of **Combine**, top to bottom: two large **material slots** (tap op
 ### F-9 Duelists · ✅ Built (live)
 Routes `/duelists` and `/duelists/<id>`, `live` since 02 TBD-D9 was resolved and the data landed (catalog 0.7.0). As built: no stage grouping (the game has no stages); rows show the portrait, the game's number, and the drop and deck counts.
 
+**Duelist page layout (owner request, 2026-10-24):** the Duelists pages use the full page width (`--page-width`, as Home and Cards; the 760px column is gone), and keep room for the docked card panel like the catalog. A hero with the portrait over a blurred copy, stat tiles and previous / next duelist links. Phones show one rank at a time (chips); md shows one rank as a grid of rows; from lg the three ranks sit side by side, with sticky column heads. The deck is a grid. Motion: the hero pops in and its numbers count up, rows come in one after another and their rate bars grow, lists replay on tab, rank or sort changes, rows lift on hover; all of it is off with `prefers-reduced-motion` (`styles/motion.css`).
+
 - **List** (`/duelists`): a search box and `CardRow`-like duelist rows (portrait placeholder, name, campaign stage), grouped by stage when the data has stages (TBD-D9); phones get one column, `md`+ a grid.
 - **Duelist page** (`/duelists/<id>`): header with name and stage; `Tabs` for **Drops** (default, the most looked-up) and **Deck**. Drops are split by rank (S/A-POW, B/C/D, S/A-TEC, per 02's draft; final list TBD-D9) with a segmented control, each card as a `CardRow` with a `PercentBar`. Sort by rate or ATK.
 - The card details panel gains **"Dropped by"** (F-5): duelists and rates, each linking to the duelist page.

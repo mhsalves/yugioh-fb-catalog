@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type CSSProperties } from "react";
 import DuelistPortrait from "../components/DuelistPortrait";
 import EmptyState from "../components/EmptyState";
 import { ChevronRightIcon } from "../components/icons";
@@ -38,8 +38,8 @@ export default function DuelistsPage() {
                 </EmptyState>
             ) : (
                 <ul className="duelist-list">
-                    {duelists.map((duelist) => (
-                        <li key={duelist.id}>
+                    {duelists.map((duelist, index) => (
+                        <li key={duelist.id} style={{ "--i": index } as CSSProperties}>
                             <Link to={`/duelists/${duelist.id}`} className="duelist-row">
                                 <DuelistPortrait name={duelist.name} portrait={duelist.portrait} />
                                 <span className="duelist-row__main">
