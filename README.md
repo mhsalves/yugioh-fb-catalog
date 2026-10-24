@@ -42,24 +42,6 @@ Site do catálogo: uma SPA estática, mobile-first, para buscar e filtrar as car
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md): arquitetura, decisões de design e roadmap
 - [docs/specs](./docs/specs/README.md): especificações do catálogo e do site
 
-## Desenvolvimento
-
-O repositório é um workspace Yarn 1 (`catalog/` e `mkt_site/`) com um único `yarn.lock` na raiz. Use Node 22 (veja `.nvmrc`).
-
-```bash
-yarn install          # instala tudo na raiz
-yarn dev              # site em http://localhost:5173 usando o catálogo local (atualiza ao editar catalog/src)
-yarn typecheck        # TypeScript (strict) nos dois pacotes
-yarn lint             # ESLint
-yarn format:check     # Prettier (yarn format para corrigir)
-yarn test             # Vitest: API de consulta + integridade dos dados
-yarn validate         # valida os JSON em catalog/data (veja catalog/CONTRIBUTING-DATA.md)
-yarn coverage:data    # quantas cartas já foram cadastradas
-yarn build            # build do catálogo e do site
-```
-
-Cada PR passa pelo CI (`.github/workflows/ci.yml`).
-
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
