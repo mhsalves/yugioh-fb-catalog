@@ -76,12 +76,14 @@ export const convertCard = ({ fulltext, printouts: p }: WikiResult): Converted =
     if (!Number.isInteger(id) || id < 1) return { skip: `${fulltext}: no FMR number` };
     if (!name) return { skip: `${fulltext}: no English name` };
 
+    // The game gives no password to ritual results and story cards: the wiki then has neither value.
     const code = first("Passcode");
     const cost = first("Star Chip cost");
-    if (!code || cost === undefined) return { skip: `${id} ${name}: no passcode or star chip cost on the wiki` };
-    if (!/^\d{8}$/.test(code)) return { skip: `${id} ${name}: passcode "${code}" is not 8 digits` };
+    if (!code !== (cost === undefined)) return { skip: `${id} ${name}: the wiki has a passcode or a cost, not both` };
+    if (code && !/^\d{8}$/.test(code)) return { skip: `${id} ${name}: passcode "${code}" is not 8 digits` };
     const base = { id, name, description: cleanWikiText(rawLore) };
-    const password = { code, cost: Number(cost) };
+    /** Spread after cardType, so the field keeps its place in the JSON and is left out when there is none. */
+    const password = code ? { password: { code, cost: Number(cost) } } : {};
 
     const cardType = first("Card type");
     switch (cardType) {
@@ -97,7 +99,7 @@ export const convertCard = ({ fulltext, printouts: p }: WikiResult): Converted =
                 card: {
                     ...base,
                     cardType: "Monster",
-                    password,
+                    ...password,
                     monsterType,
                     level: Number(first("Level")),
                     attack: Number(first("ATK")),
@@ -108,12 +110,12 @@ export const convertCard = ({ fulltext, printouts: p }: WikiResult): Converted =
         }
         case "Spell Card":
             return {
-                card: { ...base, cardType: first("Property") === "Equip Spell Card" ? "Equip" : "Magic", password },
+                card: { ...base, cardType: first("Property") === "Equip Spell Card" ? "Equip" : "Magic", ...password },
             };
         case "Trap Card":
-            return { card: { ...base, cardType: "Trap", password } };
+            return { card: { ...base, cardType: "Trap", ...password } };
         case "Ritual Card":
-            return { card: { ...base, cardType: "Ritual", password } };
+            return { card: { ...base, cardType: "Ritual", ...password } };
         default:
             return { skip: `${id} ${name}: unknown card type "${cardType}"` };
     }

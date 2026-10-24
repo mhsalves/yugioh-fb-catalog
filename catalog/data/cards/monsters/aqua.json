@@ -299,7 +299,7 @@
       "level": 1,
       "attack": 250,
       "defense": 200,
-      "guardianStars": ["Sun", "Neptune"]
+      "guardianStars": ["Neptune", "Sun"]
     },
     {
       "id": 398,
@@ -312,6 +312,18 @@
       "attack": 300,
       "defense": 250,
       "guardianStars": ["Neptune", "Moon"]
+    },
+    {
+      "id": 430,
+      "name": "Water Magician",
+      "description": "This creature surrounds opponents with water and envelops them in a sweeping attack.",
+      "cardType": "Monster",
+      "password": { "code": "93343894", "cost": 120 },
+      "monsterType": "Aqua",
+      "level": 4,
+      "attack": 1400,
+      "defense": 1000,
+      "guardianStars": ["Neptune", "Mercury"]
     },
     {
       "id": 431,
@@ -627,7 +639,7 @@
     },
     {
       "id": 606,
-      "name": "Twin Long Rods 2",
+      "name": "Twin Long Rods #2",
       "description": "An undersea creature that attacks with two whip-like tails.",
       "cardType": "Monster",
       "password": { "code": "29692206", "cost": 30 },
@@ -720,6 +732,17 @@
       "attack": 1500,
       "defense": 900,
       "guardianStars": ["Neptune", "Venus"]
+    },
+    {
+      "id": 710,
+      "name": "Crab Turtle",
+      "description": "A creature with a turtle shell and crab scissors to provide high attack and defense factors.",
+      "cardType": "Monster",
+      "monsterType": "Aqua",
+      "level": 8,
+      "attack": 2550,
+      "defense": 2500,
+      "guardianStars": ["Neptune", "Jupiter"]
     }
   ]
 }

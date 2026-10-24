@@ -466,7 +466,7 @@
       "monsterType": "Machine",
       "level": 3,
       "attack": 1100,
-      "defense": 1900,
+      "defense": 900,
       "guardianStars": ["Moon", "Uranus"]
     },
     {

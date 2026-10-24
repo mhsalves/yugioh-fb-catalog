@@ -95,16 +95,23 @@ describe("searchCards", () => {
         });
 
         it("filters every card type by cost, with inclusive bounds", () => {
-            const cost = card(425).password.cost;
-            expectMatches({ cost: { min: cost, max: cost } }, (item) => item.password.cost === cost);
-            expectMatches({ cost: { min: 999999 } }, (item) => item.password.cost === 999999);
+            const cost = card(425).password!.cost;
+            expectMatches({ cost: { min: cost, max: cost } }, (item) => item.password?.cost === cost);
+            expectMatches({ cost: { min: 999999 } }, (item) => item.password?.cost === 999999);
             expect(ids(searchCards({ cost: { min: 999999 } }).items)).toContain(690);
+        });
+
+        it("leaves cards without a password out of a cost range, and keeps them without one", () => {
+            const noPassword = where((item) => !item.password);
+            expect(ids(searchCards({ cost: { min: 0 } }).items)).toEqual(where((item) => !!item.password));
+            expect(searchCards({ cost: {} }).total).toBe(getCardList().length);
+            for (const id of noPassword) expect(ids(searchCards({ cost: { max: 999999 } }).items)).not.toContain(id);
         });
 
         it("combines filters with AND", () => {
             expectMatches(
                 { cardType: "Magic", cost: { max: 100 } },
-                (item) => item.cardType === "Magic" && item.password.cost <= 100,
+                (item) => item.cardType === "Magic" && item.password !== undefined && item.password.cost <= 100,
             );
         });
     });
@@ -114,11 +121,14 @@ describe("searchCards", () => {
             const byName = searchCards({ sort: { by: "name" } }).items.map((item) => item.name);
             expect(byName).toEqual([...byName].sort((a, b) => a.localeCompare(b)));
             const byCost = searchCards({ sort: { by: "cost", dir: "desc" } }).items;
-            for (let i = 1; i < byCost.length; i++) {
-                const [previous, current] = [byCost[i - 1], byCost[i]];
-                expect(previous.password.cost).toBeGreaterThanOrEqual(current.password.cost);
-                if (previous.password.cost === current.password.cost) expect(previous.id).toBeLessThan(current.id);
+            const priced = byCost.filter((item) => item.password);
+            for (let i = 1; i < priced.length; i++) {
+                const [previous, current] = [priced[i - 1].password!.cost, priced[i].password!.cost];
+                expect(previous).toBeGreaterThanOrEqual(current);
+                if (previous === current) expect(priced[i - 1].id).toBeLessThan(priced[i].id);
             }
+            // Cards without a password have no cost, so they come after every priced card.
+            expect(ids(byCost.slice(priced.length))).toEqual(where((item) => !item.password));
         });
 
         it("puts cards without the sort value last, whatever the direction", () => {

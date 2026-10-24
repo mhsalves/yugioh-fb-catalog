@@ -318,7 +318,7 @@
       "name": "Aqua Madoor",
       "description": "A wizard of the waters that conjures up a liquid wall to crush any enemies that oppose him.",
       "cardType": "Monster",
-      "password": { "code": "85639257", "cost": 250 },
+      "password": { "code": "85639257", "cost": 260 },
       "monsterType": "Spellcaster",
       "level": 4,
       "attack": 1200,
@@ -446,18 +446,6 @@
       "guardianStars": ["Sun", "Saturn"]
     },
     {
-      "id": 430,
-      "name": "Water Magician",
-      "description": "This creature surrounds opponents with water and envelops them in a sweeping attack.",
-      "cardType": "Monster",
-      "password": { "code": "93343894", "cost": 120 },
-      "monsterType": "Spellcaster",
-      "level": 4,
-      "attack": 1400,
-      "defense": 1000,
-      "guardianStars": ["Neptune", "Mercury"]
-    },
-    {
       "id": 433,
       "name": "Ancient Elf",
       "description": "This elf is rumored to have lived for thousands of years. He leads an army of spirits against his enemies.",
@@ -488,7 +476,7 @@
       "cardType": "Monster",
       "password": { "code": "93013676", "cost": 180 },
       "monsterType": "Spellcaster",
-      "level": 4,
+      "level": 5,
       "attack": 1550,
       "defense": 1400,
       "guardianStars": ["Sun", "Venus"]
@@ -648,6 +636,39 @@
       "attack": 2650,
       "defense": 2250,
       "guardianStars": ["Mercury", "Neptune"]
+    },
+    {
+      "id": 708,
+      "name": "Cosmo Queen",
+      "description": "A queen who rules over all the stars in the universe.",
+      "cardType": "Monster",
+      "monsterType": "Spellcaster",
+      "level": 8,
+      "attack": 2900,
+      "defense": 2450,
+      "guardianStars": ["Venus", "Uranus"]
+    },
+    {
+      "id": 720,
+      "name": "Mask of Shine & Dark",
+      "description": "A creature that twists the fabric of light and darkness to generate images to confuse opponents.",
+      "cardType": "Monster",
+      "monsterType": "Spellcaster",
+      "level": 6,
+      "attack": 2000,
+      "defense": 1800,
+      "guardianStars": ["Venus", "Pluto"]
+    },
+    {
+      "id": 722,
+      "name": "Magician of Black Chaos",
+      "description": "The ultimate magic-user, who wields the power of chaos born from the fusion of Dark and Light.",
+      "cardType": "Monster",
+      "monsterType": "Spellcaster",
+      "level": 8,
+      "attack": 2800,
+      "defense": 2600,
+      "guardianStars": ["Mercury", "Mars"]
     }
   ]
 }

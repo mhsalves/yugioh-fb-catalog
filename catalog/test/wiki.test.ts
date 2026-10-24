@@ -110,10 +110,17 @@ describe("convertCard", () => {
         expect(convertCard(wikiSpell("Field Spell Card"))).toMatchObject({ card: { cardType: "Magic" } });
     });
 
+    it("leaves the password out when the wiki has neither a passcode nor a cost", () => {
+        const converted = convertCard(wikiMonster({ Passcode: [], "Star Chip cost": [] }));
+        expect(converted).toMatchObject({ card: { id: 425, cardType: "Monster", attack: 1600 } });
+        expect("card" in converted && "password" in converted.card).toBe(false);
+    });
+
     it("skips cards it cannot enter without guessing", () => {
-        expect(convertCard(wikiMonster({ Passcode: [], "Star Chip cost": [] }))).toEqual({
-            skip: "425 Thunder Dragon: no passcode or star chip cost on the wiki",
+        expect(convertCard(wikiMonster({ Passcode: [] }))).toEqual({
+            skip: "425 Thunder Dragon: the wiki has a passcode or a cost, not both",
         });
+        expect(convertCard(wikiMonster({ "Star Chip cost": [] }))).toHaveProperty("skip");
         expect(convertCard(wikiMonster({ Passcode: ["1234"] }))).toHaveProperty("skip");
         expect(convertCard(wikiMonster({ Type: [page("Divine-Beast")] }))).toHaveProperty("skip");
         expect(convertCard(wikiMonster({ "Guardian Star": ["Sun"] }))).toHaveProperty("skip");

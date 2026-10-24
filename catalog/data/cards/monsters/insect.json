@@ -345,7 +345,7 @@
       "password": { "code": "32539892", "cost": 35 },
       "monsterType": "Insect",
       "level": 3,
-      "attack": 800,
+      "attack": 850,
       "defense": 750,
       "guardianStars": ["Moon", "Neptune"]
     },
@@ -420,6 +420,17 @@
       "attack": 900,
       "defense": 700,
       "guardianStars": ["Jupiter", "Venus"]
+    },
+    {
+      "id": 717,
+      "name": "Javelin Beetle",
+      "description": "A creature with lethal scissors that cut through almost anything.",
+      "cardType": "Monster",
+      "monsterType": "Insect",
+      "level": 8,
+      "attack": 2450,
+      "defense": 2550,
+      "guardianStars": ["Jupiter", "Uranus"]
     }
   ]
 }

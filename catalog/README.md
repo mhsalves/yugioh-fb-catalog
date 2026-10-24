@@ -52,7 +52,7 @@ interface IMonsterCard {
   id: number;
   name: string;
   description: string;
-  password: { code: string; cost: number }; // code: 8 dígitos; cost: starchips
+  password?: { code: string; cost: number }; // code: 8 dígitos; cost: starchips. Ausente nas cartas sem senha no jogo (monstros de ritual, 701–722)
   cardType: "Monster";
   monsterType: TMonsterType; // "Dragon", "Thunder", ... (MONSTER_TYPES)
   level: number; // 1 a 12
@@ -97,7 +97,7 @@ yarn data:sync              # grava; dados já cadastrados são mantidos e as di
 yarn data:sync --overwrite  # substitui os dados cadastrados pelos da wiki
 ```
 
-O que a wiki não informa (por exemplo, a senha dos monstros de ritual) não é inventado: a carta é pulada e aparece na lista do relatório. Nada é gravado se os dados resultantes não passarem no `validate`.
+Uma carta sem senha nem custo na wiki entra sem `password` (o jogo não dá senha aos monstros de ritual e às cartas da história). O que a wiki informa de forma incompleta não é inventado: a carta é pulada e aparece na lista do relatório. Cuidado com `--overwrite`: 15 cartas foram corrigidas a partir dos dados do jogo, onde a wiki está errada (veja o CHANGELOG 0.4.0), e ele trocaria essas correções pelos valores da wiki. Nada é gravado se os dados resultantes não passarem no `validate`.
 
 ## Licença
 

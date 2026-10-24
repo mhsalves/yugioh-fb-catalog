@@ -218,6 +218,17 @@
       "guardianStars": ["Sun", "Neptune"]
     },
     {
+      "id": 380,
+      "name": "Blue-eyes Ultimate Dragon",
+      "description": "The Ultimate dragon formed by the fusion of the three Blue-eyes White Dragon.",
+      "cardType": "Monster",
+      "monsterType": "Dragon",
+      "level": 12,
+      "attack": 4500,
+      "defense": 3800,
+      "guardianStars": ["Sun", "Venus"]
+    },
+    {
       "id": 383,
       "name": "Parrot Dragon",
       "description": "A dragon from the cartoons that's more dangerous than it appears to be.",
@@ -314,6 +325,28 @@
       "guardianStars": ["Sun", "Saturn"]
     },
     {
+      "id": 705,
+      "name": "Tri-horned Dragon",
+      "description": "A wicked dragon with three horns protruding from its head.",
+      "cardType": "Monster",
+      "monsterType": "Dragon",
+      "level": 8,
+      "attack": 2850,
+      "defense": 2350,
+      "guardianStars": ["Moon", "Jupiter"]
+    },
+    {
+      "id": 706,
+      "name": "Serpent Night Dragon",
+      "description": "A dragon created from the soul of a wicked knight.",
+      "cardType": "Monster",
+      "monsterType": "Dragon",
+      "level": 7,
+      "attack": 2350,
+      "defense": 2400,
+      "guardianStars": ["Mercury", "Pluto"]
+    },
+    {
       "id": 711,
       "name": "Mikazukinoyaiba",
       "description": "A dragon warrior armed with a crescent-shaped sword. Rumored to be from the moon.",
@@ -336,6 +369,17 @@
       "attack": 1800,
       "defense": 2000,
       "guardianStars": ["Uranus", "Neptune"]
+    },
+    {
+      "id": 713,
+      "name": "Meteor B. Dragon",
+      "description": "With the burning hide of a meteorite, this creature vaporizes all that it touches.",
+      "cardType": "Monster",
+      "monsterType": "Dragon",
+      "level": 8,
+      "attack": 3500,
+      "defense": 2000,
+      "guardianStars": ["Mars", "Sun"]
     }
   ]
 }

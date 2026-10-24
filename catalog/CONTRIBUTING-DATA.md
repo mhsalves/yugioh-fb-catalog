@@ -48,7 +48,7 @@ Cada arquivo é um objeto com `$schema` e uma lista. O `$schema` aponta para o e
 ```
 
 - `id`: número da carta no jogo (1 a 722).
-- `password.code`: 8 dígitos, como texto (mantém zeros à esquerda). `password.cost`: starchips, de 0 a 999999.
+- `password.code`: 8 dígitos, como texto (mantém zeros à esquerda). `password.cost`: starchips, de 0 a 999999. Cartas que o jogo não vende por senha (monstros de ritual e cartas da história, como 364 e 701–722) ficam **sem** o campo `password`.
 - `level`: 1 a 12. `guardianStars`: duas entre Mars, Jupiter, Saturn, Uranus, Pluto, Neptune, Mercury, Sun, Moon, Venus.
 - `monsterType` precisa ser o tipo do arquivo.
 

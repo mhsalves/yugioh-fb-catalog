@@ -156,6 +156,17 @@
       "attack": 1900,
       "defense": 2000,
       "guardianStars": ["Jupiter", "Uranus"]
+    },
+    {
+      "id": 703,
+      "name": "Sengenjin",
+      "description": "A headstrong primitive man equipped with a Millennium Item.",
+      "cardType": "Monster",
+      "monsterType": "Beast-Warrior",
+      "level": 8,
+      "attack": 2750,
+      "defense": 2500,
+      "guardianStars": ["Jupiter", "Mercury"]
     }
   ]
 }

@@ -146,6 +146,18 @@
       "guardianStars": ["Uranus", "Moon"]
     },
     {
+      "id": 456,
+      "name": "Minomushi Warrior",
+      "description": "A rock warrior that wields a very heavy sword carved from stone.",
+      "cardType": "Monster",
+      "password": { "code": "46864967", "cost": 100 },
+      "monsterType": "Rock",
+      "level": 4,
+      "attack": 1300,
+      "defense": 1200,
+      "guardianStars": ["Uranus", "Venus"]
+    },
+    {
       "id": 457,
       "name": "Stone Ghost",
       "description": "A creature that erupts with anger, resulting in a crushing rain of boulders.",

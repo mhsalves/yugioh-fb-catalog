@@ -26,10 +26,10 @@ export interface CardQuery {
     level?: NumberRange;
     attack?: NumberRange;
     defense?: NumberRange;
-    /** Password cost in starchips. */
+    /** Password cost in starchips. Cards without a password are left out while it is set. */
     cost?: NumberRange;
     ids?: CardId[];
-    /** Default: id ascending. Cards without the sort value (non-monsters for monster stats) go last. */
+    /** Default: id ascending. Cards without the sort value (non-monsters for monster stats, cards without a password for cost) go last. */
     sort?: { by: CardSortKey; dir?: "asc" | "desc" };
     limit?: number;
     offset?: number;
@@ -61,7 +61,7 @@ const sortValue = (card: ICard, by: CardSortKey): number | string | undefined =>
         case "name":
             return card.name;
         case "cost":
-            return card.password.cost;
+            return card.password?.cost;
         default:
             return isMonster(card) ? card[by] : undefined;
     }
@@ -84,7 +84,8 @@ export function searchCards(query: CardQuery = {}): CardSearchResult {
     const matches = cards.filter((card) => {
         if (ids && !ids.has(card.id)) return false;
         if (cardTypes.length > 0 && !cardTypes.includes(card.cardType)) return false;
-        if (!inRange(card.password.cost, query.cost)) return false;
+        // A card without a password has no cost, so a cost range leaves it out.
+        if (isSet(query.cost) && (!card.password || !inRange(card.password.cost, query.cost))) return false;
         if (text) {
             const haystack = query.includeDescription ? `${card.name}\n${card.description}` : card.name;
             if (!normalize(haystack).includes(text)) return false;

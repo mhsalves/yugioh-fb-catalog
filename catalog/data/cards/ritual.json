@@ -76,7 +76,7 @@
       "name": "Revival of Sennen Genjin",
       "description": "Sacrifice Beast-Warrior and Golem to summon Sengenjin.",
       "cardType": "Ritual",
-      "password": { "code": "16206366", "cost": 50 }
+      "password": { "code": "16206366", "cost": 100 }
     },
     {
       "id": 679,
@@ -161,6 +161,12 @@
       "description": "Sacrifice Horn and Machine Fish to summon Sea Fortress.",
       "cardType": "Ritual",
       "password": { "code": "77454922", "cost": 10 }
+    },
+    {
+      "id": 721,
+      "name": "Dark Magic Ritual",
+      "description": "Ceremony for summoning the Magician of Black Chaos. Sacrifice required.",
+      "cardType": "Ritual"
     }
   ]
 }

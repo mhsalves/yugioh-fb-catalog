@@ -32,16 +32,16 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     );
 }
 
-function Password({ card }: { card: ICard }) {
+function Password({ code }: { code: string }) {
     const [state, copy] = useCopy();
     return (
         <>
-            <code className="password">{card.password.code}</code>
+            <code className="password">{code}</code>
             <button
                 type="button"
                 className="icon-button icon-button--small"
-                aria-label={`Copy password ${card.password.code}`}
-                onClick={() => copy(card.password.code)}
+                aria-label={`Copy password ${code}`}
+                onClick={() => copy(code)}
             >
                 {state === "copied" ? <CheckIcon /> : <CopyIcon />}
             </button>
@@ -112,10 +112,18 @@ export default function CardInfo({ card, onSelect }: { card: ICard; onSelect?: (
                         </Field>
                     </>
                 )}
-                <Field label="Password">
-                    <Password card={card} />
-                </Field>
-                <Field label="Cost">{card.password.cost} starchips</Field>
+                {card.password ? (
+                    <>
+                        <Field label="Password">
+                            <Password code={card.password.code} />
+                        </Field>
+                        <Field label="Cost">{card.password.cost} starchips</Field>
+                    </>
+                ) : (
+                    <Field label="Password">
+                        <span className="hint">None: this card cannot be bought with a password</span>
+                    </Field>
+                )}
             </dl>
 
             <section className="details__section">

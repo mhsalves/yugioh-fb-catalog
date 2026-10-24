@@ -117,6 +117,14 @@ describe("validateData", () => {
         ]);
     });
 
+    it("accepts a card without a password (ritual results and story cards have none)", () => {
+        const { issues } = run((files) => {
+            delete list(files, "cards/monsters/thunder.json", "cards")[0].password;
+            delete list(files, "cards/ritual.json", "cards")[0].password;
+        });
+        expect(issues).toEqual([]);
+    });
+
     it("rejects a duplicate id across files", () => {
         const { issues } = run((files) => {
             list(files, "cards/magic.json", "cards")[0].id = 1;

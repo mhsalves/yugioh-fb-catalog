@@ -360,6 +360,17 @@
       "attack": 1600,
       "defense": 1200,
       "guardianStars": ["Moon", "Pluto"]
+    },
+    {
+      "id": 719,
+      "name": "Dokurorider",
+      "description": "A lonely rider that races across the wasteland, raising thick clouds of dust.",
+      "cardType": "Monster",
+      "monsterType": "Zombie",
+      "level": 6,
+      "attack": 1900,
+      "defense": 1850,
+      "guardianStars": ["Uranus", "Mars"]
     }
   ]
 }

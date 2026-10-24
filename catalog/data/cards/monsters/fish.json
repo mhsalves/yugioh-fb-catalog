@@ -54,7 +54,7 @@
       "name": "White Dolphin",
       "description": "A white horned dolphin that attacks by calling up tidal waves.",
       "cardType": "Monster",
-      "password": { "code": "92409659", "cost": 50 },
+      "password": { "code": "92409659", "cost": 20 },
       "monsterType": "Fish",
       "level": 2,
       "attack": 500,
@@ -192,6 +192,17 @@
       "attack": 1300,
       "defense": 1400,
       "guardianStars": ["Neptune", "Mars"]
+    },
+    {
+      "id": 718,
+      "name": "Fortress Whale",
+      "description": "A sea monster with a cannon mounted on its back to blow its enemies out of the water.",
+      "cardType": "Monster",
+      "monsterType": "Fish",
+      "level": 7,
+      "attack": 2350,
+      "defense": 2150,
+      "guardianStars": ["Neptune", "Saturn"]
     }
   ]
 }

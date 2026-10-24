@@ -590,6 +590,17 @@
       "guardianStars": ["Uranus", "Mars"]
     },
     {
+      "id": 364,
+      "name": "Black Luster Soldier",
+      "description": "A powerful warrior with the same capabilities as the legendary Blue-eyes White Dragon.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 8,
+      "attack": 3000,
+      "defense": 2500,
+      "guardianStars": ["Moon", "Uranus"]
+    },
+    {
       "id": 369,
       "name": "Wall Shadow",
       "description": "An unusually fast monster that sweeps across walls to attack it enemies.",
@@ -600,6 +611,17 @@
       "attack": 1600,
       "defense": 3000,
       "guardianStars": ["Moon", "Neptune"]
+    },
+    {
+      "id": 374,
+      "name": "Gate Guardian",
+      "description": "Sanga, Kazejin, and Suijin join to form a single, powerful monster.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 11,
+      "attack": 3750,
+      "defense": 3400,
+      "guardianStars": ["Moon", "Mars"]
     },
     {
       "id": 376,
@@ -660,18 +682,6 @@
       "attack": 1750,
       "defense": 1500,
       "guardianStars": ["Jupiter", "Neptune"]
-    },
-    {
-      "id": 456,
-      "name": "Minomushi Warrior",
-      "description": "A rock warrior that wields a very heavy sword carved from stone.",
-      "cardType": "Monster",
-      "password": { "code": "46864967", "cost": 100 },
-      "monsterType": "Warrior",
-      "level": 4,
-      "attack": 1300,
-      "defense": 1200,
-      "guardianStars": ["Uranus", "Venus"]
     },
     {
       "id": 469,
@@ -816,6 +826,50 @@
       "attack": 1450,
       "defense": 1000,
       "guardianStars": ["Mercury", "Uranus"]
+    },
+    {
+      "id": 701,
+      "name": "Performance of Sword",
+      "description": "A warrior dancer with fancy dance steps.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 6,
+      "attack": 1950,
+      "defense": 1850,
+      "guardianStars": ["Sun", "Saturn"]
+    },
+    {
+      "id": 702,
+      "name": "Hungry Burger",
+      "description": "Attracts hungry enemies with tasty aromas and eats them when they get close enough.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 6,
+      "attack": 2000,
+      "defense": 1850,
+      "guardianStars": ["Moon", "Mars"]
+    },
+    {
+      "id": 704,
+      "name": "Skull Guardian",
+      "description": "A guardian of the law that doesn't forgive cheating. Attacks enemies with its sword-like arms.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 7,
+      "attack": 2050,
+      "defense": 2500,
+      "guardianStars": ["Sun", "Jupiter"]
+    },
+    {
+      "id": 716,
+      "name": "Garma Sword",
+      "description": "A skilled warrior that wields six swords against opposing monsters.",
+      "cardType": "Monster",
+      "monsterType": "Warrior",
+      "level": 7,
+      "attack": 2550,
+      "defense": 2150,
+      "guardianStars": ["Moon", "Uranus"]
     }
   ]
 }

@@ -50,8 +50,7 @@
           "id",
           "name",
           "description",
-          "cardType",
-          "password"
+          "cardType"
         ],
         "additionalProperties": false
       }

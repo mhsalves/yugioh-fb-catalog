@@ -254,6 +254,17 @@
       "guardianStars": ["Venus", "Saturn"]
     },
     {
+      "id": 356,
+      "name": "Super War-lion",
+      "description": "A very vicious lion with sharp and long claws.",
+      "cardType": "Monster",
+      "monsterType": "Beast",
+      "level": 7,
+      "attack": 2300,
+      "defense": 2100,
+      "guardianStars": ["Jupiter", "Venus"]
+    },
+    {
       "id": 384,
       "name": "Dark Rabbit",
       "description": "A cartoon rabbit that quickly leaps all over the place, making it a difficult target.",

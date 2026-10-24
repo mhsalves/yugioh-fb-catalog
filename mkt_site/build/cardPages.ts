@@ -29,7 +29,8 @@ function cardSummary(card: ICard): string {
             ["Guardian stars", card.guardianStars.join(", ")],
         );
     }
-    rows.push(["Password", card.password.code], ["Cost", `${card.password.cost} starchips`]);
+    if (card.password) rows.push(["Password", card.password.code], ["Cost", `${card.password.cost} starchips`]);
+    else rows.push(["Password", "None"]);
 
     return [
         `<main class="static-card">`,

@@ -25,7 +25,8 @@ export interface IPassword {
 export interface ICardBase {
     id: CardId;
     name: string;
-    password: IPassword;
+    /** Absent for the cards the game gives no password (ritual results and story cards, such as 364 and 701-722). */
+    password?: IPassword;
     description: string;
 }
 

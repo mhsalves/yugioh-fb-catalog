@@ -554,6 +554,28 @@
       "guardianStars": ["Jupiter", "Moon"]
     },
     {
+      "id": 360,
+      "name": "Zera The Mant",
+      "description": "A huge, brutal monster that attacks with razor-sharp claws.",
+      "cardType": "Monster",
+      "monsterType": "Fiend",
+      "level": 8,
+      "attack": 2800,
+      "defense": 2300,
+      "guardianStars": ["Moon", "Saturn"]
+    },
+    {
+      "id": 365,
+      "name": "Fiend's Mirror",
+      "description": "An arcane glass that draws its enemies in to the mirror world.",
+      "cardType": "Monster",
+      "monsterType": "Fiend",
+      "level": 6,
+      "attack": 2100,
+      "defense": 1800,
+      "guardianStars": ["Venus", "Pluto"]
+    },
+    {
       "id": 377,
       "name": "Ryu-kishin Powered",
       "description": "Ryu-kishin enhanced by the power of darkness. Very sharp talons make it a worthy opponent.",
@@ -622,7 +644,7 @@
       "monsterType": "Fiend",
       "level": 1,
       "attack": 250,
-      "defense": 300,
+      "defense": 350,
       "guardianStars": ["Moon", "Jupiter"]
     },
     {
@@ -681,8 +703,8 @@
       "password": { "code": "28563545", "cost": 700 },
       "monsterType": "Fiend",
       "level": 6,
-      "attack": 2100,
-      "defense": 2000,
+      "attack": 2000,
+      "defense": 2100,
       "guardianStars": ["Moon", "Mercury"]
     },
     {
@@ -780,6 +802,28 @@
       "attack": 1650,
       "defense": 1600,
       "guardianStars": ["Moon", "Mercury"]
+    },
+    {
+      "id": 709,
+      "name": "Chakra",
+      "description": "A twisted shape that attacks with tentacle-like arms.",
+      "cardType": "Monster",
+      "monsterType": "Fiend",
+      "level": 7,
+      "attack": 2450,
+      "defense": 2000,
+      "guardianStars": ["Mercury", "Moon"]
+    },
+    {
+      "id": 715,
+      "name": "Psycho-Puppet",
+      "description": "A mysterious doll with a strange dance that robs the power of opposing monsters.",
+      "cardType": "Monster",
+      "monsterType": "Fiend",
+      "level": 7,
+      "attack": 2000,
+      "defense": 2350,
+      "guardianStars": ["Moon", "Saturn"]
     }
   ]
 }
