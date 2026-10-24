@@ -1,9 +1,11 @@
 /* Header */
 
+/* Phones: one compact line (logo, name, version button); the notch area is painted with the header's color. */
 .header {
     position: sticky;
     top: 0;
     z-index: 10;
+    padding-top: env(safe-area-inset-top, 0px);
     background: var(--color-surface);
     border-bottom: 2px solid var(--color-accent);
 }
@@ -12,26 +14,82 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
     max-width: var(--page-width);
     min-height: var(--header-height);
     margin: 0 auto;
-    padding: 0 var(--gutter);
+    padding: 0 max(var(--gutter), env(safe-area-inset-right, 0px)) 0 max(var(--gutter), env(safe-area-inset-left, 0px));
 }
 
 .header__brand {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-height: 44px;
     color: var(--color-text);
     font-weight: 700;
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
+    letter-spacing: 0.01em;
     text-decoration: none;
 }
 
-/* Small phones show the logo alone, so the catalog version and links fit. */
-.header__brand-text {
-    display: none;
+.header__brand img {
+    width: 28px;
+    height: 28px;
+}
+
+/* Phones: the version button opens the package, npm and GitHub actions in a sheet (CatalogVersion.tsx). */
+.catalog-version__compact {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    cursor: pointer;
+}
+
+.catalog-version__compact:hover {
+    border-color: var(--color-accent);
+}
+
+/* Link rows in a sheet */
+.link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.link-list__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.link-list__item span:first-of-type {
+    flex: 1;
+}
+
+.link-list__item:hover {
+    border-color: var(--color-accent);
+}
+
+.link-list__item .icon {
+    color: var(--color-text-muted);
 }
 
 /* Main navigation (spec 10 F-3): a tab bar fixed to the bottom on phones, tabs in the header from md up. */
@@ -84,8 +142,9 @@ body:has(.nav) {
 
 /* Catalog version */
 
+/* From md up the version, npm and GitHub sit in the header itself. */
 .catalog-version {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
@@ -112,6 +171,15 @@ body:has(.nav) {
     overflow-wrap: anywhere;
     text-align: start;
     cursor: pointer;
+}
+
+/* In the phone sheet: a full-width row, the copy icon at the end. */
+.catalog-version__copy--block {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 14px;
+    background: var(--color-bg);
 }
 
 .catalog-version__copy:hover,
@@ -197,13 +265,32 @@ body:has(.catalog[data-panel="true"]) .footer__bar {
     min-height: 44px;
 }
 
-@media (min-width: 401px) {
-    .header__brand-text {
-        display: inline;
-    }
-}
-
 @media (min-width: 721px) {
+    :root {
+        --header-height: 64px;
+    }
+
+    .header__bar {
+        gap: 16px;
+    }
+
+    .header__brand {
+        font-size: 1.125rem;
+    }
+
+    .header__brand img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .catalog-version {
+        display: flex;
+    }
+
+    .catalog-version__compact {
+        display: none;
+    }
+
     /* With a card open, the page and the footer keep their left edge and stop before the docked panel. Both are
        centered, so the space they already leave on the right (half of what the window has beyond --page-width)
        counts. */

@@ -31,10 +31,18 @@
     border-radius: 0;
 }
 
+/* Sticky in the phone sheet, so Close stays in reach while scrolling the long chip lists. */
 .filters__head {
+    position: sticky;
+    top: -16px;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: -16px -16px 0;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
 }
 
 .filters__head h2 {
@@ -105,6 +113,18 @@ fieldset:disabled {
     background: var(--color-accent);
     color: var(--color-accent-contrast);
     font-weight: 600;
+}
+
+.chip {
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chip:hover:not(:disabled):not([aria-pressed="true"]) {
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
 }
 
 .chip:disabled {
@@ -328,15 +348,101 @@ fieldset:disabled {
     font-size: 0.875rem;
 }
 
+/* Phones: the label above one row of chips that scrolls sideways (bleeding to the screen edges), so the row takes
+   one line instead of two. From md up the chips wrap next to the label. */
 .type-filter {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 12px;
+    flex-direction: column;
+    gap: 6px;
     margin: 12px 0 0;
     padding: 0;
     border: 0;
     min-width: 0;
+}
+
+.type-filter .chips {
+    flex-wrap: nowrap;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 2px var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-padding-inline: var(--gutter);
+}
+
+.type-filter .chips::-webkit-scrollbar {
+    display: none;
+}
+
+.type-filter .chip {
+    flex-shrink: 0;
+}
+
+/* Filter count on the phone "Filters" button */
+.badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Active filters: removable chips above the results */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin-top: 12px;
+}
+
+.active-filters__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.chip--removable {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 0 8px 0 12px;
+    border-color: var(--color-accent);
+    color: var(--color-text);
+}
+
+.chip--removable .icon {
+    color: var(--color-text-muted);
+}
+
+.chip--removable:hover .icon {
+    color: var(--color-text);
+}
+
+/* In the filters panel: what to do when the monster filters are off */
+.filters__notice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+}
+
+.filters__notice p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
 }
 
 .type-filter__label {
@@ -403,6 +509,28 @@ fieldset:disabled {
 @media (min-width: 721px) {
     .catalog {
         grid-template-columns: 300px minmax(0, 1fr);
+    }
+
+    .filters__head {
+        position: static;
+        margin: 0;
+        padding: 0;
+        border-bottom: 0;
+        background: none;
+    }
+
+    .type-filter {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+    }
+
+    .type-filter .chips {
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
     }
 
     .filters,

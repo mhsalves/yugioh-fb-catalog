@@ -3,7 +3,6 @@
 /*
  * Mobile first (spec 10 F-1): base styles are the phone layout, wider screens add to them with min-width queries
  * only. Breakpoints (media queries cannot read custom properties, so they are listed here):
- *   sm 401px   the brand text appears next to the logo
  *   md 721px   filter column, docked details panel, navigation in the header
  *   lg 1200px  wide details panel (721–1199px uses a narrower one)
  */
@@ -17,6 +16,9 @@
     --color-text: #e8ecf6;
     --color-text-muted: #a4b0cc;
     --color-accent: #d4a937;
+    --color-accent-hover: #e6be52;
+    /* Hover fill for ghost buttons, chips and rows. */
+    --color-surface-hover: #22386b;
     --color-accent-contrast: #14244a;
 
     /* One color per card type (spec 06 U-1; Equip is TBD-U4). */
@@ -36,7 +38,8 @@
     --panel-width: 380px;
     --panel-edge: 1.5rem;
     --panel-gap: 24px;
-    --header-height: 64px;
+    /* 56px on phones, 64px from md up (layout.css). */
+    --header-height: 56px;
     /* The phone tab bar (spec 10 F-3), not counting the bottom safe area. */
     --nav-height: 56px;
     --page-width: 1280px;

@@ -139,6 +139,61 @@ export function catalogUrl({ query, cardId }: CatalogState): string {
     return search ? `/?${search}` : "/";
 }
 
+export interface ActiveFilter {
+    id: string;
+    label: string;
+    /** The query without this filter. */
+    without: CardQuery;
+}
+
+const RANGE_LABELS: Record<RangeField, string> = { level: "Level", attack: "ATK", defense: "DEF", cost: "Cost" };
+
+function rangeLabel(name: string, { min, max }: NumberRange): string {
+    if (min !== undefined && max !== undefined) return min === max ? `${name} ${min}` : `${name} ${min}–${max}`;
+    return min !== undefined ? `${name} ≥ ${min}` : `${name} ≤ ${max}`;
+}
+
+/**
+ * The filter-panel fields that are set, one removable chip each (shown above the results so the panel need not be
+ * opened to see or undo them). Same fields as countFilters.
+ */
+export function activeFilters(query: CardQuery): ActiveFilter[] {
+    const filters: ActiveFilter[] = [];
+    const monsterTypes = asList(query.monsterType);
+    for (const type of monsterTypes) {
+        filters.push({
+            id: `mtype-${type}`,
+            label: type,
+            without: { ...query, monsterType: monsterTypes.filter((item) => item !== type) },
+        });
+    }
+    const stars = asList(query.guardianStar);
+    for (const star of stars) {
+        filters.push({
+            id: `star-${star}`,
+            label: `${star} star`,
+            without: { ...query, guardianStar: stars.filter((item) => item !== star) },
+        });
+    }
+    for (const field of Object.keys(RANGE_PARAMS) as RangeField[]) {
+        const range = query[field];
+        if (formatRange(range) === undefined) continue;
+        filters.push({
+            id: field,
+            label: rangeLabel(RANGE_LABELS[field], range!),
+            without: { ...query, [field]: undefined },
+        });
+    }
+    if (query.includeDescription) {
+        filters.push({
+            id: "desc",
+            label: "Text in descriptions",
+            without: { ...query, includeDescription: undefined },
+        });
+    }
+    return filters;
+}
+
 /** How many filter-panel fields are set: not the search text, the "By type" row or the sort (shown on the phone "Filters" button). */
 export function countFilters(query: CardQuery): number {
     return (

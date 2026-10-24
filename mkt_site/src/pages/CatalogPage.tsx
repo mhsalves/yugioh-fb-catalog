@@ -17,6 +17,7 @@ import {
     SORT_KEYS,
     withoutMonsterFilters,
 } from "../catalogUrl";
+import ActiveFilters from "../components/ActiveFilters";
 import CardDetails from "../components/CardDetails";
 import CardTile from "../components/CardTile";
 import EmptyState from "../components/EmptyState";
@@ -127,7 +128,13 @@ export default function CatalogPage() {
                         aria-expanded={filtersOpen}
                         onClick={() => setFiltersOpen(true)}
                     >
-                        <FilterIcon /> Filters{filterCount > 0 && ` (${filterCount})`}
+                        <FilterIcon /> Filters
+                        {filterCount > 0 && (
+                            <span className="badge">
+                                {filterCount}
+                                <span className="visually-hidden"> set</span>
+                            </span>
+                        )}
                     </button>
                 </div>
 
@@ -139,6 +146,8 @@ export default function CatalogPage() {
                         setQuery(monstersSelected(next) ? next : withoutMonsterFilters(next));
                     }}
                 />
+
+                <ActiveFilters query={query} onChange={setQuery} />
 
                 <div className="toolbar toolbar--secondary">
                     <p className="summary" role="status">

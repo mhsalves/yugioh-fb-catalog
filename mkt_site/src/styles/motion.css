@@ -3,7 +3,11 @@
 @media (prefers-reduced-motion: reduce) {
     .page,
     .footer__bar,
-    .card-tile {
+    .card-tile,
+    .button,
+    .icon-button,
+    .text-button,
+    .chip {
         transition: none;
     }
 

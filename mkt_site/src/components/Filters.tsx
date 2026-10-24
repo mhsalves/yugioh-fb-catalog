@@ -1,6 +1,6 @@
 import { useEffect, useId } from "react";
 import { GUARDIAN_STARS, MONSTER_TYPES, type CardQuery, type NumberRange } from "@mhsalves/yugioh-fb-catalog";
-import { hasMonsterFilters, monstersSelected, type RangeField } from "../catalogUrl";
+import { countFilters, hasMonsterFilters, monstersSelected, type RangeField } from "../catalogUrl";
 import { CloseIcon } from "./icons";
 
 interface FiltersProps {
@@ -126,15 +126,29 @@ export default function Filters({ query, onChange, total, open, onClose }: Filte
                 Also search descriptions
             </label>
 
+            {/* Outside the fieldset: a disabled fieldset disables the buttons inside it too. */}
+            {!monstersEnabled && (
+                <div className="filters__notice">
+                    <p>Monster type, guardian star, level, ATK and DEF need “Monster” selected in “By type”.</p>
+                    <button
+                        type="button"
+                        className="button button--small"
+                        onClick={() => update({ cardType: [...asList(query.cardType), "Monster"] })}
+                    >
+                        Filter monsters
+                    </button>
+                </div>
+            )}
+
             <fieldset className="filter-section" disabled={!monstersEnabled}>
                 <legend>Monster</legend>
-                <p className="hint">
-                    {!monstersEnabled
-                        ? 'Select "Monster" in "By type" to use these filters.'
-                        : otherTypesSelected && hasMonsterFilters(query)
-                          ? "Monster filters hide the other card types."
-                          : "These filters apply to monsters only."}
-                </p>
+                {monstersEnabled && (
+                    <p className="hint">
+                        {otherTypesSelected && hasMonsterFilters(query)
+                            ? "Monster filters hide the other card types."
+                            : "These filters apply to monsters only."}
+                    </p>
+                )}
                 <ChipGroup
                     legend="Monster type"
                     options={MONSTER_TYPES}
@@ -161,6 +175,7 @@ export default function Filters({ query, onChange, total, open, onClose }: Filte
                 <button
                     type="button"
                     className="button button--ghost"
+                    disabled={countFilters(query) === 0}
                     onClick={() => onChange({ text: query.text, cardType: query.cardType, sort: query.sort })}
                 >
                     Clear filters
