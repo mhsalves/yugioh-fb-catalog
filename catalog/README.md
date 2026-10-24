@@ -87,6 +87,20 @@ yarn validate        # na raiz: verifica todos os arquivos de dados
 yarn coverage:data   # quantas cartas já foram cadastradas
 ```
 
+## Sincronizar com a Yu-Gi-Oh! Wiki
+
+`yarn data:sync` preenche `catalog/data/` com as cartas e as receitas de ritual da [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards), pela API do site (spec 03 A-5).
+
+```bash
+yarn data:sync --dry-run    # mostra o que mudaria, sem gravar
+yarn data:sync              # grava; dados já cadastrados são mantidos e as diferenças listadas
+yarn data:sync --overwrite  # substitui os dados cadastrados pelos da wiki
+```
+
+O que a wiki não informa (por exemplo, a senha dos monstros de ritual) não é inventado: a carta é pulada e aparece na lista do relatório. Nada é gravado se os dados resultantes não passarem no `validate`.
+
 ## Licença
 
-MIT
+Código: MIT.
+
+Fonte dos dados: os dados das cartas foram obtidos da [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), cujo texto está sob [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Os textos das cartas e os nomes são do jogo, © Konami. A licença dos dados importados ainda está em aberto (spec 03, TBD-A4).

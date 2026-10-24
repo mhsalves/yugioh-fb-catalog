@@ -1,9 +1,25 @@
 import { describe, expect, it } from "vitest";
 
-import { getCardList, searchCards, type ICard } from "../src";
+import { getCardList, searchCards, type CardQuery, type ICard } from "../src";
+
+/**
+ * The expectations are written against whatever is in catalog/data, so they keep holding while
+ * cards are added: each filter must return exactly the cards its predicate picks, in id order.
+ * Thunder Dragon (425), Mountain (332) and Fake Trap (690) anchor the tests that need a known card.
+ */
 
 const ids = (items: readonly ICard[]) => items.map((card) => card.id);
 const allIdsAscending = () => ids(getCardList()).sort((a, b) => a - b);
+const where = (predicate: (card: ICard) => boolean) => allIdsAscending().filter((id) => predicate(card(id)));
+const card = (id: number) => getCardList().find((item) => item.id === id)!;
+const isMonster = (item: ICard) => item.cardType === "Monster";
+
+/** Asserts that the query returns exactly the cards the predicate picks, and at least one. */
+const expectMatches = (query: CardQuery, predicate: (card: ICard) => boolean) => {
+    const expected = where(predicate);
+    expect(expected.length).toBeGreaterThan(0);
+    expect(ids(searchCards(query).items)).toEqual(expected);
+};
 
 describe("searchCards", () => {
     it("returns every card sorted by id when the query is empty", () => {
@@ -19,25 +35,32 @@ describe("searchCards", () => {
 
     describe("text", () => {
         it("matches a name substring, ignoring case and accents", () => {
-            expect(ids(searchCards({ text: "thunder" }).items)).toEqual([425]);
-            expect(ids(searchCards({ text: "THÚNDER DRAG" }).items)).toEqual([425]);
+            expectMatches({ text: "thunder" }, (item) => item.name.toLowerCase().includes("thunder"));
+            expect(ids(searchCards({ text: "thunder" }).items)).toContain(425);
+            expect(ids(searchCards({ text: "THÚNDER DRAG" }).items)).toContain(425);
         });
 
         it("ignores surrounding whitespace and treats blank text as no filter", () => {
-            expect(ids(searchCards({ text: "  mountain " }).items)).toEqual([332]);
+            expect(searchCards({ text: "  mountain " })).toEqual(searchCards({ text: "mountain" }));
+            expect(ids(searchCards({ text: "  mountain " }).items)).toContain(332);
             expect(searchCards({ text: "   " }).total).toBe(getCardList().length);
         });
 
         it("searches descriptions only with includeDescription", () => {
-            expect(searchCards({ text: "lightning" }).total).toBe(0);
-            expect(ids(searchCards({ text: "lightning", includeDescription: true }).items)).toEqual([425]);
+            const inName = (item: ICard) => item.name.toLowerCase().includes("lightning");
+            expect(ids(searchCards({ text: "lightning" }).items)).toEqual(where(inName));
+            expectMatches(
+                { text: "lightning", includeDescription: true },
+                (item) => inName(item) || item.description.toLowerCase().includes("lightning"),
+            );
+            expect(ids(searchCards({ text: "lightning", includeDescription: true }).items)).toContain(425);
         });
     });
 
     describe("list filters", () => {
         it("filters by one card type or several", () => {
-            expect(ids(searchCards({ cardType: "Trap" }).items)).toEqual([690]);
-            expect(ids(searchCards({ cardType: ["Magic", "Equip"] }).items)).toEqual([315, 332]);
+            expectMatches({ cardType: "Trap" }, (item) => item.cardType === "Trap");
+            expectMatches({ cardType: ["Magic", "Equip"] }, (item) => ["Magic", "Equip"].includes(item.cardType));
         });
 
         it("treats an empty list as no filter", () => {
@@ -45,22 +68,26 @@ describe("searchCards", () => {
         });
 
         it("filters monsters by monster type and by either guardian star", () => {
-            expect(ids(searchCards({ monsterType: "Thunder" }).items)).toEqual([425]);
-            expect(ids(searchCards({ guardianStar: "Jupiter" }).items)).toEqual([425]);
-            expect(ids(searchCards({ guardianStar: ["Sun", "Pluto"] }).items)).toEqual([425]);
-            expect(searchCards({ guardianStar: "Sun" }).total).toBe(0);
+            const stars = (item: ICard): string[] => (item.cardType === "Monster" ? item.guardianStars : []);
+            expectMatches({ monsterType: "Thunder" }, (item) => isMonster(item) && item.monsterType === "Thunder");
+            expectMatches({ guardianStar: "Jupiter" }, (item) => stars(item).includes("Jupiter"));
+            expectMatches(
+                { guardianStar: ["Sun", "Pluto"] },
+                (item) => stars(item).includes("Sun") || stars(item).includes("Pluto"),
+            );
         });
 
         it("filters by id", () => {
-            expect(ids(searchCards({ ids: [690, 1, 315] }).items)).toEqual([315, 690]);
+            const known = [690, 425, 332];
+            expect(ids(searchCards({ ids: [...known, 9999] }).items)).toEqual([...known].sort((a, b) => a - b));
         });
     });
 
     describe("ranges", () => {
         it("keeps only monsters when a monster stat range is set", () => {
-            expect(ids(searchCards({ attack: { min: 0 } }).items)).toEqual([425]);
-            expect(ids(searchCards({ level: { min: 5, max: 5 } }).items)).toEqual([425]);
-            expect(searchCards({ defense: { max: 1499 } }).total).toBe(0);
+            expectMatches({ attack: { min: 0 } }, isMonster);
+            expectMatches({ level: { min: 5, max: 5 } }, (item) => isMonster(item) && item.level === 5);
+            expectMatches({ defense: { max: 1500 } }, (item) => isMonster(item) && item.defense <= 1500);
         });
 
         it("treats an empty range as no filter", () => {
@@ -68,27 +95,42 @@ describe("searchCards", () => {
         });
 
         it("filters every card type by cost, with inclusive bounds", () => {
-            expect(ids(searchCards({ cost: { min: 100, max: 800 } }).items)).toEqual([315, 425, 674]);
-            expect(ids(searchCards({ cost: { min: 999999 } }).items)).toEqual([690]);
+            const cost = card(425).password.cost;
+            expectMatches({ cost: { min: cost, max: cost } }, (item) => item.password.cost === cost);
+            expectMatches({ cost: { min: 999999 } }, (item) => item.password.cost === 999999);
+            expect(ids(searchCards({ cost: { min: 999999 } }).items)).toContain(690);
         });
 
         it("combines filters with AND", () => {
-            expect(searchCards({ cardType: "Magic", cost: { min: 100 } }).total).toBe(0);
+            expectMatches(
+                { cardType: "Magic", cost: { max: 100 } },
+                (item) => item.cardType === "Magic" && item.password.cost <= 100,
+            );
         });
     });
 
     describe("sort", () => {
         it("sorts by name and cost in both directions", () => {
-            const byName = searchCards({ sort: { by: "name" } }).items.map((card) => card.name);
+            const byName = searchCards({ sort: { by: "name" } }).items.map((item) => item.name);
             expect(byName).toEqual([...byName].sort((a, b) => a.localeCompare(b)));
-            expect(ids(searchCards({ sort: { by: "cost", dir: "desc" } }).items)).toEqual([690, 315, 425, 674, 332]);
+            const byCost = searchCards({ sort: { by: "cost", dir: "desc" } }).items;
+            for (let i = 1; i < byCost.length; i++) {
+                const [previous, current] = [byCost[i - 1], byCost[i]];
+                expect(previous.password.cost).toBeGreaterThanOrEqual(current.password.cost);
+                if (previous.password.cost === current.password.cost) expect(previous.id).toBeLessThan(current.id);
+            }
         });
 
         it("puts cards without the sort value last, whatever the direction", () => {
+            const monsters = where(isMonster).length;
             for (const dir of ["asc", "desc"] as const) {
-                const result = ids(searchCards({ sort: { by: "attack", dir } }).items);
-                expect(result[0]).toBe(425);
-                expect(result.slice(1)).toEqual([315, 332, 674, 690]);
+                const result = searchCards({ sort: { by: "attack", dir } }).items;
+                const sign = dir === "desc" ? -1 : 1;
+                const attacks = result
+                    .slice(0, monsters)
+                    .map((item) => (item.cardType === "Monster" ? item.attack : NaN));
+                expect(attacks).toEqual([...attacks].sort((a, b) => sign * (a - b)));
+                expect(ids(result.slice(monsters))).toEqual(where((item) => !isMonster(item)));
             }
         });
     });

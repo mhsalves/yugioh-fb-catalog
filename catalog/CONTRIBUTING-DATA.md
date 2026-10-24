@@ -113,6 +113,10 @@ O que o `validate` verifica:
 
 O CI roda as mesmas verificações em todo PR.
 
+## Importar da Yu-Gi-Oh! Wiki
+
+`yarn data:sync --dry-run` compara os dados com a [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) e lista as cartas que faltam, as diferenças e o que não pôde ser importado. Sem `--dry-run`, grava as cartas e receitas que faltam (as já cadastradas são mantidas; `--overwrite` as substitui). Veja o [README](./README.md#sincronizar-com-a-yu-gi-oh-wiki). Num PR feito assim, a fonte é a wiki: cite-a.
+
 ## Abrir o PR
 
 1. Cite a **fonte** de cada dado no PR (ex.: a página da carta, um guia, o próprio jogo).

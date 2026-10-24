@@ -1,6 +1,6 @@
 # 03 – Catalog data authoring (storage format and validation)
 
-> **Status: Built** (A-5 deferred). Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
+> **Status: Built** (A-5 built as a proposal: its source licensing, TBD-A4, is still open). Format decision **A-1 is Agreed: JSON** (2026-10-20). The rest of the spec follows from it.
 
 
 
@@ -11,7 +11,7 @@
 
 Build status as of 2026-10-20, after the spec 03 build PR (based on `main` @ `ce9dfcf`). Legend in the [index](./README.md#status-system).
 
-**5 built · 0 partial · 1 not built**
+**6 built · 0 partial · 0 not built**
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -19,7 +19,7 @@ Build status as of 2026-10-20, after the spec 03 build PR (based on `main` @ `ce
 | A-2 | Validation rules | Agreed | ✅ Built | `yarn validate` (CI and before every build), every rule with a failing-fixture test |
 | A-3 | Contributor guide | Agreed | ✅ Built | `catalog/CONTRIBUTING-DATA.md` (PT-BR, like the catalog README) |
 | A-4 | Coverage report as a script | Agreed | ✅ Built | `yarn coverage:data` (also printed in CI) |
-| A-5 | Import tooling | Proposed | ❌ Not built | Deferred: depends on TBD-X1 (source) and TBD-A4 (licensing) |
+| A-5 | Import tooling | Proposed | ✅ Built | `yarn data:sync` (`catalog/scripts/sync-wiki.ts`) fills `catalog/data` from the Yu-Gi-Oh! Wiki; TBD-A4 still open |
 | A-6 | PR template for data changes | Agreed | ✅ Built | `.github/PULL_REQUEST_TEMPLATE/data.md` |
 
 ## 1. Why this spec exists
@@ -167,8 +167,19 @@ A one-page guide covering: where each kind of card goes, a copyable template per
 ### A-4 Coverage report as a script · ✅ Built
 `yarn coverage:data` prints the entered count per category and overall (`5 / 722`). The site shows the same numbers ([06](./06-site-ux-forbidden-memories.md)), and CI can post them as a PR comment.
 
-### A-5 (Later) Import tooling · ❌ Not built
+### A-5 (Later) Import tooling · ✅ Built
 An optional script in `catalog/tools/` that converts a trusted external dump into the data files. It speeds up the initial bulk fill. It depends on **TBD-X1** (the source) and **TBD-A4** (licensing of that source).
+
+**As built (2026-10-23):** `yarn data:sync [--dry-run] [--overwrite]` runs `catalog/scripts/sync-wiki.ts`, next to the other data scripts rather than in `catalog/tools/`. Its source is the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/wiki/List_of_Yu-Gi-Oh!_Forbidden_Memories_cards) on Fandom, read through its API (no HTML scraping):
+
+- **Cards** come from the Semantic MediaWiki properties of the `<name> (FMR)` pages (`action=ask`, 2 requests for all 722): number, name, lore, card type, spell property (`Equip Spell Card` → `Equip`, other spells → `Magic`), type, level, ATK/DEF, guardian stars, passcode and star chip cost.
+- **Ritual recipes** come from the `ritual_card` and `ritual_material` parameters of the result monster's `{{FMR card}}` template, so every monster page's wikitext is read (13 requests). Card names are matched to ids over every wiki card, ignoring case; a name that matches no card or more than one is reported, not guessed.
+- **Nothing is guessed** (spec 02): a card without a passcode or star chip cost on the wiki, with an unknown type or without two guardian stars, is skipped and listed. On the first run that left out 24 cards, the ritual results and story cards (for example 364, 380, 701–722), which the wiki gives no passcode.
+- **Hand-entered data wins.** A record already in `catalog/data` is kept, and every field where it differs from the wiki is printed; `--overwrite` replaces it. On the first run the 5 hand-entered cards and the recipe for ritual 674 matched the wiki exactly.
+- The merged data runs through `validateData` before any file is written, and files are written with Prettier. The conversion is pure (`scripts/lib/wiki.ts`) and tested on fixtures (`test/wiki.test.ts`), with no network in the tests.
+- Requests send a project `User-Agent` and wait one second between calls.
+
+TBD-X1 now has a working answer for card stats and rituals (the wiki), but fusions, equips and fields are not on these pages and still need a source. TBD-A4 is not resolved by the script: see §6.
 
 ### A-6 PR template for data changes · ✅ Built
 `.github/PULL_REQUEST_TEMPLATE/data.md` with these checks: source cited, `yarn validate` passed, only data files touched.
@@ -187,6 +198,6 @@ An optional script in `catalog/tools/` that converts a trusted external dump int
 - ~~**TBD-A1:** Storage format.~~ **Resolved (2026-10-20): JSON** for all data.
 - ~~**TBD-A2:** Fusions and drops in JSON or CSV?~~ **Resolved: JSON**, the same as everything else. An importer (A-5) may *read* CSV from a source, but the repository stores JSON.
 - **TBD-A3:** While data is incomplete, should a missing referenced ID be an **error** or a **warning**? Proposal: a warning until coverage reaches 100%, then an error. **Built as proposed (2026-10-20):** a missing card is a warning. A wrong card kind or an out-of-range ID is always an error. Switching to errors at 100% coverage is still to do.
-- **TBD-A4:** Licensing and attribution for imported community data. Each source needs checking before any bulk import. Open; blocks A-5.
+- **TBD-A4:** Licensing and attribution for imported community data. Each source needs checking before any bulk import. **Open, needs a decision before the first synced data ships.** The Yu-Gi-Oh! Wiki's text is CC BY-SA 3.0 (attribution and share-alike, see also [08](./08-card-images.md) TBD-I2), while the package is MIT. Most synced fields are game facts (numbers, stats, passwords) and the lore is Konami's in-game text, which the wiki only transcribes, but the compilation itself may still count. Options: (a) ship it with attribution in the README and keep the data CC BY-SA, separate from the MIT code; (b) use the wiki only to cross-check data taken from the game itself (spec 02 §6 sources); (c) ask the wiki's community. `catalog/README.md` credits the wiki for now.
 - **TBD-A5:** Should each record carry a `source` field (for provenance) and an optional `notes` field? Or should provenance live only in PR descriptions? Open. For now provenance is in PR descriptions (the data PR template asks for it), and the strict schema rejects unknown fields until this is decided.
 - **TBD-A6:** Schema tool: Zod (types + runtime validation, with JSON Schema exported from it), or a hand-written JSON Schema with Ajv plus generated types? **Built with Zod 4 (2026-10-20)**, dev-only, exporting draft-07 JSON Schemas. Public types stay hand-written and are asserted equal to the schemas (see A-1 "As built").
