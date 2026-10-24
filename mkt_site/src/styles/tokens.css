@@ -42,7 +42,8 @@
     --header-height: 56px;
     /* The phone tab bar (spec 10 F-3), not counting the bottom safe area. */
     --nav-height: 56px;
-    --page-width: 1280px;
+    /* Wide enough for 6 grid columns next to the filter column (catalog.css). */
+    --page-width: 1440px;
     --gutter: 16px;
 
     color-scheme: dark;

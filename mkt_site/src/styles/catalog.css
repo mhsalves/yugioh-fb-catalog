@@ -217,6 +217,9 @@ fieldset:disabled {
     min-height: 36px;
 }
 
+/* Columns follow the width of the results area, not the window (a container query), so the grid also adapts when
+   the filter column or the details panel takes room: 2, 3, 4 or 6 columns, all dividing the 48-card page evenly.
+   6 needs about 1040px, which only wide screens have (tiles about 170px; at 144px names wrap too much). */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -224,6 +227,25 @@ fieldset:disabled {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+@container results (min-width: 480px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+@container results (min-width: 720px) {
+    .grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@container results (min-width: 1040px) {
+    .grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
 }
 
 .card-tile {
@@ -506,6 +528,7 @@ fieldset:disabled {
 /* Results pages: Previous / "Page 2 of 15" / Next on phones, numbered pages from md up */
 
 .results {
+    container: results / inline-size;
     scroll-margin-top: calc(var(--header-height) + 12px);
 }
 
@@ -633,11 +656,6 @@ fieldset:disabled {
         padding: 0;
         border-top: 0;
         background: none;
-    }
-
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 12px;
     }
 }
 
