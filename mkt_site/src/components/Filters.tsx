@@ -1,6 +1,6 @@
 import { useEffect, useId } from "react";
 import { GUARDIAN_STARS, MONSTER_TYPES, type CardQuery, type NumberRange } from "@mhsalves/yugioh-fb-catalog";
-import type { RangeField } from "../catalogUrl";
+import { hasMonsterFilters, monstersSelected, type RangeField } from "../catalogUrl";
 import { CloseIcon } from "./icons";
 
 interface FiltersProps {
@@ -88,12 +88,8 @@ function RangeInput(props: {
 }
 
 export default function Filters({ query, onChange, total, open, onClose }: FiltersProps) {
-    const cardTypes = asList(query.cardType);
-    const monstersExcluded = cardTypes.length > 0 && !cardTypes.includes("Monster");
-    const monsterFilterSet =
-        asList(query.monsterType).length > 0 ||
-        asList(query.guardianStar).length > 0 ||
-        [query.level, query.attack, query.defense].some((r) => r?.min !== undefined || r?.max !== undefined);
+    const monstersEnabled = monstersSelected(query);
+    const otherTypesSelected = asList(query.cardType).some((type) => type !== "Monster");
 
     const update = (patch: Partial<CardQuery>) => onChange({ ...query, ...patch });
     const setRange = (field: RangeField) => (range: NumberRange) => update({ [field]: range });
@@ -130,12 +126,12 @@ export default function Filters({ query, onChange, total, open, onClose }: Filte
                 Also search descriptions
             </label>
 
-            <fieldset className="filter-section" disabled={monstersExcluded}>
+            <fieldset className="filter-section" disabled={!monstersEnabled}>
                 <legend>Monster</legend>
                 <p className="hint">
-                    {monstersExcluded
+                    {!monstersEnabled
                         ? 'Select "Monster" in "By type" to use these filters.'
-                        : monsterFilterSet
+                        : otherTypesSelected && hasMonsterFilters(query)
                           ? "Monster filters hide the other card types."
                           : "These filters apply to monsters only."}
                 </p>

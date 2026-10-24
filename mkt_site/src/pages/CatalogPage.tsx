@@ -9,7 +9,14 @@ import {
     type CardQuery,
     type TCardType,
 } from "@mhsalves/yugioh-fb-catalog";
-import { catalogUrl, countFilters, parseCatalogUrl, SORT_KEYS } from "../catalogUrl";
+import {
+    catalogUrl,
+    countFilters,
+    monstersSelected,
+    parseCatalogUrl,
+    SORT_KEYS,
+    withoutMonsterFilters,
+} from "../catalogUrl";
 import CardDetails from "../components/CardDetails";
 import CardTile from "../components/CardTile";
 import Filters from "../components/Filters";
@@ -151,7 +158,11 @@ export default function CatalogPage() {
 
                 <TypeFilter
                     selected={query.cardType === undefined ? [] : ([] as TCardType[]).concat(query.cardType)}
-                    onChange={(cardType) => setQuery({ ...query, cardType: cardType.length ? cardType : undefined })}
+                    onChange={(cardType) => {
+                        const next = { ...query, cardType: cardType.length ? cardType : undefined };
+                        // Deselecting "Monster" turns its filters off, so they no longer narrow the results.
+                        setQuery(monstersSelected(next) ? next : withoutMonsterFilters(next));
+                    }}
                 />
 
                 <div className="toolbar toolbar--secondary">

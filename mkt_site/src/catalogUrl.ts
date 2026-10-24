@@ -48,6 +48,38 @@ function formatRange(range?: NumberRange): string | undefined {
 const asList = <T>(value: T | T[] | undefined): T[] =>
     value === undefined ? [] : Array.isArray(value) ? value : [value];
 
+const MONSTER_RANGES = ["level", "attack", "defense"] as const;
+
+/** Whether any monster-only field (monster type, guardian star, level, ATK, DEF) is set. */
+export function hasMonsterFilters(query: CardQuery): boolean {
+    return (
+        asList(query.monsterType).length > 0 ||
+        asList(query.guardianStar).length > 0 ||
+        MONSTER_RANGES.some((field) => formatRange(query[field]) !== undefined)
+    );
+}
+
+/** Monster filters are only enabled while "Monster" is selected in "By type" (owner request, 2026-10-23). */
+export const monstersSelected = (query: CardQuery): boolean => asList(query.cardType).includes("Monster");
+
+/** Drops the monster-only fields, for when "Monster" is no longer selected. */
+export function withoutMonsterFilters(query: CardQuery): CardQuery {
+    const next = { ...query };
+    delete next.monsterType;
+    delete next.guardianStar;
+    for (const field of MONSTER_RANGES) delete next[field];
+    return next;
+}
+
+/**
+ * Keeps a URL's query in line with that rule: monster filters with no card type select "Monster" (older links such
+ * as ?atk=1000- keep working); monster filters with other card types only are dropped.
+ */
+function applyMonsterRule(query: CardQuery): CardQuery {
+    if (!hasMonsterFilters(query) || monstersSelected(query)) return query;
+    return asList(query.cardType).length === 0 ? { ...query, cardType: ["Monster"] } : withoutMonsterFilters(query);
+}
+
 export function parseCatalogUrl(search: string): CatalogState {
     const params = new URLSearchParams(search);
     const query: CardQuery = {};
@@ -74,7 +106,10 @@ export function parseCatalogUrl(search: string): CatalogState {
     }
 
     const cardId = parseNumber(params.get("card") ?? "");
-    return { query, cardId: cardId !== undefined && Number.isInteger(cardId) ? cardId : undefined };
+    return {
+        query: applyMonsterRule(query),
+        cardId: cardId !== undefined && Number.isInteger(cardId) ? cardId : undefined,
+    };
 }
 
 /** Builds "/?…" for the catalog page, leaving out empty fields so the plain catalog URL stays "/". */

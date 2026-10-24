@@ -96,7 +96,7 @@ Clicking a grid item opens the **details card** over the page (C-4).
 | Search box | `text` | Free text | Case- and accent-insensitive substring on the name (Q-4). Debounced ~150 ms |
 | "Also search descriptions" checkbox | `includeDescription` | On / off | Off by default |
 | **By type** row, above the grid | `cardType[]` | "All types" + `CARD_TYPES` | Always visible (not inside the panel). Multi-select; "All types" clears the selection and is shown selected when none is chosen (owner request, 2026-10-20) |
-| Monster type chips | `monsterType[]` | `MONSTER_TYPES` | Multi-select. Disabled, with a hint, when card types are selected and "Monster" is not one of them |
+| Monster type chips | `monsterType[]` | `MONSTER_TYPES` | Multi-select. Enabled only while "Monster" is selected in "By type" (owner request, 2026-10-23); disabled with a hint otherwise, "All types" included |
 | Guardian star chips | `guardianStar[]` | `GUARDIAN_STARS` | Matches either of a monster's two stars |
 | Level | `level { min, max }` | Two number inputs, 1–12 | Monster-only, like ATK and DEF |
 | ATK / DEF | `attack`, `defense` `{ min, max }` | Two number inputs each | Empty = no limit |
@@ -107,7 +107,7 @@ Clicking a grid item opens the **details card** over the page (C-4).
 - Results update as the user types or clicks; there is no "Apply" button.
 - The page shows the result count from `searchCards(...).total` and the catalogue coverage: "**N cards** · 5 of 722 catalogued" (`getCardList().length` of `TOTAL_CARDS`).
 - **Zero results:** a placeholder in place of the grid: an empty dashed card frame, "No cards found", "No cards match these filters. Try another type or clear the filters." and a "Clear filters" button that resets everything except the sort (owner request, 2026-10-20).
-- Monster-only filters (monster type, star, level, ATK, DEF) leave non-monster cards out of the results while they are set. That follows Q-4 and is said in a hint under the group.
+- Monster-only filters (monster type, star, level, ATK, DEF) are **enabled only while "Monster" is selected** in "By type". Deselecting "Monster" (or choosing "All types") clears them, so a disabled filter never narrows the results. A URL with monster filters and no card type selects "Monster" (older links keep working); one with only other card types drops them. With "Monster" and other types selected, set monster filters leave the other types out (Q-4), as the hint says.
 - Desktop: filters in a left column. Phones: a "Filters" button opens them in a full-screen sheet with "Show N cards" to close (TBD-C2).
 
 ### C-3 Results grid · ✅ Built
