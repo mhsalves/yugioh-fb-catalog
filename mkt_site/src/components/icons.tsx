@@ -99,6 +99,13 @@ export const DuelistIcon = () => (
     </Icon>
 );
 
+export const InfoIcon = () => (
+    <Icon>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5M12 8h.01" />
+    </Icon>
+);
+
 export const PlusIcon = () => (
     <Icon>
         <path d="M12 5v14M5 12h14" />

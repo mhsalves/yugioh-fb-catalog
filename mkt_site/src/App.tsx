@@ -8,10 +8,11 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { usePath } from "./router";
 import { SITE_TITLE } from "./routes";
 
-// Preview features load on demand, so the catalog does not pay for their code (spec 10 F-2).
+// Preview features and About load on demand, so the catalog does not pay for their code (spec 10 F-2).
 const FusionPage = lazy(() => import("./pages/FusionPage"));
 const DuelistsPage = lazy(() => import("./pages/DuelistsPage"));
 const DuelistPage = lazy(() => import("./pages/DuelistPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
 
 /** The page for a path, or undefined for the 404 view. Pages of features that are not visible are 404s (routes.ts). */
 function pageFor(path: string): ReactNode | undefined {
@@ -20,6 +21,7 @@ function pageFor(path: string): ReactNode | undefined {
     const cardId = path.match(/^\/cards\/(\d+)$/)?.[1];
     if (cardId !== undefined) return <CardPage id={Number(cardId)} />;
     if (path === "/fusion" && isRouteVisible("fusion")) return <FusionPage />;
+    if (path === "/about" && isRouteVisible("about")) return <AboutPage />;
     if (isRouteVisible("duelists")) {
         if (path === "/duelists") return <DuelistsPage />;
         const duelistId = path.match(/^\/duelists\/([\w-]+)$/)?.[1];

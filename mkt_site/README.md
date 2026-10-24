@@ -9,6 +9,7 @@ Mobile-first ([spec 10](../docs/specs/10-site-feature-shell-mobile-first.md)): o
 | Página | Endereço | Estado |
 |---|---|---|
 | Cartas (catálogo; a busca aceita nome, `#número` ou senha de 8 dígitos) | `/` | No ar |
+| Sobre o projeto (agradecimentos às fontes das imagens e ao autor; link no rodapé) | `/about` | No ar |
 | Fusões | `/fusion` | Prévia com dados de exemplo |
 | Duelistas | `/duelists`, `/duelists/<id>` | Prévia com dados de exemplo |
 
@@ -107,7 +108,7 @@ mkt_site/
     ├── data/            # Adaptadores com mocks (fusions, duelists, cards), sample.ts, pending.ts
     ├── assets/logo.svg
     ├── components/      # Header, Nav, Footer, Filters, CardTile, CardRow, CardDetails, CardInfo, Sheet, CardPicker, Tabs, ...
-    └── pages/           # CatalogPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage
+    └── pages/           # CatalogPage, AboutPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage
 ```
 
 ## Licença

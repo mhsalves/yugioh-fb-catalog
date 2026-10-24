@@ -1,3 +1,4 @@
+import { Link } from "../router";
 import { ExternalIcon } from "./icons";
 
 const LINKS = [
@@ -11,6 +12,9 @@ export default function Footer() {
             <div className="footer__bar">
                 <p>Made by Matheus Alves</p>
                 <ul className="footer__links">
+                    <li>
+                        <Link to="/about">About this project</Link>
+                    </li>
                     {LINKS.map((link) => (
                         <li key={link.url}>
                             <a href={link.url} target="_blank" rel="noopener noreferrer">

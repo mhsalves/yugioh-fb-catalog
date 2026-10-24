@@ -25,3 +25,6 @@ export const isVisible = (route: RouteMeta) => route.status === "live" || (route
 export const isRouteVisible = (id: RouteId) => isVisible(routeMeta(id));
 
 export const visibleRoutes = () => ROUTES.filter(isVisible);
+
+/** Visible pages that belong in the tab bar. */
+export const navRoutes = () => visibleRoutes().filter((route) => route.nav !== false);

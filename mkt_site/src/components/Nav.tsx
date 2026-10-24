@@ -1,11 +1,12 @@
 import { useEffect, type JSX } from "react";
-import { visibleRoutes } from "../features";
+import { navRoutes } from "../features";
 import { CATALOG_SEARCH_ID, isTyping } from "../keyboard";
 import { Link, navigate, usePath } from "../router";
 import type { RouteId } from "../routes";
 import { CardsIcon, DuelistIcon, FusionIcon } from "./icons";
 
-const ICONS: Record<RouteId, () => JSX.Element> = {
+// Pages kept out of the tab bar (nav: false, such as About) need no icon.
+const ICONS: Partial<Record<RouteId, () => JSX.Element>> = {
     cards: CardsIcon,
     fusion: FusionIcon,
     duelists: DuelistIcon,
@@ -23,7 +24,7 @@ function isCurrent(path: string, routePath: string): boolean {
  */
 export default function Nav() {
     const path = usePath();
-    const routes = visibleRoutes();
+    const routes = navRoutes();
 
     // "/" focuses the card search from any page (spec 06 §4), going to the Cards page first when needed.
     useEffect(() => {
@@ -57,7 +58,7 @@ export default function Nav() {
                                 className="nav__link"
                                 aria-current={isCurrent(path, route.path) ? "page" : undefined}
                             >
-                                <Icon />
+                                {Icon && <Icon />}
                                 {route.label}
                             </Link>
                         </li>

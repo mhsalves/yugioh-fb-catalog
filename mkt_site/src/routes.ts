@@ -8,7 +8,7 @@
 export type FeatureStatus = "live" | "preview" | "hidden";
 
 // No separate search page: the Cards search box covers names, #numbers and passwords (spec 10 F-7, as built).
-export type RouteId = "cards" | "fusion" | "duelists";
+export type RouteId = "cards" | "fusion" | "duelists" | "about";
 
 export interface RouteMeta {
     id: RouteId;
@@ -19,6 +19,8 @@ export interface RouteMeta {
     title: string;
     description: string;
     status: FeatureStatus;
+    /** false keeps the page out of the tab bar (it is linked from the footer instead). */
+    nav?: boolean;
 }
 
 export const SITE_TITLE = "Yu-Gi-Oh! FM Catalog";
@@ -50,6 +52,16 @@ export const ROUTES: readonly RouteMeta[] = [
         description: "Yu-Gi-Oh! Forbidden Memories duelists, their decks and the cards they drop.",
         // Sample data until the catalog has duelists (spec 02 TBD-D9, src/data/pending.ts).
         status: "preview",
+    },
+    {
+        id: "about",
+        path: "/about",
+        label: "About",
+        title: "About",
+        description:
+            "About the Yu-Gi-Oh! Forbidden Memories catalog: what it does, how to use its open data, the sites its card images come from, and who made it.",
+        status: "live",
+        nav: false,
     },
 ];
 

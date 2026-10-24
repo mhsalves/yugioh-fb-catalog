@@ -1,8 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { getCardList, TOTAL_CARDS } from "@mhsalves/yugioh-fb-catalog";
+import { Link } from "../router";
 import { useCopy } from "../useCopy";
 import Sheet from "./Sheet";
-import { CheckIcon, ChevronRightIcon, CopyIcon, ExternalIcon, GitHubIcon } from "./icons";
+import { CheckIcon, ChevronRightIcon, CopyIcon, ExternalIcon, GitHubIcon, InfoIcon } from "./icons";
 
 const PACKAGE_SPEC = `${__CATALOG_NAME__}@${__CATALOG_VERSION__}`;
 const NPM_URL = `https://www.npmjs.com/package/${__CATALOG_NAME__}/v/${__CATALOG_VERSION__}`;
@@ -75,6 +76,13 @@ export default function CatalogVersion() {
                 </p>
                 <CopyPackage className="catalog-version__copy catalog-version__copy--block" />
                 <ul className="link-list">
+                    <li>
+                        <Link to="/about" className="link-list__item" onClick={() => setOpen(false)}>
+                            <InfoIcon />
+                            <span>About this project</span>
+                            <ChevronRightIcon />
+                        </Link>
+                    </li>
                     <li>
                         <ExternalLink href={NPM_URL} className="link-list__item">
                             <ExternalIcon />
