@@ -8,7 +8,7 @@ Checked against branch `site-feature-shell` (based on `main` @ `5443e78`, 2026-1
 
 **9 built · 1 partial · 0 not built**
 
-Live in production: **Cards** and **Search**. **Fusion** and **Duelists** are `preview` (sample data): they show in `yarn dev`, or with `?preview=1` on any page, and go `live` when the catalog ships the methods in [§ Catalog methods the site mocks](#catalog-methods-the-site-mocks).
+Live in production: **Cards** (with the search look-ups of F-7). **Fusion** and **Duelists** are `preview` (sample data): they show in `yarn dev`, or with `?preview=1` on any page, and go `live` when the catalog ships the methods in [§ Catalog methods the site mocks](#catalog-methods-the-site-mocks).
 
 | ID | Item | Decision | Build | What exists today |
 |---|---|---|---|---|
@@ -16,12 +16,12 @@ Live in production: **Cards** and **Search**. **Fusion** and **Duelists** are `p
 | F-2 | Route table and feature flags | Agreed | ✅ Built | `src/routes.ts` (pure data, also read by the build), `src/features.ts` (`?preview=1`), lazy Fusion and Duelists pages, scroll restoration in `router.tsx` |
 | F-3 | App shell: bottom tab bar on phones, header tabs on desktop | Agreed (F1, F2 defaults) | ✅ Built | `components/Nav.tsx`; hidden while only one page is visible |
 | F-4 | Shared UI primitives (Sheet, CardRow, CardPicker, EmptyState, Tabs) | Agreed | 🟡 Partial | `Sheet` (`<dialog>`), `CardRow`, `CardPicker`, `EmptyState`, `SearchBox`, `Tabs`, `PercentBar`, `PreviewBanner`, `DuelistPortrait`, `useUrlParams`. Not done: `Filters` and `CardDetails` still have their own phone sheets, and Back does not close a `Sheet` |
-| F-5 | Card details on every page (`?card=`) | Agreed | ✅ Built | `useCardParam` + `PageCardDetails` on Search, Fusion and Duelist pages; `CardInfo` shows "Fusions" and "Dropped by" while those features are visible |
+| F-5 | Card details on every page (`?card=`) | Agreed | ✅ Built | `useCardParam` + `PageCardDetails` on Fusion and Duelist pages; `CardInfo` shows "Fusions" and "Dropped by" while those features are visible |
 | F-6 | Data adapters and sample data for features without catalog data | Agreed | ✅ Built | `src/data/{fusions,duelists,cards}.ts` (mocks with the catalog's planned signatures), `src/data/sample.ts` (seeded sample data from the real card list), `src/data/pending.ts` (the list of methods owed to the catalog) |
-| F-7 | **Search card**: quick search reachable from any page | Agreed (F3 default) | ✅ Built | `/search`: name, `#id`/number, 8-digit password (mocked `getCardByPassword`), recent searches; `/` opens it |
+| F-7 | **Search card** | Agreed (changed 2026-10-23) | ✅ Built | Folded into the Cards search box: name, `#425` (card number), 8-digit password (mocked `getCardByPassword`); `/` focuses it from any page. The separate `/search` page was built, then removed (see As built) |
 | F-8 | **Fusion tool** UI | Agreed (F4 default) | ✅ Built (preview) | `/fusion`: Combine, Uses, Recipes on sample data |
 | F-9 | **Duelists** list and duelist page UI | Agreed | ✅ Built (preview) | `/duelists`, `/duelists/<id>`: drops by rank with rates, deck, on sample data |
-| F-10 | Static pages and sitemap for the new routes | Agreed | ✅ Built | `build/cardPages.ts` writes `search/index.html` and lists it in `sitemap.xml`; preview routes get nothing |
+| F-10 | Static pages and sitemap for the new routes | Agreed | ✅ Built | `build/cardPages.ts` writes a page and a sitemap entry for every `live` route besides `/` (none today); preview routes get nothing |
 
 ### Catalog methods the site mocks
 
@@ -37,14 +37,14 @@ Registered in `mkt_site/src/data/pending.ts` (the source of truth; the preview b
 | `getDropsFrom(duelistId, { rank?, sort? }?): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists |
 | `getDroppedBy(cardId): IDrop[]` | 04 Q-5, 02 TBD-D9 | Sample data | Duelists, card details |
 | `getDeckOf(duelistId, { sort? }?): IDeckEntry[]` | New (F-9) | Sample data | Duelists |
-| `getCardByPassword(code): ICard \| undefined` | New (F-7) | Real data, computed in the site | Search |
+| `getCardByPassword(code): ICard \| undefined` | New (F-7) | Real data, computed in the site | Cards search |
 
 ### As built: differences from the plan below
 
 - **F-1:** no `@layer`; the files are imported in the old cascade order, so specificity behaves exactly as before.
 - **F-2:** previews also need `?preview=1` under `yarn preview` (it serves the production build).
 - **F-6:** sample data is generated from the real card list with a seeded random function (`src/data/sample.ts`), not hand-written fixtures. It is a few lines of code in the main bundle, and only runs when a preview feature asks for it.
-- **F-7:** on desktop, `/` opens the Search page (and focuses its box) instead of a header search field with a dropdown; one search box instead of two.
+- **F-7 (owner review, 2026-10-23):** the separate Search page duplicated the Cards search box (same `searchCards`, a second box, fewer options), so it was **removed**. What it added moved into the Cards box: `#425` looks up a card number and 8 digits a password; `/` focuses the box from any page. Recent searches were dropped. With Cards the only live page, production shows no navigation until Fusion or Duelists go live.
 - **F-8:** the look-up card is `?of=` (not `?card=`, which opens the details panel). The material picker is limited to monsters.
 
 ## 1. Why this spec exists

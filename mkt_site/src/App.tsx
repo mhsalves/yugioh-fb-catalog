@@ -5,7 +5,6 @@ import { isRouteVisible } from "./features";
 import CardPage from "./pages/CardPage";
 import CatalogPage from "./pages/CatalogPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import SearchPage from "./pages/SearchPage";
 import { usePath } from "./router";
 import { SITE_TITLE } from "./routes";
 
@@ -20,7 +19,6 @@ function pageFor(path: string): ReactNode | undefined {
     // /cards/<id>/ is a card's own page, reached through a shared link (spec 09 C-7).
     const cardId = path.match(/^\/cards\/(\d+)$/)?.[1];
     if (cardId !== undefined) return <CardPage id={Number(cardId)} />;
-    if (path === "/search" && isRouteVisible("search")) return <SearchPage />;
     if (path === "/fusion" && isRouteVisible("fusion")) return <FusionPage />;
     if (isRouteVisible("duelists")) {
         if (path === "/duelists") return <DuelistsPage />;

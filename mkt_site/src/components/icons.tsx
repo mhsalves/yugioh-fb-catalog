@@ -77,13 +77,6 @@ export const FilterIcon = () => (
     </Icon>
 );
 
-export const SearchIcon = () => (
-    <Icon>
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
-    </Icon>
-);
-
 export const CardsIcon = () => (
     <Icon>
         <rect x="4" y="3" width="11" height="15" rx="1.5" />

@@ -82,7 +82,7 @@ export const PENDING_CATALOG_METHODS: readonly PendingMethod[] = [
         signature: "getCardByPassword(code: string): ICard | undefined",
         spec: "New, proposed in 10 F-7",
         mock: "real data, computed in the site",
-        usedBy: ["search"],
+        usedBy: ["cards"],
     },
 ];
 

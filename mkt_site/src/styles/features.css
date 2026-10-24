@@ -1,4 +1,4 @@
-/* Shared pieces and the Search, Fusion and Duelists pages (spec 10 F-4, F-7 to F-9). Phone first. */
+/* Shared pieces and the Fusion and Duelists pages (spec 10 F-4, F-8, F-9). Phone first. */
 
 .page-title {
     margin: 0;
@@ -32,28 +32,20 @@
 
 /* Pages built from a column of blocks */
 
-.search-page,
 .fusion-page,
 .fusion-panel,
 .duelists-page,
 .duelist-page,
-.duelist-panel,
-.search-page__recent {
+.duelist-panel {
     display: flex;
     flex-direction: column;
     gap: 16px;
     min-width: 0;
 }
 
-.search-page > .search,
 .duelists-page > .search,
 .sheet .search {
     width: 100%;
-}
-
-.search-page__all {
-    align-self: flex-start;
-    text-decoration: none;
 }
 
 /* Preview notice */
@@ -480,7 +472,6 @@ body:has(dialog[open]) {
 /* Wider screens */
 
 @media (min-width: 721px) {
-    .search-page,
     .fusion-page,
     .duelists-page,
     .duelist-page {

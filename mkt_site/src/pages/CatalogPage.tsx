@@ -24,10 +24,27 @@ import EmptyState from "../components/EmptyState";
 import Filters from "../components/Filters";
 import SearchBox from "../components/SearchBox";
 import { FilterIcon, SortIcon } from "../components/icons";
+import { getCardByPassword } from "../data/cards";
+import { CATALOG_SEARCH_ID } from "../keyboard";
 import { navigate, useSearch } from "../router";
 
 const SORT_LABELS = { id: "ID", name: "Name", attack: "ATK", defense: "DEF", level: "Level", cost: "Cost" };
 const SITE_TITLE = "Yu-Gi-Oh! FM Catalog";
+
+/**
+ * The search box also takes a card number ("#425") or an 8-digit password (spec 10 F-7, folded into this page). They
+ * become an `ids` query; everything else is a name search (spec 09 C-2). The URL keeps what was typed.
+ */
+function toSearchQuery(query: CardQuery): CardQuery {
+    const text = query.text?.trim() ?? "";
+    const number = text.match(/^#(\d{1,3})$/)?.[1];
+    if (number) return { ...query, text: undefined, ids: [Number(number)] };
+    if (/^\d{8}$/.test(text)) {
+        // No card has id 0: an unknown password matches nothing (an empty `ids` would match everything).
+        return { ...query, text: undefined, ids: [getCardByPassword(text)?.id ?? 0] };
+    }
+    return query;
+}
 
 /** "By type" quick filter (spec 09 C-2): maps to CardQuery.cardType; no selection = all types. */
 function TypeFilter({ selected, onChange }: { selected: TCardType[]; onChange: (cardType: TCardType[]) => void }) {
@@ -70,7 +87,7 @@ function TypeFilter({ selected, onChange }: { selected: TCardType[]; onChange: (
 export default function CatalogPage() {
     const search = useSearch();
     const { query, cardId } = useMemo(() => parseCatalogUrl(search), [search]);
-    const result = useMemo(() => searchCards(query), [query]);
+    const result = useMemo(() => searchCards(toSearchQuery(query)), [query]);
     const [filtersOpen, setFiltersOpen] = useState(false);
 
     // Filter changes replace the history entry; opening a card adds one, so Back closes it (C-6). With the panel
@@ -120,7 +137,13 @@ export default function CatalogPage() {
                 </h1>
                 <div className="toolbar">
                     {/* Search text is debounced before it reaches the URL; everything else updates at once. */}
-                    <SearchBox value={query.text ?? ""} onChange={setText} label="Search cards by name" />
+                    <SearchBox
+                        id={CATALOG_SEARCH_ID}
+                        value={query.text ?? ""}
+                        onChange={setText}
+                        label="Search cards by name, #number or password"
+                        placeholder="Name, #number or password"
+                    />
                     <button
                         type="button"
                         className="button button--ghost toolbar__filters"

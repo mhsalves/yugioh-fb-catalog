@@ -7,7 +7,8 @@
  */
 export type FeatureStatus = "live" | "preview" | "hidden";
 
-export type RouteId = "cards" | "search" | "fusion" | "duelists";
+// No separate search page: the Cards search box covers names, #numbers and passwords (spec 10 F-7, as built).
+export type RouteId = "cards" | "fusion" | "duelists";
 
 export interface RouteMeta {
     id: RouteId;
@@ -30,14 +31,6 @@ export const ROUTES: readonly RouteMeta[] = [
         title: "Cards",
         description:
             "Card data for Yu-Gi-Oh! Forbidden Memories: stats, passwords and more, from the open-source npm catalog.",
-        status: "live",
-    },
-    {
-        id: "search",
-        path: "/search",
-        label: "Search",
-        title: "Search",
-        description: "Look up any Yu-Gi-Oh! Forbidden Memories card by name, card number or password.",
         status: "live",
     },
     {

@@ -1,13 +1,12 @@
 import { useEffect, type JSX } from "react";
-import { isRouteVisible, visibleRoutes } from "../features";
-import { isTyping } from "../keyboard";
+import { visibleRoutes } from "../features";
+import { CATALOG_SEARCH_ID, isTyping } from "../keyboard";
 import { Link, navigate, usePath } from "../router";
 import type { RouteId } from "../routes";
-import { CardsIcon, DuelistIcon, FusionIcon, SearchIcon } from "./icons";
+import { CardsIcon, DuelistIcon, FusionIcon } from "./icons";
 
 const ICONS: Record<RouteId, () => JSX.Element> = {
     cards: CardsIcon,
-    search: SearchIcon,
     fusion: FusionIcon,
     duelists: DuelistIcon,
 };
@@ -26,15 +25,19 @@ export default function Nav() {
     const path = usePath();
     const routes = visibleRoutes();
 
-    // "/" opens search from any page (spec 06 §4), or focuses its box when search is already open.
+    // "/" focuses the card search from any page (spec 06 §4), going to the Cards page first when needed.
     useEffect(() => {
-        if (!isRouteVisible("search")) return;
+        const focusSearch = () => document.getElementById(CATALOG_SEARCH_ID)?.focus();
         const onKey = (event: KeyboardEvent) => {
             if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return;
-            if (document.querySelector("dialog[open]")) return;
+            if (document.querySelector('dialog[open], .filters[data-open="true"]')) return;
             event.preventDefault();
-            if (window.location.pathname.endsWith("/search")) document.getElementById("search-input")?.focus();
-            else navigate("/search");
+            if (document.getElementById(CATALOG_SEARCH_ID)) {
+                focusSearch();
+            } else {
+                navigate("/");
+                window.requestAnimationFrame(focusSearch);
+            }
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);

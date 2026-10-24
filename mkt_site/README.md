@@ -8,8 +8,7 @@ Mobile-first ([spec 10](../docs/specs/10-site-feature-shell-mobile-first.md)): o
 
 | Página | Endereço | Estado |
 |---|---|---|
-| Cartas (catálogo) | `/` | No ar |
-| Busca rápida (nome, número ou senha) | `/search` | No ar |
+| Cartas (catálogo; a busca aceita nome, `#número` ou senha de 8 dígitos) | `/` | No ar |
 | Fusões | `/fusion` | Prévia com dados de exemplo |
 | Duelistas | `/duelists`, `/duelists/<id>` | Prévia com dados de exemplo |
 
@@ -70,7 +69,7 @@ Alguns métodos que o site usa ainda não existem no catálogo. O site simula ca
 
 - Fusões: `getFusion`, `getFusionsWith`, `getFusionsFor` (`src/data/fusions.ts`)
 - Duelistas: `getDuelistList`, `getDuelist`, `getDropsFrom`, `getDroppedBy`, `getDeckOf` (`src/data/duelists.ts`)
-- Senha: `getCardByPassword` (`src/data/cards.ts`, com os dados reais)
+- Senha: `getCardByPassword` (`src/data/cards.ts`, com os dados reais; usado pela busca do catálogo)
 
 Os dados de exemplo (`src/data/sample.ts`) usam as cartas reais, mas as fusões, duelistas e taxas são inventados; as páginas em prévia mostram um aviso dizendo isso. Quando o catálogo ganhar um desses métodos: reexporte-o no adaptador em `src/data/`, apague o mock e a entrada em `pending.ts`, e mude a rota para `"live"` em `src/routes.ts` quando todos os métodos da página forem reais.
 
@@ -108,7 +107,7 @@ mkt_site/
     ├── data/            # Adaptadores com mocks (fusions, duelists, cards), sample.ts, pending.ts
     ├── assets/logo.svg
     ├── components/      # Header, Nav, Footer, Filters, CardTile, CardRow, CardDetails, CardInfo, Sheet, CardPicker, Tabs, ...
-    └── pages/           # CatalogPage, SearchPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage
+    └── pages/           # CatalogPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage
 ```
 
 ## Licença

@@ -108,7 +108,7 @@ function searchCards(q: CardQuery): { total: number; items: readonly ICard[] };
 
 Fusion resolution in FM may involve priority and generic rules (**TBD-D2**). `getFusion` must implement exactly what the agreed model says, and nothing more.
 
-**Waiting in the site (2026-10-23).** The site's Fusion, Duelists and Search pages ([10](./10-site-feature-shell-mobile-first.md) F-6) already call these functions through mocks in `mkt_site/src/data/`, listed in `mkt_site/src/data/pending.ts`. The signatures they code against, to build here with tests:
+**Waiting in the site (2026-10-23).** The site's Fusion and Duelists pages and its Cards search ([10](./10-site-feature-shell-mobile-first.md) F-6) already call these functions through mocks in `mkt_site/src/data/`, listed in `mkt_site/src/data/pending.ts`. The signatures they code against, to build here with tests:
 
 | Function | Notes from the site |
 |---|---|
