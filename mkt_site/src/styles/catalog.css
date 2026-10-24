@@ -503,12 +503,90 @@ fieldset:disabled {
     color: var(--color-text-muted);
 }
 
+/* Results pages: Previous / "Page 2 of 15" / Next on phones, numbered pages from md up */
+
+.results {
+    scroll-margin-top: calc(var(--header-height) + 12px);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+}
+
+.pagination__status {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.pagination__status strong {
+    color: var(--color-text);
+}
+
+.pagination__pages {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pagination__page {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background: none;
+    color: var(--color-text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
+}
+
+.pagination__page:hover:not([aria-current="page"]) {
+    border-color: var(--color-border);
+    background: var(--color-surface-hover);
+}
+
+.pagination__page[aria-current="page"] {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-weight: 700;
+}
+
+.pagination__gap {
+    min-width: 24px;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
 /* From md up: filters in a left column next to the results; the panel takes its full height and scrolls with the
    page, so it has no scrollbar of its own. */
 
 @media (min-width: 721px) {
     .catalog {
         grid-template-columns: 300px minmax(0, 1fr);
+    }
+
+    .pagination__status {
+        display: none;
+    }
+
+    .pagination__pages {
+        display: flex;
     }
 
     .filters__head {

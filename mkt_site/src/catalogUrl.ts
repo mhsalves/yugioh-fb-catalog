@@ -9,7 +9,7 @@ import {
 } from "@mhsalves/yugioh-fb-catalog";
 
 // The catalog page keeps its whole state in the query string (spec 09 C-6), for example
-// ?q=dragon&type=Monster&mtype=Dragon,Thunder&star=Sun&atk=1000-&sort=attack-desc&card=425
+// ?q=dragon&type=Monster&mtype=Dragon,Thunder&star=Sun&atk=1000-&sort=attack-desc&page=2&card=425
 
 export const SORT_KEYS: readonly CardSortKey[] = ["id", "name", "attack", "defense", "level", "cost"];
 
@@ -17,6 +17,8 @@ export interface CatalogState {
     query: CardQuery;
     /** The card open in the details card. */
     cardId?: CardId;
+    /** Results page, from 1; left out for the first page. */
+    page?: number;
 }
 
 const RANGE_PARAMS = { level: "level", attack: "atk", defense: "def", cost: "cost" } as const;
@@ -106,14 +108,16 @@ export function parseCatalogUrl(search: string): CatalogState {
     }
 
     const cardId = parseNumber(params.get("card") ?? "");
+    const page = parseNumber(params.get("page") ?? "");
     return {
         query: applyMonsterRule(query),
         cardId: cardId !== undefined && Number.isInteger(cardId) ? cardId : undefined,
+        page: page !== undefined && Number.isInteger(page) && page > 1 ? page : undefined,
     };
 }
 
 /** Builds "/?…" for the catalog page, leaving out empty fields so the plain catalog URL stays "/". */
-export function catalogUrl({ query, cardId }: CatalogState): string {
+export function catalogUrl({ query, cardId, page }: CatalogState): string {
     const parts: [string, string | undefined][] = [
         ["q", query.text?.trim() || undefined],
         ["desc", query.includeDescription ? "1" : undefined],
@@ -129,6 +133,7 @@ export function catalogUrl({ query, cardId }: CatalogState): string {
                 ? `${query.sort.by}-${query.sort.dir ?? "asc"}`
                 : undefined,
         ],
+        ["page", page !== undefined && page > 1 ? String(page) : undefined],
         ["card", cardId?.toString()],
     ];
     // Commas stay readable; everything else is encoded.
