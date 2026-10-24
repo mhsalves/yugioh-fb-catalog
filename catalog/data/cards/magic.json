@@ -2,11 +2,235 @@
   "$schema": "../../schema/magic-list.schema.json",
   "cards": [
     {
+      "id": 320,
+      "name": "Stop Defense",
+      "description": "Forces an opponent's monster card positioned for defense into the attack position.",
+      "cardType": "Magic",
+      "password": { "code": "63102017", "cost": 800 }
+    },
+    {
+      "id": 329,
+      "name": "Dragon Capture Jar",
+      "description": "Destroys all opponent Dragon monsters on the playfield!",
+      "cardType": "Magic",
+      "password": { "code": "50045299", "cost": 999999 }
+    },
+    {
+      "id": 330,
+      "name": "Forest",
+      "description": "Changes the field in favor of Beast-Warrior, Insect, Plant and Beast monsters!",
+      "cardType": "Magic",
+      "password": { "code": "87430998", "cost": 55 }
+    },
+    {
+      "id": 331,
+      "name": "Wasteland",
+      "description": "Changes the field in favor of Zombie, Dinosaur and Rock monsters!",
+      "cardType": "Magic",
+      "password": { "code": "23424603", "cost": 55 }
+    },
+    {
       "id": 332,
       "name": "Mountain",
       "description": "Changes the field in favor of Dragon, Winged Beast, and Thunder monsters!",
       "cardType": "Magic",
       "password": { "code": "50913601", "cost": 55 }
+    },
+    {
+      "id": 333,
+      "name": "Sogen",
+      "description": "Changes the field to meadow land in favor of Warrior and Beast-Warrior monsters!",
+      "cardType": "Magic",
+      "password": { "code": "86318356", "cost": 55 }
+    },
+    {
+      "id": 334,
+      "name": "Umi",
+      "description": "Changes the field in favor of Aqua and Thunder monsters, but unfavorable to Machine and Pyro monsters!",
+      "cardType": "Magic",
+      "password": { "code": "22702055", "cost": 55 }
+    },
+    {
+      "id": 335,
+      "name": "Yami",
+      "description": "Changes the field in favor of Magic-User and Fiend monsters, but unfavorable to Fairy monsters!",
+      "cardType": "Magic",
+      "password": { "code": "59197169", "cost": 55 }
+    },
+    {
+      "id": 336,
+      "name": "Dark Hole",
+      "description": "Sucks up every card in play on the field!",
+      "cardType": "Magic",
+      "password": { "code": "53129443", "cost": 20000 }
+    },
+    {
+      "id": 337,
+      "name": "Raigeki",
+      "description": "Destroy every opposing monster with a stroke of lightning!",
+      "cardType": "Magic",
+      "password": { "code": "12580477", "cost": 999999 }
+    },
+    {
+      "id": 338,
+      "name": "Mooyan Curry",
+      "description": "A delicious beef curry increases Life Points by 200!",
+      "cardType": "Magic",
+      "password": { "code": "58074572", "cost": 999999 }
+    },
+    {
+      "id": 339,
+      "name": "Red Medicine",
+      "description": "A magic potion that increases Life Points by 500!",
+      "cardType": "Magic",
+      "password": { "code": "38199696", "cost": 55 }
+    },
+    {
+      "id": 340,
+      "name": "Goblin's Secret Remedy",
+      "description": "A goblin's herb that increases Life Points by 1000!",
+      "cardType": "Magic",
+      "password": { "code": "11868825", "cost": 20000 }
+    },
+    {
+      "id": 341,
+      "name": "Soul of the Pure",
+      "description": "A fairy potion that increases Life Points by 2000!",
+      "cardType": "Magic",
+      "password": { "code": "47852924", "cost": 35000 }
+    },
+    {
+      "id": 342,
+      "name": "Dian Keto the Cure Master",
+      "description": "A mystical power that increases Life Points by 5000!",
+      "cardType": "Magic",
+      "password": { "code": "84257639", "cost": 999999 }
+    },
+    {
+      "id": 343,
+      "name": "Sparks",
+      "description": "A shower of sparks inflicts 50 points of damage to your opponent's Life Points!",
+      "cardType": "Magic",
+      "password": { "code": "76103675", "cost": 10 }
+    },
+    {
+      "id": 344,
+      "name": "Hinotama",
+      "description": "A fireball inflicts 100 points of damage to your opponent's Life Points!",
+      "cardType": "Magic",
+      "password": { "code": "46130346", "cost": 55 }
+    },
+    {
+      "id": 345,
+      "name": "Final Flame",
+      "description": "A flame inflicts 200 points of damage to your opponent's Life Points!",
+      "cardType": "Magic",
+      "password": { "code": "73134081", "cost": 20000 }
+    },
+    {
+      "id": 346,
+      "name": "Ookazi",
+      "description": "A flame inflicts 500 points of damage to your opponent's Life Points!",
+      "cardType": "Magic",
+      "password": { "code": "19523799", "cost": 35000 }
+    },
+    {
+      "id": 347,
+      "name": "Tremendous Fire",
+      "description": "An inferno inflicts 1000 points of damage to your opponent's Life Points!",
+      "cardType": "Magic",
+      "password": { "code": "46918794", "cost": 999999 }
+    },
+    {
+      "id": 348,
+      "name": "Swords of Revealing Light",
+      "description": "Enemy monsters are revealed and your opponent cannot attack for three turns.",
+      "cardType": "Magic",
+      "password": { "code": "72302403", "cost": 999999 }
+    },
+    {
+      "id": 349,
+      "name": "Spellbinding Circle",
+      "description": "A curse reduces the power of all enemy monsters!",
+      "cardType": "Magic",
+      "password": { "code": "18807108", "cost": 999999 }
+    },
+    {
+      "id": 350,
+      "name": "Dark-piercing Light",
+      "description": "A dazzling light reveals all monsters on the playing field.",
+      "cardType": "Magic",
+      "password": { "code": "45895206", "cost": 999999 }
+    },
+    {
+      "id": 653,
+      "name": "Warrior Elimination",
+      "description": "Destroys all opponent Warrior cards played on the field.",
+      "cardType": "Magic",
+      "password": { "code": "90873992", "cost": 999999 }
+    },
+    {
+      "id": 655,
+      "name": "Cursebreaker",
+      "description": "Cancels the magic over all level-reduced monsters and sets them at level 0.",
+      "cardType": "Magic",
+      "password": { "code": "69666645", "cost": 10 }
+    },
+    {
+      "id": 656,
+      "name": "Eternal Rest",
+      "description": "Eliminates all Zombie creatures.",
+      "cardType": "Magic",
+      "password": { "code": "95051344", "cost": 999999 }
+    },
+    {
+      "id": 660,
+      "name": "Stain Storm",
+      "description": "Acid rain destroys an opponent's Machine monsters.",
+      "cardType": "Magic",
+      "password": { "code": "21323861", "cost": 999999 }
+    },
+    {
+      "id": 661,
+      "name": "Crush Card",
+      "description": "Opponent monsters in play with attack factors of 1500 or more are eliminated.",
+      "cardType": "Magic",
+      "password": { "code": "57728570", "cost": 999999 }
+    },
+    {
+      "id": 662,
+      "name": "Eradicating Aerosol",
+      "description": "An insecticide for wiping out an opponent's Insect monsters that are currently in play.",
+      "cardType": "Magic",
+      "password": { "code": "94716515", "cost": 999999 }
+    },
+    {
+      "id": 663,
+      "name": "Breath of Light",
+      "description": "A magic wind that reduces to rubble an opponent's Rock monsters that are currently in play.",
+      "cardType": "Magic",
+      "password": { "code": "20101223", "cost": 999999 }
+    },
+    {
+      "id": 664,
+      "name": "Eternal Draught",
+      "description": "A blast of heat dries up and eliminates an opponent's Fish monsters that are currently in play.",
+      "cardType": "Magic",
+      "password": { "code": "56606928", "cost": 999999 }
+    },
+    {
+      "id": 669,
+      "name": "Shadow Spell",
+      "description": "Decreases an opponent's in-play monsters by two levels.",
+      "cardType": "Magic",
+      "password": { "code": "29267084", "cost": 999999 }
+    },
+    {
+      "id": 672,
+      "name": "Harpie's Feather Duster",
+      "description": "Destroy all opponent Magic Cards that are in play.",
+      "cardType": "Magic",
+      "password": { "code": "18144506", "cost": 999999 }
     }
   ]
 }

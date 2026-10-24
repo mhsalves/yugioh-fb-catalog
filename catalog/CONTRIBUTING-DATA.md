@@ -48,7 +48,7 @@ Cada arquivo é um objeto com `$schema` e uma lista. O `$schema` aponta para o e
 ```
 
 - `id`: número da carta no jogo (1 a 722).
-- `password.code`: 8 dígitos, como texto (mantém zeros à esquerda). `password.cost`: starchips, de 0 a 999999.
+- `password.code`: 8 dígitos, como texto (mantém zeros à esquerda). `password.cost`: starchips, de 0 a 999999. Cartas que o jogo não vende por senha (monstros de ritual e cartas da história, como 364 e 701–722) ficam **sem** o campo `password`.
 - `level`: 1 a 12. `guardianStars`: duas entre Mars, Jupiter, Saturn, Uranus, Pluto, Neptune, Mercury, Sun, Moon, Venus.
 - `monsterType` precisa ser o tipo do arquivo.
 
@@ -112,6 +112,10 @@ O que o `validate` verifica:
 - **Avisos** (não bloqueiam): relação apontando para uma carta que ainda não foi cadastrada, carta de ritual sem receita, nomes repetidos. Enquanto o catálogo estiver incompleto, isso é esperado.
 
 O CI roda as mesmas verificações em todo PR.
+
+## Importar da Yu-Gi-Oh! Wiki
+
+`yarn data:sync --dry-run` compara os dados com a [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) e lista as cartas que faltam, as diferenças e o que não pôde ser importado. Sem `--dry-run`, grava as cartas e receitas que faltam (as já cadastradas são mantidas; `--overwrite` as substitui). Veja o [README](./README.md#sincronizar-com-a-yu-gi-oh-wiki). Num PR feito assim, a fonte é a wiki: cite-a.
 
 ## Abrir o PR
 

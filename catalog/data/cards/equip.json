@@ -2,11 +2,242 @@
   "$schema": "../../schema/equip-list.schema.json",
   "cards": [
     {
+      "id": 301,
+      "name": "Legendary Sword",
+      "description": "A sword that brings out the best in warriors. It cannot be used by servants of the dark.",
+      "cardType": "Equip",
+      "password": { "code": "61854111", "cost": 800 }
+    },
+    {
+      "id": 302,
+      "name": "Sword of Dark Destruction",
+      "description": "Dark forces increase the power of Warriors.",
+      "cardType": "Equip",
+      "password": { "code": "37120512", "cost": 800 }
+    },
+    {
+      "id": 303,
+      "name": "Dark Energy",
+      "description": "Dark forces increase the power of Fiends and other monsters of the Dark!",
+      "cardType": "Equip",
+      "password": { "code": "04614116", "cost": 800 }
+    },
+    {
+      "id": 304,
+      "name": "Axe of Despair",
+      "description": "Fiends and Beast-Warriors can constantly use their maximum strength!",
+      "cardType": "Equip",
+      "password": { "code": "40619825", "cost": 800 }
+    },
+    {
+      "id": 305,
+      "name": "Laser Cannon Armor",
+      "description": "Arms insects with a powerful laser!",
+      "cardType": "Equip",
+      "password": { "code": "77007920", "cost": 800 }
+    },
+    {
+      "id": 306,
+      "name": "Insect Armor with Laser Cannon",
+      "description": "Allows Insects to fire an intense blast of fire!",
+      "cardType": "Equip",
+      "password": { "code": "03492538", "cost": 800 }
+    },
+    {
+      "id": 307,
+      "name": "Elf's Light",
+      "description": "Increases the power of elves with mystical light!",
+      "cardType": "Equip",
+      "password": { "code": "39897277", "cost": 800 }
+    },
+    {
+      "id": 308,
+      "name": "Beast Fangs",
+      "description": "Increases the power of Beasts and other fanged monsters!",
+      "cardType": "Equip",
+      "password": { "code": "46009906", "cost": 800 }
+    },
+    {
+      "id": 309,
+      "name": "Steel Shell",
+      "description": "Boosts the power of shelled monsters! said to have no effect on those without shells.",
+      "cardType": "Equip",
+      "password": { "code": "02370081", "cost": 800 }
+    },
+    {
+      "id": 310,
+      "name": "Vile Germs",
+      "description": "Vile microbes boosts the power of Plants in the woods!",
+      "cardType": "Equip",
+      "password": { "code": "39774685", "cost": 800 }
+    },
+    {
+      "id": 311,
+      "name": "Black Pendant",
+      "description": "This pendant grants extra power to Dark sorcerers!",
+      "cardType": "Equip",
+      "password": { "code": "65169794", "cost": 800 }
+    },
+    {
+      "id": 312,
+      "name": "Silver Bow and Arrow",
+      "description": "Silver bow and arrow enhances the power of Fairies.",
+      "cardType": "Equip",
+      "password": { "code": "01557499", "cost": 800 }
+    },
+    {
+      "id": 313,
+      "name": "Horn of Light",
+      "description": "Increases the power of horned creatures! Has no effect on Dark monsters.",
+      "cardType": "Equip",
+      "password": { "code": "38552107", "cost": 800 }
+    },
+    {
+      "id": 314,
+      "name": "Horn of the Unicorn",
+      "description": "Increases the power of Dark monsters with horns!",
+      "cardType": "Equip",
+      "password": { "code": "64047146", "cost": 800 }
+    },
+    {
       "id": 315,
       "name": "Dragon Treasure",
       "description": "A legendary treasure that increases the power of dragons.",
       "cardType": "Equip",
       "password": { "code": "01435851", "cost": 800 }
+    },
+    {
+      "id": 316,
+      "name": "Electro-whip",
+      "description": "A whip for paralyzing enemies. Increases power when equipped with female creatures.",
+      "cardType": "Equip",
+      "password": { "code": "37820550", "cost": 800 }
+    },
+    {
+      "id": 317,
+      "name": "Cyber Shield",
+      "description": "Increases the power of female monsters by changing their attitudes.",
+      "cardType": "Equip",
+      "password": { "code": "63224564", "cost": 800 }
+    },
+    {
+      "id": 318,
+      "name": "Elegant Egotist",
+      "description": "Creates the doppelgangers of Harpie Lady for three-pronged attacks!",
+      "cardType": "Equip",
+      "password": { "code": "90219263", "cost": 999999 }
+    },
+    {
+      "id": 319,
+      "name": "Mystical Moon",
+      "description": "Moonlight increases the power of Beasts!",
+      "cardType": "Equip",
+      "password": { "code": "36607978", "cost": 800 }
+    },
+    {
+      "id": 321,
+      "name": "Malevolent Nuzzler",
+      "description": "Diabolic forces act to increase the power of female and Dark monsters!",
+      "cardType": "Equip",
+      "password": { "code": "99597615", "cost": 800 }
+    },
+    {
+      "id": 322,
+      "name": "Violet Crystal",
+      "description": "Mystic forces from the crystal increase the power of Zombies.",
+      "cardType": "Equip",
+      "password": { "code": "15052462", "cost": 800 }
+    },
+    {
+      "id": 323,
+      "name": "Book of Secret Arts",
+      "description": "A magic book for increasing the power of magic-users. It cannot be used by bad-hearted sorcerers.",
+      "cardType": "Equip",
+      "password": { "code": "91595718", "cost": 800 }
+    },
+    {
+      "id": 324,
+      "name": "Invigoration",
+      "description": "Increases the power of Thunder, Rock, and Pyro monsters!",
+      "cardType": "Equip",
+      "password": { "code": "98374133", "cost": 800 }
+    },
+    {
+      "id": 325,
+      "name": "Machine Conversion Factory",
+      "description": "A manufacturing facility that tunes up all Machine monsters.",
+      "cardType": "Equip",
+      "password": { "code": "25769732", "cost": 999999 }
+    },
+    {
+      "id": 326,
+      "name": "Raise Body Heat",
+      "description": "Absorbs the sun's energy to increase the power of Dinosaurs!",
+      "cardType": "Equip",
+      "password": { "code": "51267887", "cost": 800 }
+    },
+    {
+      "id": 327,
+      "name": "Follow Wind",
+      "description": "The winds provide support to increase the power of Winged Beasts and other flying monsters!",
+      "cardType": "Equip",
+      "password": { "code": "98252586", "cost": 800 }
+    },
+    {
+      "id": 328,
+      "name": "Power of Kaishin",
+      "description": "Poseidon's strength is shared to boost the power of Aqua, Fish, and Sea Serpent monsters!",
+      "cardType": "Equip",
+      "password": { "code": "77027445", "cost": 800 }
+    },
+    {
+      "id": 651,
+      "name": "Kunai with Chain",
+      "description": "A boomerang featuring the effects of two cards: the Legendary Sword and the Sword of Dark Destruction.",
+      "cardType": "Equip",
+      "password": { "code": "37390589", "cost": 800 }
+    },
+    {
+      "id": 652,
+      "name": "Magical Labyrinth",
+      "description": "A card for boosting the power of the Labyrinth Wall.",
+      "cardType": "Equip",
+      "password": { "code": "64389297", "cost": 10 }
+    },
+    {
+      "id": 654,
+      "name": "Salamandra",
+      "description": "Increases the strength of those who control the power of Salamandra.",
+      "cardType": "Equip",
+      "password": { "code": "32268901", "cost": 800 }
+    },
+    {
+      "id": 657,
+      "name": "Megamorph",
+      "description": "A card that increases the power of any selected monster by 2 levels.",
+      "cardType": "Equip",
+      "password": { "code": "22046459", "cost": 50000 }
+    },
+    {
+      "id": 658,
+      "name": "Metalmorph",
+      "description": "A card that changes any selected monster to a Machine monster.",
+      "cardType": "Equip",
+      "password": { "code": "68540058", "cost": 999999 }
+    },
+    {
+      "id": 659,
+      "name": "Winged Trumpeter",
+      "description": "A horn that increases the power of fairy creatures.",
+      "cardType": "Equip",
+      "password": { "code": "94939166", "cost": 800 }
+    },
+    {
+      "id": 668,
+      "name": "Bright Castle",
+      "description": "A glaring light that increases the power of all monsters.",
+      "cardType": "Equip",
+      "password": { "code": "82878489", "cost": 800 }
     }
   ]
 }

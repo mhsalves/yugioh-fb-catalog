@@ -33,17 +33,17 @@ const cardBase = {
 export const MonsterCard = z.strictObject({
     ...cardBase,
     cardType: z.literal("Monster"),
-    password: Password,
+    password: Password.optional(),
     monsterType: MonsterType,
     level: z.int().min(1).max(12),
     attack: z.int().min(0),
     defense: z.int().min(0),
     guardianStars: z.tuple([GuardianStar, GuardianStar]),
 });
-export const MagicCard = z.strictObject({ ...cardBase, cardType: z.literal("Magic"), password: Password });
-export const TrapCard = z.strictObject({ ...cardBase, cardType: z.literal("Trap"), password: Password });
-export const EquipCard = z.strictObject({ ...cardBase, cardType: z.literal("Equip"), password: Password });
-export const RitualCard = z.strictObject({ ...cardBase, cardType: z.literal("Ritual"), password: Password });
+export const MagicCard = z.strictObject({ ...cardBase, cardType: z.literal("Magic"), password: Password.optional() });
+export const TrapCard = z.strictObject({ ...cardBase, cardType: z.literal("Trap"), password: Password.optional() });
+export const EquipCard = z.strictObject({ ...cardBase, cardType: z.literal("Equip"), password: Password.optional() });
+export const RitualCard = z.strictObject({ ...cardBase, cardType: z.literal("Ritual"), password: Password.optional() });
 
 export const Ritual = z.strictObject({
     ritual: CardId,

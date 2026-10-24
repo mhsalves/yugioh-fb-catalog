@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../schema/monster-list.schema.json",
+  "cards": [
+    {
+      "id": 73,
+      "name": "Kairyu-Shin",
+      "description": "A sea dragon that's referred to as the \"King of the Ocean\". It attacks its enemies with huge tidal waves.",
+      "cardType": "Monster",
+      "password": { "code": "76634149", "cost": 290 },
+      "monsterType": "Sea Serpent",
+      "level": 5,
+      "attack": 1800,
+      "defense": 1500,
+      "guardianStars": ["Neptune", "Mars"]
+    },
+    {
+      "id": 353,
+      "name": "Takriminos",
+      "description": "A finned creature distantly related to sea dragons.",
+      "cardType": "Monster",
+      "password": { "code": "44073668", "cost": 140 },
+      "monsterType": "Sea Serpent",
+      "level": 4,
+      "attack": 1500,
+      "defense": 1200,
+      "guardianStars": ["Neptune", "Mercury"]
+    },
+    {
+      "id": 442,
+      "name": "Aqua Dragon",
+      "description": "A dragon that dwells in the sea. It is capable of spitting high-pressure blasts of water.",
+      "cardType": "Monster",
+      "password": { "code": "86164529", "cost": 700 },
+      "monsterType": "Sea Serpent",
+      "level": 6,
+      "attack": 2250,
+      "defense": 1900,
+      "guardianStars": ["Neptune", "Moon"]
+    },
+    {
+      "id": 443,
+      "name": "Sea King Dragon",
+      "description": "The King of the Seas, this creature is protected by a solid shell and spits poisonous bubbles at its enemies.",
+      "cardType": "Monster",
+      "password": { "code": "23659124", "cost": 1000 },
+      "monsterType": "Sea Serpent",
+      "level": 6,
+      "attack": 2000,
+      "defense": 1700,
+      "guardianStars": ["Neptune", "Mercury"]
+    },
+    {
+      "id": 448,
+      "name": "Spike Seadra",
+      "description": "Using the spikes sprouting from its body, this creature stabs its opponents and floods then with electricity.",
+      "cardType": "Monster",
+      "password": { "code": "85326399", "cost": 180 },
+      "monsterType": "Sea Serpent",
+      "level": 5,
+      "attack": 1600,
+      "defense": 1300,
+      "guardianStars": ["Pluto", "Mercury"]
+    }
+  ]
+}

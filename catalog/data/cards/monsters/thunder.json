@@ -2,6 +2,54 @@
   "$schema": "../../../schema/monster-list.schema.json",
   "cards": [
     {
+      "id": 45,
+      "name": "Oscillo Hero #2",
+      "description": "Attacks its enemies with thunder.",
+      "cardType": "Monster",
+      "password": { "code": "27324313", "cost": 30 },
+      "monsterType": "Thunder",
+      "level": 3,
+      "attack": 1000,
+      "defense": 500,
+      "guardianStars": ["Pluto", "Sun"]
+    },
+    {
+      "id": 191,
+      "name": "LALA Li-oon",
+      "description": "Protected by thunder, this dangerous cloud attacks its enemies with acid rain.",
+      "cardType": "Monster",
+      "password": { "code": "09430387", "cost": 25 },
+      "monsterType": "Thunder",
+      "level": 2,
+      "attack": 600,
+      "defense": 600,
+      "guardianStars": ["Pluto", "Moon"]
+    },
+    {
+      "id": 211,
+      "name": "Kaminarikozou",
+      "description": "This creature stores lightning within its body to deliver electrifying attacks.",
+      "cardType": "Monster",
+      "password": { "code": "15510988", "cost": 30 },
+      "monsterType": "Thunder",
+      "level": 2,
+      "attack": 700,
+      "defense": 600,
+      "guardianStars": ["Pluto", "Venus"]
+    },
+    {
+      "id": 371,
+      "name": "Sanga of the Thunder",
+      "description": "A golem that uses lightning attacker similar to the labyrinth brothers.",
+      "cardType": "Monster",
+      "password": { "code": "25955164", "cost": 999999 },
+      "monsterType": "Thunder",
+      "level": 7,
+      "attack": 2600,
+      "defense": 2200,
+      "guardianStars": ["Pluto", "Mars"]
+    },
+    {
       "id": 425,
       "name": "Thunder Dragon",
       "description": "A dragon that summons thunder and lightning to attack its opponents.",
@@ -12,6 +60,114 @@
       "attack": 1600,
       "defense": 1500,
       "guardianStars": ["Pluto", "Jupiter"]
+    },
+    {
+      "id": 458,
+      "name": "Kaminari Attack",
+      "description": "A monster that judges wrong-doers and punishes them appropriately.",
+      "cardType": "Monster",
+      "password": { "code": "09653271", "cost": 290 },
+      "monsterType": "Thunder",
+      "level": 5,
+      "attack": 1900,
+      "defense": 1400,
+      "guardianStars": ["Pluto", "Venus"]
+    },
+    {
+      "id": 459,
+      "name": "Tripwire Beast",
+      "description": "This creature attacks enemies with electromagnetic wave.",
+      "cardType": "Monster",
+      "password": { "code": "45042329", "cost": 100 },
+      "monsterType": "Thunder",
+      "level": 4,
+      "attack": 1200,
+      "defense": 1300,
+      "guardianStars": ["Pluto", "Saturn"]
+    },
+    {
+      "id": 460,
+      "name": "Bolt Escargot",
+      "description": "This creature spits a gooey substance that robs enemies of mobility and then stuns them with electric shocks.",
+      "cardType": "Monster",
+      "password": { "code": "12146024", "cost": 180 },
+      "monsterType": "Thunder",
+      "level": 5,
+      "attack": 1400,
+      "defense": 1500,
+      "guardianStars": ["Pluto", "Jupiter"]
+    },
+    {
+      "id": 461,
+      "name": "Bolt Penguin",
+      "description": "A monster with a pair of electric whips instead of arms.",
+      "cardType": "Monster",
+      "password": { "code": "48531733", "cost": 50 },
+      "monsterType": "Thunder",
+      "level": 3,
+      "attack": 1100,
+      "defense": 800,
+      "guardianStars": ["Pluto", "Moon"]
+    },
+    {
+      "id": 462,
+      "name": "The Immortal of Thunder",
+      "description": "A creature that attacks enemies with thunderbolts.",
+      "cardType": "Monster",
+      "password": { "code": "84926738", "cost": 160 },
+      "monsterType": "Thunder",
+      "level": 4,
+      "attack": 1500,
+      "defense": 1300,
+      "guardianStars": ["Pluto", "Sun"]
+    },
+    {
+      "id": 463,
+      "name": "Electric Snake",
+      "description": "A serpent with a tail for storing electricity.",
+      "cardType": "Monster",
+      "password": { "code": "11324436", "cost": 40 },
+      "monsterType": "Thunder",
+      "level": 3,
+      "attack": 800,
+      "defense": 900,
+      "guardianStars": ["Pluto", "Mars"]
+    },
+    {
+      "id": 537,
+      "name": "Mega Thunderball",
+      "description": "Rolls along the ground releasing bolts of electricity to attack its enemies.",
+      "cardType": "Monster",
+      "password": { "code": "21817254", "cost": 30 },
+      "monsterType": "Thunder",
+      "level": 2,
+      "attack": 750,
+      "defense": 600,
+      "guardianStars": ["Pluto", "Mercury"]
+    },
+    {
+      "id": 610,
+      "name": "Electric Lizard",
+      "description": "A lizard that discharges electricity stored in its body.",
+      "cardType": "Monster",
+      "password": { "code": "55875323", "cost": 35 },
+      "monsterType": "Thunder",
+      "level": 3,
+      "attack": 850,
+      "defense": 800,
+      "guardianStars": ["Pluto", "Sun"]
+    },
+    {
+      "id": 613,
+      "name": "Twin-headed Thunder Dragon",
+      "description": "A two-headed Thunder Dragon capable of powerful electric attacks.",
+      "cardType": "Monster",
+      "password": { "code": "54752875", "cost": 1900 },
+      "monsterType": "Thunder",
+      "level": 7,
+      "attack": 2800,
+      "defense": 2100,
+      "guardianStars": ["Pluto", "Moon"]
     }
   ]
 }

@@ -1,0 +1,161 @@
+{
+  "$schema": "../../../schema/monster-list.schema.json",
+  "cards": [
+    {
+      "id": 11,
+      "name": "Sword Arm of Dragon",
+      "description": "With a body covered in sword-like thorns, nothing dares stand in the way of this monster when it changes.",
+      "cardType": "Monster",
+      "password": { "code": "13069066", "cost": 1000 },
+      "monsterType": "Dinosaur",
+      "level": 6,
+      "attack": 1750,
+      "defense": 2030,
+      "guardianStars": ["Uranus", "Moon"]
+    },
+    {
+      "id": 32,
+      "name": "Two-headed King Rex",
+      "description": "An unusual and rarely seen two headed dragon.",
+      "cardType": "Monster",
+      "password": { "code": "94119974", "cost": 160 },
+      "monsterType": "Dinosaur",
+      "level": 4,
+      "attack": 1600,
+      "defense": 1200,
+      "guardianStars": ["Uranus", "Neptune"]
+    },
+    {
+      "id": 59,
+      "name": "Mammoth Graveyard",
+      "description": "A mammoth that protects the gravesite of its pack. It's absolutely merciless when facing graverobbers.",
+      "cardType": "Monster",
+      "password": { "code": "40374923", "cost": 55 },
+      "monsterType": "Dinosaur",
+      "level": 3,
+      "attack": 1200,
+      "defense": 800,
+      "guardianStars": ["Mercury", "Pluto"]
+    },
+    {
+      "id": 79,
+      "name": "Megazowler",
+      "description": "Nothing stands in the way of this spike-covered dinosaur.",
+      "cardType": "Monster",
+      "password": { "code": "75390004", "cost": 500 },
+      "monsterType": "Dinosaur",
+      "level": 6,
+      "attack": 1800,
+      "defense": 2000,
+      "guardianStars": ["Uranus", "Neptune"]
+    },
+    {
+      "id": 80,
+      "name": "Uraby",
+      "description": "Fast on its feet, this dinosaur rips enemies to shreds with its sharp claws.",
+      "cardType": "Monster",
+      "password": { "code": "01784619", "cost": 80 },
+      "monsterType": "Dinosaur",
+      "level": 4,
+      "attack": 1500,
+      "defense": 800,
+      "guardianStars": ["Uranus", "Mars"]
+    },
+    {
+      "id": 81,
+      "name": "Crawling Dragon #2",
+      "description": "A powerful dragon with teeth that can grind almost anything to dust.",
+      "cardType": "Monster",
+      "password": { "code": "38289717", "cost": 160 },
+      "monsterType": "Dinosaur",
+      "level": 4,
+      "attack": 1600,
+      "defense": 1200,
+      "guardianStars": ["Moon", "Pluto"]
+    },
+    {
+      "id": 105,
+      "name": "Tomozaurus",
+      "description": "A deceivingly small creature that is so vicious it attacks both friend and foe without discretion.",
+      "cardType": "Monster",
+      "password": { "code": "46457856", "cost": 20 },
+      "monsterType": "Dinosaur",
+      "level": 2,
+      "attack": 500,
+      "defense": 400,
+      "guardianStars": ["Uranus", "Venus"]
+    },
+    {
+      "id": 218,
+      "name": "Two-mouth Darkruler",
+      "description": "A Dinosaur with two crushing jaws. Stores electricity in its horn and releases high voltage bolts from the back mouth on its head.",
+      "cardType": "Monster",
+      "password": { "code": "57305373", "cost": 35 },
+      "monsterType": "Dinosaur",
+      "level": 3,
+      "attack": 900,
+      "defense": 700,
+      "guardianStars": ["Moon", "Saturn"]
+    },
+    {
+      "id": 482,
+      "name": "Pragtical",
+      "description": "A very dangerous monster with spikes on its head and tail.",
+      "cardType": "Monster",
+      "password": { "code": "33691040", "cost": 320 },
+      "monsterType": "Dinosaur",
+      "level": 5,
+      "attack": 1900,
+      "defense": 1500,
+      "guardianStars": ["Uranus", "Neptune"]
+    },
+    {
+      "id": 509,
+      "name": "Bracchio-raidus",
+      "description": "A colossal dinosaur that stomps on anything that wanders into its path.",
+      "cardType": "Monster",
+      "password": { "code": "16507828", "cost": 800 },
+      "monsterType": "Dinosaur",
+      "level": 6,
+      "attack": 2200,
+      "defense": 2000,
+      "guardianStars": ["Uranus", "Moon"]
+    },
+    {
+      "id": 568,
+      "name": "Anthrosaurus",
+      "description": "Man-like dinosaur lacking in strength but with a high I.Q.",
+      "cardType": "Monster",
+      "password": { "code": "89904598", "cost": 45 },
+      "monsterType": "Dinosaur",
+      "level": 3,
+      "attack": 1000,
+      "defense": 850,
+      "guardianStars": ["Uranus", "Moon"]
+    },
+    {
+      "id": 570,
+      "name": "Trakadon",
+      "description": "A tiger-striped dragon that is often seen racing across the wasteland with tremendous speed.",
+      "cardType": "Monster",
+      "password": { "code": "42348802", "cost": 60 },
+      "monsterType": "Dinosaur",
+      "level": 3,
+      "attack": 1300,
+      "defense": 800,
+      "guardianStars": ["Uranus", "Venus"]
+    },
+    {
+      "id": 573,
+      "name": "Little D",
+      "description": "A very ferocious monster spawned from a T-Rex.",
+      "cardType": "Monster",
+      "password": { "code": "42625254", "cost": 45 },
+      "monsterType": "Dinosaur",
+      "level": 3,
+      "attack": 1100,
+      "defense": 700,
+      "guardianStars": ["Uranus", "Mercury"]
+    }
+  ]
+}

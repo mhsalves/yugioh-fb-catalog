@@ -1,6 +1,6 @@
 {
   "name": "@mhsalves/yugioh-fb-catalog",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "This catalog tools helps to retrieve data from Yugioh Forbidden Memories",
   "main": "./lib/index.js",
   "files": [
@@ -23,6 +23,7 @@
     "pretest": "yarn data:build",
     "test": "vitest run",
     "data:build": "tsx scripts/build-data.ts",
+    "data:sync": "tsx scripts/sync-wiki.ts",
     "validate": "tsx scripts/validate.ts",
     "schema:build": "tsx scripts/build-schemas.ts",
     "schema:check": "tsx scripts/build-schemas.ts --check",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
+    "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "^5.7.3",
     "vite": "^8",

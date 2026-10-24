@@ -31,7 +31,9 @@ export default function CardTile(props: { card: ICard; onOpen: (id: number) => v
                         </span>
                     </>
                 ) : (
-                    <span className="card-tile__meta">Cost {card.password.cost}</span>
+                    <span className="card-tile__meta">
+                        {card.password ? `Cost ${card.password.cost}` : "No password"}
+                    </span>
                 )}
             </span>
         </button>

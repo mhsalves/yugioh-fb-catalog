@@ -2,6 +2,69 @@
   "$schema": "../../schema/trap-list.schema.json",
   "cards": [
     {
+      "id": 681,
+      "name": "House of Adhesive Tape",
+      "description": "Monsters with Attack Factors of 500 or lower are eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "15083728", "cost": 999999 }
+    },
+    {
+      "id": 682,
+      "name": "Eatgaboon",
+      "description": "Monsters with Attack Factors of 1000 or less are eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "42578427", "cost": 999999 }
+    },
+    {
+      "id": 683,
+      "name": "Bear Trap",
+      "description": "When an opposing monster's Attack Factor is 1500 or lower, it is eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "78977532", "cost": 999999 }
+    },
+    {
+      "id": 684,
+      "name": "Invisible Wire",
+      "description": "When an opposing monster's Attack Factor is 2000 or lower, it is eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "15361130", "cost": 999999 }
+    },
+    {
+      "id": 685,
+      "name": "Acid Trap Hole",
+      "description": "When an opposing monster's Attack Factor is 3000 or lower, it is eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "41356845", "cost": 999999 }
+    },
+    {
+      "id": 686,
+      "name": "Widespread Ruin",
+      "description": "When an opponent's monster attacks, it is blown to smithereens and eliminated from the play field.",
+      "cardType": "Trap",
+      "password": { "code": "77754944", "cost": 999999 }
+    },
+    {
+      "id": 687,
+      "name": "Goblin Fan",
+      "description": "Reflects the damage of direct attack cards like Fire Sparks and Inferno back to your opponent.",
+      "cardType": "Trap",
+      "password": { "code": "04149689", "cost": 999999 }
+    },
+    {
+      "id": 688,
+      "name": "Bad Reaction to Simochi",
+      "description": "A card that reverses the effects of recovery cards and transforms the points to damage.",
+      "cardType": "Trap",
+      "password": { "code": "40633297", "cost": 999999 }
+    },
+    {
+      "id": 689,
+      "name": "Reverse Trap",
+      "description": "A card that reverses the effects of power-up cards and transforms the effects to power reduction.",
+      "cardType": "Trap",
+      "password": { "code": "77622396", "cost": 999999 }
+    },
+    {
       "id": 690,
       "name": "Fake Trap",
       "description": "A trap card for tricking your opponent. Nothing happens when it is attacked.",

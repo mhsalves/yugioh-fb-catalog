@@ -2,6 +2,20 @@
 
 All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.4.0
+
+### BREAKING
+
+- **`password` is optional.** The 24 cards the game gives no password (ritual results and story cards, such as 364 Black Luster Soldier, 380 Blue-eyes Ultimate Dragon and 701–722) have none, so `card.password` is `undefined` for them. Read it as `card.password?.code` / `card.password?.cost`.
+- `searchCards({ cost })` leaves cards without a password out while a cost range is set, and sorting by `cost` puts them last.
+
+### Added
+
+- **All 722 cards** (was 5): 621 monsters across all 20 monster types, 33 Magic, 34 Equip, 10 Trap and 24 Ritual cards, imported from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) with `yarn data:sync` (spec 03 A-5). The wiki's text is CC BY-SA 3.0; see the attribution in the README.
+- **24 ritual recipes** (was 1) in `getRitual()`, one for every ritual card.
+
+Every card was checked against two dumps of the game data ([FusionCalc](https://github.com/Solumin/YGO-FM-FusionCalc) `Cards.json` and the [decompilation](https://github.com/Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled)'s `card-catalog.csv`, spec 02 §6). Where both disagree with the wiki, the catalog follows the game: 15 cards (213, 285, 393, 402, 430, 436, 456, 473, 493, 500, 534, 580, 606, 637, 678), for example 580 Patrol Robo DEF 900 (wiki: 1900) and 430 Water Magician as Aqua (wiki: Spellcaster).
+
 ## 0.3.0
 
 ### Added
