@@ -6,7 +6,7 @@ export default function NotFoundPage() {
             <h1>Page not found</h1>
             <p>This page does not exist.</p>
             <p>
-                <Link to="/">Back to the catalog</Link>
+                <Link to="/cards">Browse the cards</Link> or <Link to="/">go home</Link>
             </p>
         </section>
     );

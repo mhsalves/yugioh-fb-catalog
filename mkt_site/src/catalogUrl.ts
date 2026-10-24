@@ -141,7 +141,7 @@ export function catalogUrl({ query, cardId, page }: CatalogState): string {
         .filter((part): part is [string, string] => part[1] !== undefined)
         .map(([key, value]) => `${key}=${encodeURIComponent(value).replace(/%2C/g, ",")}`)
         .join("&");
-    return search ? `/?${search}` : "/";
+    return search ? `/cards?${search}` : "/cards";
 }
 
 export interface ActiveFilter {

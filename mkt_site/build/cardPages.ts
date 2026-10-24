@@ -39,7 +39,7 @@ function cardSummary(card: ICard): string {
         `<h1>#${card.id} ${escapeHtml(card.name)}</h1>`,
         `<dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join("")}</dl>`,
         `<p>${escapeHtml(card.description)}</p>`,
-        `<p><a href="../../">Back to the catalog</a></p>`,
+        `<p><a href="../">Browse all cards</a></p>`,
         `</main>`,
     ].join("");
 }

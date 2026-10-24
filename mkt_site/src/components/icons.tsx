@@ -99,6 +99,21 @@ export const DuelistIcon = () => (
     </Icon>
 );
 
+export const SearchIcon = () => (
+    <Icon>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+    </Icon>
+);
+
+export const HomeIcon = () => (
+    <Icon>
+        <path d="M3 10.5 12 3l9 7.5" />
+        <path d="M5 9v11h14V9" />
+        <path d="M10 20v-6h4v6" />
+    </Icon>
+);
+
 export const InfoIcon = () => (
     <Icon>
         <circle cx="12" cy="12" r="9" />

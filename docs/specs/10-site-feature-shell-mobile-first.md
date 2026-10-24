@@ -23,6 +23,8 @@ Live in production: **Cards** (with the search look-ups of F-7). **Fusion** and 
 | F-9 | **Duelists** list and duelist page UI | Agreed | ✅ Built (preview) | `/duelists`, `/duelists/<id>`: drops by rank with rates, deck, on sample data |
 | F-10 | Static pages and sitemap for the new routes | Agreed | ✅ Built | `build/cardPages.ts` writes a page and a sitemap entry for every `live` route besides `/` (none today); preview routes get nothing |
 
+**Home page (2026-10-23, owner request):** `/` is a home page (`pages/HomePage.tsx`): intro, a card search, tiles to Cards, Fusion and Duelists ("Coming soon" without a link while a feature is not visible), special thanks, how to use the data, and the author. The catalog moved to `/cards`; `/` with catalog parameters and the short-lived `/about` redirect. With Home and Cards live, production shows the tab bar (Home, Cards).
+
 ### Catalog methods the site mocks
 
 Registered in `mkt_site/src/data/pending.ts` (the source of truth; the preview banner reads it) and in [04](./04-catalog-query-api.md) Q-5. When the catalog ships one, its adapter in `src/data/` re-exports it and the mock and its entry are deleted.

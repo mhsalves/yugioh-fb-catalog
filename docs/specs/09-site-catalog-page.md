@@ -83,6 +83,8 @@ Clicking a grid item opens the **details card** over the page (C-4).
 ### C-1 One page, header without menu · ✅ Built
 > **Changed 2026-10-23 by [10](./10-site-feature-shell-mobile-first.md) F-3:** with more than one visible page, the header gets navigation tabs (a bottom tab bar on phones). With only the catalog visible it stays as described here.
 
+> **Changed 2026-10-23 (owner request):** the catalog moved to **`/cards`**, and `/` is now a **home page**: what the project is, a card search that opens `/cards?q=`, tiles to Cards, Fusion and Duelists, special thanks to the image sources, how to use the npm package, and the author. Old catalog addresses (`/?type=…&card=…`) redirect to `/cards?…`.
+
 - The site has **one page**, the catalog, at the site root (`/yugioh-fb-catalog/`).
 - The header keeps the **logo** (back to the full catalog: clears filters and the open card, scrolls to top), the **catalog package** button (shows and copies `@mhsalves/yugioh-fb-catalog@<version>`), the **npm** link and the **GitHub** repository link. The **menu is removed**, with its mobile toggle and `routes.ts`.
 - Unknown paths keep showing the 404 view, with a link back to the catalog ([07](./07-site-github-pages-delivery.md) P-4).
@@ -150,6 +152,8 @@ Focus moves to the panel's title when it opens and back to the card's tile when 
 - Fusions, equips, fields and drops are added to this card when their data and library functions exist (04 Q-5). The card shows nothing for relations that have no data, with no empty sections.
 
 ### C-5 Footer with owner links · ✅ Built
+> **Changed 2026-10-23 (owner request):** the footer is two short lines: "Made by Matheus Alves" (linked to GitHub) · "About & credits" (the home page), then the fan-project notice and image attribution with links to both wikis. The home page link (matheusalves.dev) and the full thanks moved to the home page.
+
 At the bottom of the page, on every view (including 404):
 
 | Link | URL |

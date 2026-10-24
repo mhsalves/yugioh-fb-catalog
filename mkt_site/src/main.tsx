@@ -8,7 +8,7 @@ import "./styles/layout.css";
 import "./styles/catalog.css";
 import "./styles/card-panel.css";
 import "./styles/features.css";
-import "./styles/about.css";
+import "./styles/home.css";
 import "./styles/motion.css";
 
 createRoot(document.getElementById("root")!).render(

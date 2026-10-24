@@ -77,7 +77,7 @@ export default function CatalogVersion() {
                 <CopyPackage className="catalog-version__copy catalog-version__copy--block" />
                 <ul className="link-list">
                     <li>
-                        <Link to="/about" className="link-list__item" onClick={() => setOpen(false)}>
+                        <Link to="/" className="link-list__item" onClick={() => setOpen(false)}>
                             <InfoIcon />
                             <span>About this project</span>
                             <ChevronRightIcon />

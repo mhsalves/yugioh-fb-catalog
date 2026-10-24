@@ -228,7 +228,7 @@ This is **not a server** (it was named `server/` until spec 01 R-6 renamed it). 
 
 The site is **one page** (spec 09): the catalog at `/`.
 
-> **Since spec 10 (2026-10-23):** the site is mobile-first and has a route list with feature flags (`src/routes.ts`): Cards is live (its search box also takes `#number` and 8-digit passwords); Fusion and Duelists are previews on sample data. Catalog methods those pages need but the catalog lacks are mocked in `mkt_site/src/data/` and listed in `pending.ts`. See [spec 10](./specs/10-site-feature-shell-mobile-first.md).
+> **Since spec 10 (2026-10-23):** the site is mobile-first and has a route list with feature flags (`src/routes.ts`): the home page (`/`) and Cards (`/cards`, whose search box also takes `#number` and 8-digit passwords) are live; Fusion and Duelists are previews on sample data. Catalog methods those pages need but the catalog lacks are mocked in `mkt_site/src/data/` and listed in `pending.ts`. See [spec 10](./specs/10-site-feature-shell-mobile-first.md).
 - **Header:** logo (back to the full catalog), the **catalog version** the site was built with (click to copy `@mhsalves/yugioh-fb-catalog@<version>`) and a link to that version on npm. No menu.
 - **Filters:** a search box and a "By type" row ("All types" + the 5 card types) above the grid; a panel with the other `CardQuery` fields (monster type, guardian star, level, ATK, DEF, cost, description search). A left column on desktop, a full-screen sheet on phones.
 - **Results:** the page calls `searchCards(query)` from the catalog and renders the items as a grid, with "N cards · 5 of 722 catalogued" and a sort control. Zero results show a placeholder with "Clear filters". The site never filters or sorts by itself.

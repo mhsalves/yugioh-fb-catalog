@@ -3,18 +3,19 @@ import { navRoutes } from "../features";
 import { CATALOG_SEARCH_ID, isTyping } from "../keyboard";
 import { Link, navigate, usePath } from "../router";
 import type { RouteId } from "../routes";
-import { CardsIcon, DuelistIcon, FusionIcon } from "./icons";
+import { CardsIcon, DuelistIcon, FusionIcon, HomeIcon } from "./icons";
 
-// Pages kept out of the tab bar (nav: false, such as About) need no icon.
+// Pages kept out of the tab bar (nav: false) need no icon.
 const ICONS: Partial<Record<RouteId, () => JSX.Element>> = {
+    home: HomeIcon,
     cards: CardsIcon,
     fusion: FusionIcon,
     duelists: DuelistIcon,
 };
 
-/** The Cards tab also covers a shared card's page; the others cover their sub-pages (/duelists/<id>). */
+/** A tab covers its sub-pages too: Cards a shared card's page (/cards/<id>), Duelists a duelist's. */
 function isCurrent(path: string, routePath: string): boolean {
-    if (routePath === "/") return path === "/" || path.startsWith("/cards/");
+    if (routePath === "/") return path === "/";
     return path === routePath || path.startsWith(`${routePath}/`);
 }
 
@@ -36,7 +37,7 @@ export default function Nav() {
             if (document.getElementById(CATALOG_SEARCH_ID)) {
                 focusSearch();
             } else {
-                navigate("/");
+                navigate("/cards");
                 window.requestAnimationFrame(focusSearch);
             }
         };

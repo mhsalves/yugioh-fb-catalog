@@ -18,7 +18,7 @@ export default function CardPage({ id }: { id: CardId }) {
 
     return (
         <article className="card-page" data-type={card?.cardType} aria-labelledby="card-page-title">
-            <Link to="/" className="back-link">
+            <Link to="/cards" className="back-link">
                 <ChevronLeftIcon /> Back to the catalog
             </Link>
 
@@ -37,7 +37,7 @@ export default function CardPage({ id }: { id: CardId }) {
                 )}
 
                 <div className="details__nav">
-                    <Link to="/" className="button">
+                    <Link to="/cards" className="button">
                         Browse the full catalog
                     </Link>
                 </div>
