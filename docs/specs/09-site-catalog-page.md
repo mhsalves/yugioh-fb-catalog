@@ -113,8 +113,8 @@ Clicking a grid item opens the **details card** over the page (C-4).
 - Desktop: filters in a left column. Phones: a "Filters" button opens them in a full-screen sheet with "Show N cards" to close (TBD-C2).
 
 ### C-3 Results grid · ✅ Built
-> **Changed 2026-10-23 (owner request):** results are **paged, 48 cards a page** (`?page=` in the URL; through `searchCards`'s `limit` and `offset`). A filter change goes back to page 1; page changes add a history entry; previous / next in the details card cross page edges and the grid follows. Phones show Previous / "Page N of M" / Next, wider screens numbered pages.
-> **Grid columns (2026-10-23):** the column count follows the width of the results area (a container query): 2, 3, 4 or 6 columns, all dividing the 48-card page. Six columns need about 1040px of results, so the page is now up to 1440px wide; at 1280px six columns would make 144px tiles with names wrapping, so that width keeps 4.
+> **Changed 2026-10-23 (owner request):** results are **paged, 30 cards a page** (owner choice; first built with 48) (`?page=` in the URL; through `searchCards`'s `limit` and `offset`). A filter change goes back to page 1; page changes add a history entry; previous / next in the details card cross page edges and the grid follows. Phones show Previous / "Page N of M" / Next, wider screens numbered pages.
+> **Grid columns (2026-10-23):** the column count follows the width of the results area (a container query): 2, 3, 4 or 6 columns; a 30-card page fills every row at 2, 3 and 6 columns, and leaves 2 cards in the last row at 4. Six columns need about 1040px of results, so the page is now up to 1440px wide; at 1280px six columns would make 144px tiles with names wrapping, so that width keeps 4.
 
 - A responsive grid: `repeat(auto-fill, minmax(~180px, 1fr))`, which gives 2 columns on phones and 4–6 on desktop.
 - **Each grid item** shows: `#id`, name, card type badge (color per type, 06 U-1), and for monsters the monster type, level and ATK/DEF. The image area shows the styled placeholder frame until card images land ([08](./08-card-images.md) I-4).

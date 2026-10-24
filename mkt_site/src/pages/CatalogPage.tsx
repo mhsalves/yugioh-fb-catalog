@@ -31,8 +31,8 @@ import { navigate, useSearch } from "../router";
 
 const SORT_LABELS = { id: "ID", name: "Name", attack: "ATK", defense: "DEF", level: "Level", cost: "Cost" };
 const SITE_TITLE = "Yu-Gi-Oh! FM Catalog";
-/** Cards per results page: divides evenly into the grid's 2, 3, 4 or 6 columns. */
-const PAGE_SIZE = 48;
+/** Cards per results page (owner choice): full rows at 2, 3 and 6 columns; at 4 the last row has 2. */
+const PAGE_SIZE = 30;
 
 /**
  * The search box also takes a card number ("#425") or an 8-digit password (spec 10 F-7, folded into this page). They
