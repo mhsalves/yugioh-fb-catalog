@@ -5,7 +5,6 @@ import EmptyState from "../components/EmptyState";
 import { ChevronLeftIcon } from "../components/icons";
 import PageCardDetails from "../components/PageCardDetails";
 import PercentBar from "../components/PercentBar";
-import PreviewBanner from "../components/PreviewBanner";
 import Tabs, { tabPanelProps } from "../components/Tabs";
 import { DROP_RANKS, getDeckOf, getDropsFrom, getDuelist, type DropRank, type RateSort } from "../data/duelists";
 import { Link } from "../router";
@@ -20,8 +19,8 @@ const TABS = [
 ] as const satisfies readonly { id: Tab; label: string }[];
 
 /**
- * One duelist (spec 10 F-9): the cards they drop, by rank, and the cards their deck is drawn from. A preview on
- * sample data until the catalog has duelists (spec 02 TBD-D9). Tab, rank and sort are in the URL.
+ * One duelist (spec 10 F-9): the cards they drop, by rank, and the cards their deck is drawn from, with the game's
+ * rates. Tab, rank and sort are in the URL.
  */
 export default function DuelistPage({ id }: { id: string }) {
     const duelist = getDuelist(id);
@@ -57,15 +56,22 @@ export default function DuelistPage({ id }: { id: string }) {
 
     return (
         <section className="duelist-page" aria-labelledby="duelist-title">
-            <PreviewBanner route="duelists" />
             {back}
             <header className="duelist-head">
-                <DuelistPortrait name={duelist.name} large />
+                <DuelistPortrait name={duelist.name} portrait={duelist.portrait} large />
                 <div>
                     <h1 id="duelist-title" className="page-title">
                         {duelist.name}
                     </h1>
-                    <p className="hint">{duelist.stage}</p>
+                    <p className="hint">Free Duel #{duelist.number}</p>
+                    {duelist.portrait && (
+                        <p className="duelist-credit">
+                            Portrait:{" "}
+                            <a href={duelist.portrait.source.pageUrl} target="_blank" rel="noopener noreferrer">
+                                {duelist.portrait.source.name}
+                            </a>
+                        </p>
+                    )}
                 </div>
             </header>
 

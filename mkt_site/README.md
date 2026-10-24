@@ -72,7 +72,7 @@ Alguns métodos que o site usa ainda não existem no catálogo. O site simula ca
 - Duelistas: `getDuelistList`, `getDuelist`, `getDropsFrom`, `getDroppedBy`, `getDeckOf` (`src/data/duelists.ts`)
 - Senha: `getCardByPassword` (`src/data/cards.ts`, com os dados reais; usado pela busca do catálogo)
 
-Os dados de exemplo (`src/data/sample.ts`) usam as cartas reais, mas as fusões, duelistas e taxas são inventados; as páginas em prévia mostram um aviso dizendo isso. Quando o catálogo ganhar um desses métodos: reexporte-o no adaptador em `src/data/`, apague o mock e a entrada em `pending.ts`, e mude a rota para `"live"` em `src/routes.ts` quando todos os métodos da página forem reais.
+Os dados de exemplo (`src/data/sample.ts`) usam as cartas reais, mas as fusões são inventadas (os duelistas já vêm do catálogo); as páginas em prévia mostram um aviso dizendo isso. Quando o catálogo ganhar um desses métodos: reexporte-o no adaptador em `src/data/`, apague o mock e a entrada em `pending.ts`, e mude a rota para `"live"` em `src/routes.ts` quando todos os métodos da página forem reais.
 
 ## Regras
 
@@ -105,7 +105,7 @@ mkt_site/
     ├── catalogUrl.ts    # Query string ⇄ CardQuery
     ├── useCopy.ts       # Copiar para a área de transferência
     ├── styles/          # tokens, base, layout, catalog, card-panel, features, motion (mobile-first)
-    ├── data/            # Adaptadores com mocks (fusions, duelists, cards), sample.ts, pending.ts
+    ├── data/            # Adaptadores do catálogo (duelists) e com mocks (fusions, cards), sample.ts, pending.ts
     ├── assets/logo.svg
     ├── components/      # Header, Nav, Footer, Filters, CardTile, CardRow, CardDetails, CardInfo, Sheet, CardPicker, Tabs, ...
     └── pages/           # HomePage, CatalogPage, FusionPage, DuelistsPage, DuelistPage, CardPage, NotFoundPage

@@ -442,12 +442,26 @@ body:has(dialog[open]) {
     background: var(--color-surface-2);
     color: var(--color-accent);
     font-weight: 700;
+    overflow: hidden;
+}
+
+/* Yugipedia's portraits are busts of different sizes: fill the frame and keep the face, near the top. */
+.duelist-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
 }
 
 .duelist-portrait--large {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     font-size: 1.375rem;
+}
+
+.duelist-credit {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
 }
 
 .duelist-head {

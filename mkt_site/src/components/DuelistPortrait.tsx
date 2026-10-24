@@ -1,5 +1,17 @@
-/** A duelist's initials in a frame, standing in for portraits (spec 10 TBD-F6). */
-export default function DuelistPortrait({ name, large = false }: { name: string; large?: boolean }) {
+import { useState } from "react";
+import type { DuelistPortrait as Portrait } from "@mhsalves/yugioh-fm-catalog";
+
+/** A duelist's portrait in a round frame (linked from Yugipedia, spec 10 TBD-F6); their initials when it is missing. */
+export default function DuelistPortrait({
+    name,
+    portrait,
+    large = false,
+}: {
+    name: string;
+    portrait?: Portrait;
+    large?: boolean;
+}) {
+    const [failed, setFailed] = useState(false);
     const initials = name
         .split(/\s+/)
         .filter((word) => /^[A-Z]/.test(word))
@@ -8,7 +20,11 @@ export default function DuelistPortrait({ name, large = false }: { name: string;
         .slice(-2);
     return (
         <span className={large ? "duelist-portrait duelist-portrait--large" : "duelist-portrait"} aria-hidden="true">
-            {initials}
+            {portrait && !failed ? (
+                <img src={portrait.url} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+            ) : (
+                initials
+            )}
         </span>
     );
 }
