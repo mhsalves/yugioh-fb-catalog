@@ -791,6 +791,31 @@ body:has(.duelist-page[data-panel="true"]) .page {
     animation-delay: calc(min(var(--i, 0), 24) * 22ms);
 }
 
+/* Bigger card art than other row lists: the duelist page is about which cards they are. */
+.rate-row .card-row {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 14px;
+    min-height: 88px;
+    padding: 8px 14px 8px 8px;
+}
+
+.rate-row .card-row__art {
+    width: 56px;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 35%);
+}
+
+.rate-row .card-row__art .card-image {
+    transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rate-row .card-row:hover .card-row__art .card-image {
+    transform: scale(1.08);
+}
+
+.rate-row .card-row__name {
+    font-size: 1rem;
+}
+
 .rate-row .percent__fill {
     transform-origin: left;
     animation: bar-grow 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -939,6 +964,15 @@ body:has(.duelist-page[data-panel="true"]) .page {
 
     .duelist-stat {
         gap: 2px;
+    }
+
+    .rate-row .card-row {
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        min-height: 112px;
+    }
+
+    .rate-row .card-row__art {
+        width: 72px;
     }
 
     .duelist-controls .tabs {

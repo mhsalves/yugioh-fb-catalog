@@ -22,7 +22,8 @@
     .duelist-row:hover,
     .duelist-row:hover .duelist-portrait img,
     .duelist-row:hover .icon,
-    .duelist-neighbor:hover {
+    .duelist-neighbor:hover,
+    .rate-row .card-row:hover .card-row__art .card-image {
         transform: none;
     }
 
