@@ -2,6 +2,17 @@
 
 All notable changes to `@mhsalves/yugioh-fb-catalog`. The package is in `0.x`: a minor version may contain breaking changes, which are marked **BREAKING**.
 
+## 0.5.0
+
+### Added
+
+- **Card images for all 722 cards** (spec 08), as links: the package ships URLs, never images. `catalog/data/images.json` holds 618 images from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom) and, for the 104 cards Fandom only shows the card back for, Yugipedia's screenshots of the game's card screen with the `crop` that is the card. `yarn data:sync` fills it.
+- `getCardImage(id, size?)`: `{ url, width, height, crop?, source: { name, pageUrl } }`, or `undefined`. `size` is `"full"` (default) or `"thumb"` (160 px, from Fandom's CDN). When `crop` is set, show only that rectangle of the image.
+- `getCardImageSrcSet(id)`: a `srcset` with the thumbnail and the full image (`undefined` for cropped images).
+- Types `ImageSize`, `CardImage`, `ICardImageRef`, `IImageSource`, `IImageCrop`, and the constants `THUMB_WIDTH` and `DEFAULT_IMAGE_SIZE`.
+
+Fandom's CDN answers **403 without a `Referer`**. Web pages send one by default (do not set `referrerpolicy="no-referrer"`); servers, CLIs and apps that download the images must send their own. Yu-Gi-Oh! and its card artwork are © Kazuki Takahashi / Konami.
+
 ## 0.4.1
 
 ### Changed

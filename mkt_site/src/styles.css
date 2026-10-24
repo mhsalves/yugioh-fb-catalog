@@ -1,5 +1,7 @@
 /* Placeholder tokens until the style guide lands (spec 06 U-1, spec 09 TBD-C5). Change colors and fonts here only. */
 :root {
+    /* Option A for the wiki's dull card images (spec 08 I-4); "none" shows them as they are. */
+    --card-image-filter: contrast(1.2) saturate(1.25) brightness(1.05);
     --color-bg: #0b1530;
     --color-surface: #14244a;
     --color-surface-2: #1b2e5a;
@@ -494,8 +496,43 @@ fieldset:disabled {
         linear-gradient(160deg, var(--type-color), var(--color-surface-2));
 }
 
+/* The ratio of a Forbidden Memories card image, so tiles with and without an image line up. */
 .card-tile__art {
-    aspect-ratio: 4 / 3;
+    position: relative;
+    aspect-ratio: 300 / 423;
+}
+
+.card-tile__art > span {
+    position: relative;
+}
+
+/*
+ * Card images (spec 08 I-4) are low-contrast captures of the PS1 game, so they are lifted in the
+ * browser ("option A"): one variable to tune, no copies of the images anywhere.
+ */
+.card-image {
+    display: block;
+    filter: var(--card-image-filter);
+}
+
+.card-tile__art .card-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* A cropped screenshot (Yugipedia): the wrapper has the card's ratio and clips the rest of the screen. */
+.card-image--crop {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-image--crop img {
+    position: absolute;
+    max-width: none;
+    height: auto;
 }
 
 .card-tile__id {
@@ -708,8 +745,36 @@ fieldset:disabled {
 }
 
 .details__art {
+    position: relative;
     height: 96px;
+    margin: 0;
     border-radius: var(--radius);
+}
+
+.details__art[data-has-image] {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: auto;
+    padding: 16px;
+}
+
+.details__art[data-has-image] .type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.details__art .card-image {
+    width: min(100%, 300px);
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 45%);
+}
+
+.details__credit {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
 }
 
 .details__empty {

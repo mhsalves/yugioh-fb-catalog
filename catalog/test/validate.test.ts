@@ -274,3 +274,68 @@ describe("validateData", () => {
         expect(messages(issues, "error")).toEqual(["equips.json: invalid JSON: Unexpected token"]);
     });
 });
+
+describe("validateData: images.json (spec 08 I-2)", () => {
+    // Real wiki URLs: the md5 folder (e/e1, e/ee) must match the file name.
+    const FANDOM = "https://static.wikia.nocookie.net/yugioh/images/e/e1/ThunderDragon-FMR-EN-VG.png/revision/latest";
+    const YUGIPEDIA = "https://ms.yugipedia.com/e/ee/PatrolRobo-FMR-NA-VG.png";
+    const crop = { x: 4, y: 6, width: 136, height: 192 };
+    const withImages = (images: Record<string, unknown>[]) =>
+        run((files) => {
+            files["images.json"] = {
+                $schema: "../schema/images.schema.json",
+                sources: {
+                    fandom: { name: "Fandom", filePageUrl: "https://yugioh.fandom.com/wiki/File:" },
+                    yugipedia: { name: "Yugipedia", filePageUrl: "https://yugipedia.com/wiki/File:" },
+                },
+                images,
+            };
+        });
+
+    it("accepts Fandom and cropped Yugipedia images", () => {
+        const { issues, catalog } = withImages([
+            { card: 1, source: "fandom", url: `${FANDOM}?cb=20131221161931` },
+            { card: 2, source: "yugipedia", url: YUGIPEDIA, width: 320, height: 240, crop },
+        ]);
+        expect(issues).toEqual([]);
+        expect(catalog?.images.map((image) => image.card)).toEqual([1, 2]);
+    });
+
+    it("rejects a URL from another host", () => {
+        const { issues } = withImages([{ card: 1, source: "fandom", url: "https://example.com/1.png" }]);
+        expect(messages(issues, "error")).toEqual([expect.stringContaining("images[0].url: must be a")]);
+    });
+
+    it("rejects a folder that does not match the file name (a mistyped URL)", () => {
+        const { issues } = withImages([{ card: 1, source: "fandom", url: FANDOM.replace("/e/e1/", "/e/e2/") }]);
+        expect(messages(issues, "error")).toEqual([
+            "images.json: image of card 1: folder e/e2 does not match the file name (expected e/e1)",
+        ]);
+    });
+
+    it("rejects an unknown source, a second image for a card and a crop outside the image", () => {
+        const { issues } = withImages([
+            { card: 1, source: "imgur", url: FANDOM },
+            { card: 2, source: "yugipedia", url: YUGIPEDIA, width: 320, height: 240, crop },
+            { card: 2, source: "yugipedia", url: YUGIPEDIA, width: 100, height: 100, crop },
+        ]);
+        expect(messages(issues, "error")).toEqual([
+            'images.json: image of card 1: unknown source "imgur"',
+            "images.json: card 2 has more than one image",
+            "images.json: image of card 2: crop goes outside the 100 × 100 image",
+        ]);
+    });
+
+    it("needs the image size with a crop, and warns about cards not entered yet", () => {
+        const { issues } = withImages([
+            { card: 2, source: "yugipedia", url: YUGIPEDIA, crop },
+            { card: 500, source: "fandom", url: FANDOM },
+        ]);
+        expect(messages(issues, "error")).toEqual([
+            "images.json: image of card 2: a crop needs the image's width and height",
+        ]);
+        expect(messages(issues, "warning")).toEqual([
+            "images.json: image of card 500: card not found (card not entered yet)",
+        ]);
+    });
+});

@@ -19,7 +19,9 @@ Todos os dados ficam em arquivos **JSON** dentro de `catalog/data/`. Para adicio
 
 O nome do arquivo de um tipo de monstro é o tipo em minúsculas, com `-` no lugar de espaços. Os 20 tipos são: `dragon`, `spellcaster`, `zombie`, `warrior`, `beast-warrior`, `beast`, `winged-beast`, `fiend`, `fairy`, `insect`, `dinosaur`, `reptile`, `fish`, `sea-serpent`, `machine`, `thunder`, `aqua`, `pyro`, `rock`, `plant`. Se o arquivo do tipo ainda não existe, crie-o com o modelo abaixo.
 
-Duelistas e drops ainda não têm formato definido (spec 02, TBD-D9). Imagens das cartas (`data/images.json`) chegam com a spec 08.
+Duelistas e drops ainda não têm formato definido (spec 02, TBD-D9).
+
+**Imagens** ficam em `data/images.json`: `{ "card": 425, "source": "fandom", "url": "<endereço da imagem>" }`, com a URL copiada da wiki (mantenha o `?cb=`). O `validate` confere o host e se a pasta `<h>/<hh>` da URL bate com o nome do arquivo, o que pega URLs digitadas errado. O `yarn data:sync` preenche tudo; à mão, só quando uma imagem mudar.
 
 ## Modelos para copiar
 

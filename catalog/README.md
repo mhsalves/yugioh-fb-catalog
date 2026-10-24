@@ -21,7 +21,7 @@ The package is CommonJS and works with both `import` and `require`.
 ## Quick start
 
 ```ts
-import { getCard, searchCards, getRitual } from "@mhsalves/yugioh-fb-catalog";
+import { getCard, getCardImage, searchCards, getRitual } from "@mhsalves/yugioh-fb-catalog";
 
 getCard(1);
 // {
@@ -49,6 +49,7 @@ const { total, items } = searchCards({
 // items: Blue-eyes Ultimate Dragon (4500), Meteor B. Dragon (3500), B. Skull Dragon (3200)
 
 getRitual(674); // { ritual: 674, result: 365, materials: [186, 261, 595] }
+getCardImage(425); // { url: "https://static.wikia.nocookie.net/…", width: 300, height: 423, source }
 ```
 
 Cards are identified by their **number in the game** (`id`, from 1 to 722). Every function that returns cards returns the catalog's own objects: treat them as read-only.
@@ -145,6 +146,38 @@ getRitual(365); // the same recipe, found by the summoned monster
 const recipe = getRitual(674);
 recipe?.materials.map((id) => getCard(id)?.name); // the monsters to sacrifice
 ```
+
+### Card images
+
+The package ships **links only, no images**. Every card has one: 618 are the card scans of the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), about 300 × 423 px. The other 104 cards only have the card back there, so they link [Yugipedia](https://yugipedia.com/)'s screenshot of the game's card screen (320 × 240), with the `crop` that is the card.
+
+| Function                   | Returns                   | Description                                                                                  |
+| -------------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
+| `getCardImage(id, size?)`  | `CardImage \| undefined`  | `size`: `"full"` (default) or `"thumb"` (160 px wide, from Fandom's CDN).                    |
+| `getCardImageSrcSet(id)`   | `string \| undefined`     | A `srcset` with the thumbnail and the full image. `undefined` for cropped images.            |
+
+```ts
+import { getCardImage } from "@mhsalves/yugioh-fb-catalog";
+
+getCardImage(425, "thumb");
+// {
+//   url: "https://static.wikia.nocookie.net/yugioh/images/e/e1/ThunderDragon-FMR-EN-VG.png/revision/latest/scale-to-width-down/160?cb=20131221161931",
+//   width: 160, height: 226,
+//   source: { name: "Yu-Gi-Oh! Wiki (Fandom)", pageUrl: "https://yugioh.fandom.com/wiki/File:ThunderDragon-FMR-EN-VG.png" }
+// }
+
+getCardImage(580);
+// {
+//   url: "https://ms.yugipedia.com/e/ee/PatrolRobo-FMR-NA-VG.png", width: 320, height: 240,
+//   crop: { x: 4, y: 6, width: 136, height: 192 },   // show only this part: the card
+//   source: { name: "Yugipedia", pageUrl: "https://yugipedia.com/wiki/File:PatrolRobo-FMR-NA-VG.png" }
+// }
+```
+
+- **When `crop` is set**, show only that rectangle, for example with a wrapper that has `overflow: hidden` and the crop's aspect ratio, and the image scaled and moved inside it.
+- **Fandom's CDN answers 403 without a `Referer`.** Web pages send one by default, so do not set `referrerpolicy="no-referrer"`. Servers, CLIs and apps that download the images must send their own.
+- **Credit the source** with `source.name` and a link to `source.pageUrl`. Yu-Gi-Oh! and its card artwork are © Kazuki Takahashi / Konami.
+- The images are captures of a PS1 game and look dull. The [site](https://mhsalves.github.io/yugioh-fb-catalog) lifts them with CSS: `filter: contrast(1.2) saturate(1.25) brightness(1.05)`.
 
 ### Constants
 
@@ -255,6 +288,27 @@ interface IGameRules {
 }
 ```
 
+### Images
+
+```ts
+type ImageSize = "thumb" | "full";
+interface CardImage {
+    url: string;
+    width: number; // size of the image at url
+    height: number;
+    crop?: IImageCrop; // the part of the image that is the card
+    source: { name: string; pageUrl: string };
+}
+interface IImageCrop {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+```
+
+`ICardImageRef` and `IImageSource` (the stored records) and the constants `THUMB_WIDTH` (`160`) and `DEFAULT_IMAGE_SIZE` (`{ width: 300, height: 423 }`) are exported too.
+
 `IFusion`, `IEquipCompat` and `IFieldEffect` are also exported, but the catalog has no fusion, equip or field data yet, so there are no functions that return them.
 
 ## Data accuracy
@@ -273,4 +327,4 @@ How the data is organized, how to add or fix a card and how to sync with the wik
 
 Code: MIT.
 
-Card data comes from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), whose text is licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Card names and texts are from the game, © Konami. This project is not affiliated with Konami.
+Card data comes from the [Yu-Gi-Oh! Wiki](https://yugioh.fandom.com/) (Fandom), whose text is licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Card names and texts are from the game, © Konami. Card images are not included: the package links images hosted by the Yu-Gi-Oh! Wiki (Fandom) and Yugipedia; the artwork is © Kazuki Takahashi / Konami. This project is not affiliated with Konami.
